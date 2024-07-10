@@ -1,27 +1,30 @@
-<!--index.wxml-->
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
+    <!-- Dinner List Section -->
+    <view class="dinner-list">
+      <!-- Add Dinner Button -->
+      <button class="add-dinner-btn" bindtap="onAddDinner">
+        <image class="add-dinner-icon" src="../assets/addbutton.jpg" mode="aspectFill"></image>
+      </button>
+      
+      <!-- Dinner Items -->
+      <block wx:for="{{dinners}}" wx:key="index">
+        <view class="dinner-item">
+          <image class="dinner-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+          <view class="dinner-info">
+            <text class="dinner-time">{{item.time}}</text>
+            <text class="dinner-location">{{item.location}}</text>
+            <view class="dinner-health">
+              <text>健康指数: </text>
+              <van-rate value="{{ item.likes }}" />
+            </view>
+            <view class="dinner-taste">
+              <text>好吃指数: </text>
+              <van-rate value="{{ item.taste }}" />
+            </view>
+          </view>
         </view>
       </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
-    </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
     </view>
   </view>
 </scroll-view>

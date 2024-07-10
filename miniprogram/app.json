@@ -1,14 +1,30 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/logs/logs",
+    "pages/users/users"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "Weixin",
     "navigationBarBackgroundColor": "#ffffff"
   },
-  "style": "v2",
   "componentFramework": "glass-easel",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "吃饭"
+      },
+      {
+        "pagePath": "pages/logs/logs",
+        "text": "好友饭"
+      },
+      {
+        "pagePath": "pages/users/users",
+        "text": "我的"
+      }
+    ]
+  }
 }
