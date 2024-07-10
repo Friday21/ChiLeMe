@@ -1,5 +1,4 @@
 {
   "usingComponents": {
-    "van-rate": "node_modules/@vant/weapp/rate/index"
   }
 }
