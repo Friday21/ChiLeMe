@@ -13,6 +13,7 @@ const callContainer = (path: string, method: "GET" | "POST" | "PUT" | "DELETE" =
       method: method,
       data: data,
       success(res) {
+        console.log("POST", res.data);
         resolve(res.data.data);
       },
       fail(err) {
@@ -26,4 +27,12 @@ const getDinners = (): Promise<any> => {
   return callContainer("api/dinners/", "GET");
 };
 
-export { getDinners };
+const uploadDinner = (dinnerData: object): Promise<any> => {
+  return callContainer("api/dinners/", "POST", dinnerData);
+};
+
+const login = (body: object): Promise<any> => {
+  return callContainer("api/login/", "POST", body);
+};
+
+export { getDinners, uploadDinner, login };

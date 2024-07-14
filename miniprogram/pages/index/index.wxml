@@ -1,12 +1,13 @@
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <!-- Dinner List Section -->
-    <view class="dinner-list">
+
       <!-- Add Dinner Button -->
       <button class="add-dinner-btn" bindtap="onAddDinner">
         <image class="add-dinner-icon" src="../assets/addbutton.jpg" mode="aspectFill"></image>
       </button>
-      
+
+    <!-- Dinner List Section -->
+    <view class="dinner-list">
       <!-- Dinner Items -->
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
@@ -16,7 +17,7 @@
             <text class="dinner-location">{{item.location}}</text>
             <view class="dinner-health">
               <text>健康指数: </text>
-              <van-rate value= "4" />
+              <van-rate value= "{{item.healthyStar}}" />
             </view>
             <view class="dinner-taste">
               <text>好吃指数: </text>
