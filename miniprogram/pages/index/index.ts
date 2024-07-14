@@ -1,6 +1,8 @@
 // index.ts
 // 获取应用实例
-Component({
+import { getDinners } from '../../utils/service';
+
+Page({
   data: {
     motto: 'Hello World',
     userInfo: {
@@ -10,24 +12,25 @@ Component({
     hasUserInfo: false,
     canIUseGetUserProfile: wx.canIUse('getUserProfile'),
     canIUseNicknameComp: wx.canIUse('input.type.nickname'),
-    dinners: [
-      {
-        imageUrl: "https://www.creativefabrica.com/wp-content/uploads/2019/05/Add-icon-by-ahlangraphic-1-580x386.jpg",
-        time: "2024-07-10 18:00",
-        location: "Restaurant A",
-        likes: 5,
-        taste: 4
-      },
-      {
-        imageUrl: "https://www.creativefabrica.com/wp-content/uploads/2019/05/Add-icon-by-ahlangraphic-1-580x386.jpg",
-        time: "2024-07-11 19:00",
-        location: "Restaurant B",
-        likes: 3,
-        taste: 1
-      }
-      // 添加更多的 dinner 对象
-    ]
+    dinners: []
   },
+
+  onLoad: function() {
+    console.log("on load");
+    this.loadDinners();
+    console.log("dinners", this.data.dinners)
+  },
+
+  loadDinners: function() {
+    getDinners().then(dinnerData => {
+      this.setData({
+        dinners: dinnerData
+      });
+    }).catch(err => {
+      console.error('获取dinners失败:', err);
+    });
+},
+
   methods: {
     onAddDinner() {
       wx.chooseMedia({

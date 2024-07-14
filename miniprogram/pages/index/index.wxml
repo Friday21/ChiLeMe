@@ -8,19 +8,19 @@
       </button>
       
       <!-- Dinner Items -->
-      <block wx:for="{{dinners}}" wx:key="index">
+      <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
-          <image class="dinner-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+          <van-image width="200" height="200" src="{{item.picUrl}}" />
           <view class="dinner-info">
-            <text class="dinner-time">{{item.time}}</text>
+            <text class="dinner-time">{{item.date}}</text>
             <text class="dinner-location">{{item.location}}</text>
             <view class="dinner-health">
               <text>健康指数: </text>
-              <van-rate value="{{ item.likes }}" />
+              <van-rate value= "4" />
             </view>
             <view class="dinner-taste">
               <text>好吃指数: </text>
-              <van-rate value="{{ item.taste }}" />
+              <van-rate value="{{item.deliciousStar}}" />
             </view>
           </view>
         </view>
