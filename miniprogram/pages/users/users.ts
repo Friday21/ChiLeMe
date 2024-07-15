@@ -1,9 +1,11 @@
 // index.ts
 // 获取应用实例
-const app = getApp<IAppOption>()
+import { createUser } from '../../utils/service';
+
+const app = getApp<IAppOption>();
 const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 
-Component({
+Page({
   data: {
     motto: 'Hello World',
     userInfo: {
@@ -14,7 +16,42 @@ Component({
     canIUseGetUserProfile: wx.canIUse('getUserProfile'),
     canIUseNicknameComp: wx.canIUse('input.type.nickname'),
   },
-  methods: {
+  onLoad: function() {
+    this.waitForOpenId().then(openId => {
+      console.log("openId is not now", openId)
+      if (app.globalData.userInfo) {
+        this.setData({
+          "userInfo.avatarUrl": app.globalData.userInfo.avatar_url,
+          "userInfo.nickName": app.globalData.userInfo.alias,
+          hasUserInfo: true,
+        })
+      }
+    }).catch(err => {
+      console.error(err);
+    });
+  },
+
+  waitForOpenId: function() {
+    return new Promise((resolve, reject) => {
+      const maxWaitTime = 30000;  // Maximum wait time is 30s
+      let waitedTime = 0;
+
+      // Check openId every 100ms
+      let checkInterval = setInterval(() => {
+        if (app.globalData.openId) {
+          clearInterval(checkInterval);
+          resolve(app.globalData.openId);
+        } else {
+          waitedTime += 100;
+          if (waitedTime >= maxWaitTime) {
+            clearInterval(checkInterval);
+            reject('waitForOpenId timeout');
+          }
+        }
+      }, 100);
+    });
+  },
+
     // 事件处理函数
     bindViewTap() {
       wx.navigateTo({
@@ -37,18 +74,16 @@ Component({
         hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
       })
     },
-    getUserProfile() {
-      // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      wx.getUserProfile({
-        desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          console.log(res)
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
+
+    updateUserInfo(e: any) {
+      let user = {
+        "open_id": app.globalData.openId,
+        "avatar_url": this.data.userInfo.avatarUrl,
+        "alias": this.data.userInfo.nickName,
+      }
+      createUser(user).then(userInfo => {
+        app.globalData.userInfo = userInfo;
+        console.log("created user", app.globalData.userInfo)
       })
-    },
-  },
+    }
 })

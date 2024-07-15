@@ -1,0 +1,25 @@
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <!-- Dinner List Section -->
+    <view class="dinner-list">
+      <!-- Dinner Items -->
+      <block wx:for="{{dinners}}" wx:key="id">
+        <view class="dinner-item">
+          <van-image width="200" height="200" src="{{item.picUrl}}" />
+          <view class="dinner-info">
+            <text class="dinner-time">{{item.date}}</text>
+            <text class="dinner-location">{{item.location}}</text>
+            <view class="dinner-health">
+              <text>健康指数: </text>
+              <van-rate value= "{{item.healthyStar}}" />
+            </view>
+            <view class="dinner-taste">
+              <text>好吃指数: </text>
+              <van-rate value="{{item.deliciousStar}}" />
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</scroll-view>

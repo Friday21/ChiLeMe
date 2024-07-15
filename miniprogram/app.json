@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/logs/logs",
-    "pages/users/users"
+    "pages/users/users",
+    "pages/friendDinner/friendDinner"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -18,7 +19,7 @@
         "text": "吃饭"
       },
       {
-        "pagePath": "pages/logs/logs",
+        "pagePath": "pages/friendDinner/friendDinner",
         "text": "好友饭"
       },
       {

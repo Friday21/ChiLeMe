@@ -5,7 +5,9 @@ App<IAppOption>({
   globalData: {
     openId: "",   // 添加openId属性
     sessionId: "",
+    userInfo: undefined,
   },
+
   onLaunch() {
     // 展示本地存储能力
     const logs = wx.getStorageSync('logs') || []
@@ -30,6 +32,10 @@ App<IAppOption>({
           console.log('login successful', info);
           this.globalData.openId = info.openId;
           this.globalData.sessionId = info.sessionId;
+          if (info.userInfo) {
+            this.globalData.userInfo = info.userInfo;
+            console.log("get user", this.globalData.userInfo);
+          }
         }).catch(error => {
           console.error('login failed', error);
         });

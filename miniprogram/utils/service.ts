@@ -23,16 +23,24 @@ const callContainer = (path: string, method: "GET" | "POST" | "PUT" | "DELETE" =
   });
 };
 
-const getDinners = (): Promise<any> => {
-  return callContainer("api/dinners/", "GET");
+const getDinners = (openId: string): Promise<any> => {
+  return callContainer("api/dinners/" + openId + "/", "GET");
+};
+
+const getFriendDinners = (openId: string): Promise<any> => {
+  return callContainer("api/friend/dinners/" + openId + "/", "GET");
 };
 
 const uploadDinner = (dinnerData: object): Promise<any> => {
-  return callContainer("api/dinners/", "POST", dinnerData);
+  return callContainer("api/dinners/" + dinnerData["user_openId"] + "/", "POST", dinnerData);
 };
 
 const login = (body: object): Promise<any> => {
   return callContainer("api/login/", "POST", body);
 };
 
-export { getDinners, uploadDinner, login };
+const createUser = (body: object): Promise<any> => {
+  return callContainer("api/users/", "POST", body);
+};
+
+export { getDinners, uploadDinner, login, createUser, getFriendDinners };
