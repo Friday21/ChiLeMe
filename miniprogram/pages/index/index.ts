@@ -1,6 +1,6 @@
 // index.ts
 // 获取应用实例
-import { getDinners, uploadDinner } from '../../utils/service';
+import { getDinners, uploadDinner, likeDinner } from '../../utils/service';
 const app = getApp<IAppOption>();
 
 Page({
@@ -108,5 +108,59 @@ Page({
       });
     });
   },
+
+  updateDinner: function(dinner: object) {
+    let updatedDinners = this.data.dinners.map(item => {
+      if (item.id === dinner.id) {
+        return dinner;
+      } else {
+        return item;
+      }
+    });
+    this.setData({ dinners: updatedDinners });
+  },
+
+  rateHealthy(event: any) {
+    let body = {
+      from_openId: app.globalData.openId,
+      dinner_id: event.currentTarget.dataset.id,
+      healthy_star: event.detail,
+    };
+    console.log("body", body)
+    likeDinner(body).then(dinner => {
+      console.log('like dinner successful', dinner);
+      this.updateDinner(dinner);
+    }).catch(error => {
+      console.error('Upload failed', error);
+    });
+  },
+
+  rateDelicious(event: any) {
+    let body = {
+      from_openId: app.globalData.openId,
+      dinner_id: event.currentTarget.dataset.id,
+      delicious_star: event.detail,
+    };
+    likeDinner(body).then(dinner => {
+      this.updateDinner(dinner);
+    }).catch(error => {
+      console.error('Upload failed', error);
+    });
+  },
+
+  rateBeauty(event: any) {
+    let body = {
+      from_openId: app.globalData.openId,
+      dinner_id: event.currentTarget.dataset.id,
+      beauty_star: event.detail,
+    };
+    likeDinner(body).then(dinner => {
+      this.updateDinner(dinner);
+    }).catch(error => {
+      console.error('Upload failed', error);
+    });
+  },
+
+
 },
 );

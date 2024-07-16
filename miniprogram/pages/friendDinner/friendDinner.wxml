@@ -5,17 +5,21 @@
       <!-- Dinner Items -->
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
-          <van-image width="200" height="200" src="{{item.picUrl}}" />
+          <van-image width="200" height="200" src="{{item.picUrl}}" fit="scale-down" lazy-load/>
           <view class="dinner-info">
             <text class="dinner-time">{{item.date}}</text>
-            <text class="dinner-location">{{item.location}}</text>
+            <text class="dinner-location">  {{item.type}}</text>
             <view class="dinner-health">
               <text>健康指数: </text>
-              <van-rate value= "{{item.healthyStar}}" />
+              <van-rate data-id = "{{item.id}}" value= "{{item.healthyStar / 10}}"  bind:change="rateHealthy"/>
             </view>
             <view class="dinner-taste">
               <text>好吃指数: </text>
-              <van-rate value="{{item.deliciousStar}}" />
+              <van-rate data-id = "{{item.id}}" value="{{item.deliciousStar / 10}}" bind:change="rateDelicious"/>
+            </view>
+            <view class="dinner-taste">
+              <text>瘦身指数: </text>
+              <van-rate data-id = "{{item.id}}" value="{{item.beautyStar / 10}}" bind:change="rateBeauty"/>
             </view>
           </view>
         </view>
