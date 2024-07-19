@@ -1,0 +1,6 @@
+<!--logs.wxml-->
+<scroll-view class="scrollarea" scroll-y type="list">
+  <block wx:for="{{friends}}" wx:key="friend.alias" wx:for-item="friend">
+    <view class="friend-item">{{index + 1}}. {{friend.alias}}</view>
+  </block>
+</scroll-view>

@@ -1,25 +1,23 @@
-<!--index.wxml-->
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
     <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
         <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
           <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
         </button>
         <view class="nickname-wrapper">
           <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
+          <input type="text" class="nickname-input" placeholder="请输入昵称" bindinput="onInputChange" value="{{userInfo.nickName}}" />
         </view>
-        <button bindtap="updateUserInfo" class="confirm-button">确认</button>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
+        <van-cell title="好友列表" is-link bind:click="showPopup" class="friends-list" />
+        <van-popup show="{{ showFriends }}" bind:close="onClose">
+          <van-cell-group>
+            <block wx:for="{{friends}}" wx:key="id">
+              <van-cell title="{{ item.alias }}" icon="{{ item.avatar_ulr }}"   position="right" custom-style="height: 20%;" />
+            </block>
+          </van-cell-group>
+        </van-popup>
+
+        <van-button type="primary" bindtap="updateUserInfo" class="confirm-button">更新个人信息</van-button>
     </view>
     <view class="usermotto">
       <text class="user-motto">{{motto}}</text>

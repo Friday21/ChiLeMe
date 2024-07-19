@@ -8,6 +8,15 @@ Page({
     dinners: [],
   },
 
+  onPullDownRefresh: function () {
+    var that = this;
+    that.setData({
+      dinners: [] //当前页的一些初始数据，视业务需求而定
+    })
+    this.loadDinners(); //重新加载onLoad()
+    wx.stopPullDownRefresh();
+  },
+
   onLoad: function() {
     this.waitForOpenId().then(openId => {
       console.log("openId is not now", openId)
@@ -99,7 +108,13 @@ Page({
       console.error('Upload failed', error);
     });
   },
-
+  preview(event: any) {
+    let currentUrl = event.currentTarget.dataset.src
+    wx.previewImage({
+      current: currentUrl, // 当前显示图片的http链接
+      urls: [currentUrl] // 需要预览的图片http链接列表
+    })
+  },
 
 },
 );

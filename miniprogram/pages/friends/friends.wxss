@@ -7,10 +7,10 @@ page {
   flex: 1;
   overflow-y: hidden;
 }
-.log-item {
+.friend-item {
   margin-top: 20rpx;
   text-align: center;
 }
-.log-item:last-child {
+.friend-item:last-child {
   padding-bottom: env(safe-area-inset-bottom);
 }

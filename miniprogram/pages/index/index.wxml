@@ -11,7 +11,7 @@
       <!-- Dinner Items -->
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
-          <van-image width="200" height="200" src="{{item.picUrl}}" fit="scale-down" lazy-load/>
+          <van-image width="200" height="200" src="{{item.picUrl}}" fit="scale-down" data-src="{{item.picUrl}}"  bindtap="preview" lazy-load/>
           <view class="dinner-info">
             <text class="dinner-time">{{item.date}}</text>
             <text class="dinner-location">  {{item.type}}</text>

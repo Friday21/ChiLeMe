@@ -12,9 +12,7 @@ Page({
       avatarUrl: defaultAvatarUrl,
       nickName: '',
     },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    showFriends: false,
   },
   onLoad: function() {
     this.waitForOpenId().then(openId => {
@@ -58,6 +56,7 @@ Page({
         url: '../logs/logs',
       })
     },
+
     onChooseAvatar(e: any) {
       const { avatarUrl } = e.detail
       const { nickName } = this.data.userInfo
@@ -85,5 +84,18 @@ Page({
         app.globalData.userInfo = userInfo;
         console.log("created user", app.globalData.userInfo)
       })
-    }
+    },
+
+    showPopup() {
+      console.log("pop up");
+      wx.navigateTo({
+        url: '../friends/friends',
+      })
+    },
+  
+    onClose() {
+      this.setData({ showFriends: false });
+    },
+
+
 })

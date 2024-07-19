@@ -21,7 +21,8 @@ Page({
     that.setData({
       dinners: [] //当前页的一些初始数据，视业务需求而定
     })
-    this.onLoad(); //重新加载onLoad()
+    this.loadDinners(); //重新加载onLoad()
+    wx.stopPullDownRefresh();
   },
 
   onLoad: function() {
@@ -161,6 +162,12 @@ Page({
     });
   },
 
-
+  preview(event: any) {
+    let currentUrl = event.currentTarget.dataset.src
+    wx.previewImage({
+      current: currentUrl, // 当前显示图片的http链接
+      urls: [currentUrl] // 需要预览的图片http链接列表
+    })
+  }
 },
 );

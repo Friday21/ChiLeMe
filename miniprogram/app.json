@@ -1,15 +1,17 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
+    "pages/friends/friends",
     "pages/users/users",
     "pages/friendDinner/friendDinner"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarBackgroundColor": "#ffffff",
+    "enablePullDownRefresh": true
   },
+
   "componentFramework": "glass-easel",
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {
