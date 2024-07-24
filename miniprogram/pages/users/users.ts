@@ -1,6 +1,7 @@
 // index.ts
 // 获取应用实例
 import { createUser } from '../../utils/service';
+import Toast from '@vant/weapp/toast/toast';
 
 const app = getApp<IAppOption>();
 const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
@@ -82,7 +83,8 @@ Page({
       }
       createUser(user).then(userInfo => {
         app.globalData.userInfo = userInfo;
-        console.log("created user", app.globalData.userInfo)
+        console.log("created user", app.globalData.userInfo);
+        Toast.success('更新成功');
       })
     },
 

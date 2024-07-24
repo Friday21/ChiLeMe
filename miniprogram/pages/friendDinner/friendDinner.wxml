@@ -1,25 +1,26 @@
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <!-- Dinner List Section -->
-    <view class="dinner-list">
+     <!-- Dinner List Section -->
+     <view class="dinner-list">
       <!-- Dinner Items -->
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
-          <van-image width="200" height="200" src="{{item.picUrl}}" fit="scale-down" data-src="{{item.picUrl}}"  bindtap="preview" lazy-load/>
-          <view class="dinner-info">
-            <text class="dinner-time">{{item.date}}</text>
-            <text class="dinner-location">  {{item.type}}</text>
+          <view class="dinner-left">
+            <van-image width="200" height="200" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
+          </view>
+          <view class="dinner-right">
+            <text class="dinner-time">{{item.date}}  {{item.type}}</text>
             <view class="dinner-health">
               <text>健康指数: </text>
-              <van-rate data-id = "{{item.id}}" value= "{{item.healthyStar / 10}}"  bind:change="rateHealthy"/>
+              <van-rate data-id="{{item.id}}" value="{{item.healthyStar / 10}}" bind:change="rateHealthy"/>
             </view>
             <view class="dinner-taste">
               <text>好吃指数: </text>
-              <van-rate data-id = "{{item.id}}" value="{{item.deliciousStar / 10}}" bind:change="rateDelicious"/>
+              <van-rate data-id="{{item.id}}" value="{{item.deliciousStar / 10}}" bind:change="rateDelicious"/>
             </view>
-            <view class="dinner-taste">
+            <view class="dinner-beauty">
               <text>瘦身指数: </text>
-              <van-rate data-id = "{{item.id}}" value="{{item.beautyStar / 10}}" bind:change="rateBeauty"/>
+              <van-rate data-id="{{item.id}}" value="{{item.beautyStar / 10}}" bind:change="rateBeauty"/>
             </view>
           </view>
         </view>
