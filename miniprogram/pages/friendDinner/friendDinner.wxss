@@ -8,33 +8,6 @@
   align-items: center;
 }
 
-.userinfo {
-  width: 100%;
-  padding: 20px;
-}
-
-.avatar-wrapper {
-  margin-bottom: 10px;
-}
-
-.nickname-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.nickname-label {
-  margin-bottom: 5px;
-}
-
-.nickname-input {
-  border: 1px solid #ccc;
-  padding: 5px;
-}
-
-.usermotto {
-  margin: 20px 0;
-}
-
 .dinner-list {
   width: 100%;
   padding: 20px;

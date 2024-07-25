@@ -1,6 +1,8 @@
-<!--logs.wxml-->
 <scroll-view class="scrollarea" scroll-y type="list">
-  <block wx:for="{{friends}}" wx:key="friend.alias" wx:for-item="friend">
-    <view class="friend-item">{{index + 1}}. {{friend.alias}}</view>
+  <block wx:for="{{friends}}" wx:key="alias" wx:for-item="friend">
+    <view class="friend-item">
+      <view class="friend-alias">{{index + 1}}. {{friend.alias}}</view>
+      <van-image width="50" height="50" src="{{friend.avatar_url}}" fit="cover" data-src="{{friend.avatar_url}}" bindtap="preview" lazy-load class="friend-icon"/>
+    </view>
   </block>
 </scroll-view>

@@ -66,8 +66,14 @@ page {
 }
 
 .friends-list {
-  flex: 1;
   display: flex;
-  flex-direction: column; /* Ensure items stack vertically */
-  align-items: flex-start; /* Align items to the start (left) of the container */
+  justify-content: flex-start; /* Align to the start (left) */
+  width: 100%;
+}
+
+.share-button {
+  display: flex;
+  justify-content: flex-start; /* Align to the start (left) */
+  width: 100%;
+  margin-top: 10px;
 }

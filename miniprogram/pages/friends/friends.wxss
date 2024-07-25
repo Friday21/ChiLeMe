@@ -3,14 +3,27 @@ page {
   display: flex;
   flex-direction: column;
 }
+
 .scrollarea {
   flex: 1;
   overflow-y: hidden;
 }
+
 .friend-item {
+  display: flex;
+  align-items: center;
   margin-top: 20rpx;
-  text-align: center;
 }
+
+.friend-alias {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.friend-icon {
+  margin-right: 400rpx;
+}
+
 .friend-item:last-child {
   padding-bottom: env(safe-area-inset-bottom);
 }

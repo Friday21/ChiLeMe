@@ -1,12 +1,18 @@
+import { removeFriend, getFriend } from '../../utils/service';
+const app = getApp<IAppOption>();
 
 Page({
   data: {
     logs: [],
-    friends: [{"alias": "fridayli", "open_id": "123", "avatar_url": ""}, {"alias": "fridayli", "open_id": "123", "avatar_url": ""}],
+    friends: [],
   },
 
   onLoad: function() {
-    console.log("onload")
+    getFriend(app.globalData.openId!).then(res => {
+      this.setData({
+        friends: res.friends,
+      })
+    })
   },
 
 })

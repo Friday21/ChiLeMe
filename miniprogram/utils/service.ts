@@ -46,4 +46,16 @@ const likeDinner = (body: object): Promise<any> => {
   return callContainer("api/dinnersLikes/", "POST", body);
 };
 
-export { getDinners, uploadDinner, login, createUser, getFriendDinners, likeDinner };
+const addFriend = (friendData: object): Promise<any> => {
+  return callContainer("api/friends/" + friendData["user_openId"] + "/", "POST", friendData);
+};
+
+const removeFriend = (friendData: object): Promise<any> => {
+  return callContainer("api/friends/" + friendData["user_openId"] + "/", "DELETE", friendData);
+};
+
+const getFriend = (openId: string): Promise<any> => {
+  return callContainer("api/friends/" + openId + "/", "GET");
+};
+
+export { getDinners, uploadDinner, login, createUser, getFriendDinners, likeDinner, addFriend, removeFriend, getFriend };
