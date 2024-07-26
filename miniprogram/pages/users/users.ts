@@ -11,17 +11,36 @@ Page({
       avatarUrl: defaultAvatarUrl,
       nickName: '',
     },
+    avatarFileId: '',
     showFriends: false,
     sharedBy: '',  // 新增字段记录分享者的 openId
     sharedAlias: '',
+    sharedTimestamp: '',
   },
   onLoad: function (options) {
     if (options.sharerOpenId) {
-      // 如果URL中有sharerOpenId参数，则表示是通过分享链接进入的
-      console.log("Shared by:", options.sharerOpenId);
-      this.setData({ sharedBy: options.sharerOpenId });
-      this.setData({ sharedAlias: options.shareAlias})
-      this.showAddFriendPopup();
+      const currentTime = new Date().getTime();
+      const sharedTimestamp = options.timestamp ? parseInt(options.timestamp) : null;
+      const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (sharedTimestamp && (currentTime - sharedTimestamp < oneDay)) {
+        // 如果分享时间在24小时内
+        console.log("Shared by:", options.sharerOpenId);
+        this.setData({
+          sharedBy: options.sharerOpenId,
+          sharedAlias: options.shareAlias,
+          sharedTimestamp: sharedTimestamp,
+        });
+        this.showAddFriendPopup();
+      } else {
+        // 分享已失效
+        wx.showModal({
+          title: '分享已失效',
+          content: '该分享链接已超过24小时，请让您的朋友重新分享。',
+          showCancel: false, // 不显示取消按钮
+          confirmText: '确定',
+        });
+      }
     }
 
     this.waitForOpenId().then(openId => {
@@ -69,10 +88,23 @@ Page({
   onChooseAvatar(e: any) {
     const { avatarUrl } = e.detail;
     const { nickName } = this.data.userInfo;
-    this.setData({
-      "userInfo.avatarUrl": avatarUrl,
-      hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-    });
+    const cloudPath = `images/${app.globalData.openId}/${new Date().getTime()}-${Math.floor(Math.random() * 1000)}.png`;
+    console.log('上传头像', avatarUrl);
+    wx.cloud.uploadFile({
+      cloudPath, // 云存储路径
+      filePath: avatarUrl, // 本地文件路径
+      success: (res) => {
+        console.log('上传成功', res);
+        this.setData({
+          "userInfo.avatarUrl": avatarUrl,
+          "avatarFileId": res.fileID,
+          hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
+        });
+      },
+      fail: (err) => {
+        console.error('上传失败', err);
+      }
+    })
   },
 
   onInputChange(e: any) {
@@ -87,7 +119,7 @@ Page({
   updateUserInfo(e: any) {
     let user = {
       "open_id": app.globalData.openId,
-      "avatar_url": this.data.userInfo.avatarUrl,
+      "avatar_url": this.data.avatarFileId !== "" ? this.data.avatarFileId : this.data.userInfo.avatarUrl,
       "alias": this.data.userInfo.nickName,
     };
     createUser(user).then(userInfo => {
@@ -111,9 +143,10 @@ Page({
 
   // 分享功能
   onShareAppMessage: function () {
+    const currentTime = new Date().getTime();
     return {
-      title: '分享给朋友',
-      path: `/pages/users/users?sharerOpenId=${app.globalData.openId}&shareAlias=${app.globalData.userInfo!.alias}`,
+      title: `${app.globalData.userInfo!.alias}邀请你成为吃饭搭子`,
+      path: `/pages/users/users?sharerOpenId=${app.globalData.openId}&shareAlias=${app.globalData.userInfo!.alias}&timestamp=${currentTime}`,
       success: function (res) {
         Toast.success('分享成功');
       },
@@ -139,8 +172,6 @@ Page({
           });
         }
       }
-    },
-    )},
-
-
+    });
+  },
 });

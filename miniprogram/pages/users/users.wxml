@@ -9,12 +9,9 @@
           <input type="text" class="nickname-input" placeholder="请输入昵称" bindinput="onInputChange" value="{{userInfo.nickName}}" />
         </view>
         <van-button type="primary" bindtap="updateUserInfo" class="confirm-button">更新个人信息</van-button>
-        <van-cell title="好友列表" is-link bind:click="showPopup" class="friends-list" />
+        <van-cell title="饭搭子列表" is-link bind:click="showPopup" class="friends-list" />
         <van-button type="info" open-type="share" class="share-button">邀请朋友成为吃饭搭子</van-button>
         <van-toast id="van-toast" />
-    </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
     </view>
   </view>
 </scroll-view>

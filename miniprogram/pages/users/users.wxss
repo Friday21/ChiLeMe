@@ -25,10 +25,6 @@ page {
   border-radius: 50%;
 }
 
-.usermotto {
-  margin-top: 200px;
-}
-
 .avatar-wrapper {
   padding: 0;
   width: 56px !important;
