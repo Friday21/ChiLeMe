@@ -6,10 +6,13 @@
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
           <view class="dinner-left">
-            <van-image width="200" height="250" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
+            <van-image width="200" height="280" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
           </view>
           <view class="dinner-right">
-            <text class="dinner-alias">{{item.alias}}  <van-image width="50" height="50" src="{{item.avatar_url}}" fit="cover" data-src="{{item.avatar_url}}" lazy-load/></text>
+            <view class="dinner-alias">
+              <van-image class="avatar" width="50" height="50" round src="{{item.avatar_url}}" fit="cover" data-src="{{item.avatar_url}}" lazy-load/>
+              <text>{{item.alias}}</text>
+            </view>
             <text class="dinner-time">{{item.date}}  {{item.type}}</text>
             <view class="dinner-health">
               <text>健康指数: </text>

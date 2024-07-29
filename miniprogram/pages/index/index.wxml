@@ -12,9 +12,14 @@
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
           <view class="dinner-left">
-            <van-image width="200" height="200" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
+            <van-image width="200" height="250" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
           </view>
           <view class="dinner-right">
+            <view class="dinner-alias">
+              <block wx:for="{{item.friends_avatars}}" wx:key="id" wx:for-item="avatar">
+                <van-image class="avatar" width="50" height="50" round src="{{avatar}}" fit="cover" data-src="{{avatar}}" lazy-load/>
+              </block>
+            </view>
             <text class="dinner-time">{{item.date}}  {{item.type}}</text>
             <view class="dinner-health">
               <text>健康指数: </text>
