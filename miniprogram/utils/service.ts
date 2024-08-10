@@ -34,6 +34,10 @@ const uploadDinner = (dinnerData: object): Promise<any> => {
   return callContainer("api/dinners/" + dinnerData["user_openId"] + "/", "POST", dinnerData);
 };
 
+const deleteDinner = (dinnerData: object): Promise<any> => {
+  return callContainer("api/dinners/" + dinnerData["user_openId"] + "/", "DELETE", dinnerData);
+};
+
 const login = (body: object): Promise<any> => {
   return callContainer("api/login/", "POST", body);
 };
@@ -44,6 +48,10 @@ const createUser = (body: object): Promise<any> => {
 
 const likeDinner = (body: object): Promise<any> => {
   return callContainer("api/dinnersLikes/", "POST", body);
+};
+
+const clearLikeDinner = (body: object): Promise<any> => {
+  return callContainer("api/dinnersLikes/", "DELETE", body);
 };
 
 const addFriend = (friendData: object): Promise<any> => {
@@ -58,4 +66,4 @@ const getFriend = (openId: string): Promise<any> => {
   return callContainer("api/friends/" + openId + "/", "GET");
 };
 
-export { getDinners, uploadDinner, login, createUser, getFriendDinners, likeDinner, addFriend, removeFriend, getFriend };
+export { getDinners, uploadDinner, login, createUser, getFriendDinners, likeDinner, addFriend, removeFriend, getFriend, clearLikeDinner, deleteDinner };

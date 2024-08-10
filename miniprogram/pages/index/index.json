@@ -1,7 +1,9 @@
 {
   "usingComponents": {
     "van-rate": "@vant/weapp/rate/index",
-    "van-image": "@vant/weapp/image/index"
+    "van-image": "@vant/weapp/image/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-toast": "@vant/weapp/toast/index"
   },
   "window": {
     "enablePullDownRefresh": true,

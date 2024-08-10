@@ -12,7 +12,7 @@
       <block wx:for="{{dinners}}" wx:key="id">
         <view class="dinner-item">
           <view class="dinner-left">
-            <van-image width="200" height="250" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
+            <van-image width="200" height="300" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
           </view>
           <view class="dinner-right">
             <view class="dinner-alias">
@@ -32,6 +32,11 @@
             <view class="dinner-beauty">
               <text>瘦身指数: </text>
               <van-rate data-id="{{item.id}}" value="{{item.beautyStar / 10}}" bind:change="rateBeauty"/>
+            </view>
+            <view class="dinner-operations">
+              <van-icon data-id="{{item.id}}" name="clear" color="red" size="20px" bind:tap="clearRate"/>
+              <van-icon data-id="{{item.id}}" class="dinner-operation" name="delete" color="red" size="20px" bind:tap="deleteDinner"/>
+              <van-toast id="van-toast" />
             </view>
           </view>
         </view>

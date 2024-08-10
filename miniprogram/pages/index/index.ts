@@ -1,6 +1,7 @@
 // index.ts
 // 获取应用实例
-import { getDinners, uploadDinner, likeDinner } from '../../utils/service';
+import { getDinners, uploadDinner, likeDinner, clearLikeDinner, deleteDinner } from '../../utils/service';
+import Toast from '@vant/weapp/toast/toast';
 const app = getApp<IAppOption>();
 
 Page({
@@ -159,6 +160,51 @@ Page({
       this.updateDinner(dinner);
     }).catch(error => {
       console.error('Upload failed', error);
+    });
+  },
+
+  clearRate(event: any) {
+    wx.showModal({
+      title: '清除评分',
+      content: `是否清除你对这顿饭的评分？`,
+      success: (res) => {
+        if (res.confirm) {
+          // 用户点击了确认，处理添加逻辑
+          let body = {
+            from_openId: app.globalData.openId,
+            dinner_id: event.currentTarget.dataset.id,
+          };
+          clearLikeDinner(body).then(dinner => {
+            this.updateDinner(dinner);
+            Toast.success('清除成功');
+          }).catch(error => {
+            console.error('Upload failed', error);
+          });
+        }
+      }
+    });
+  },
+
+  deleteDinner (event: any) {
+    wx.showModal({
+      title: '删除',
+      content: `是否删除这顿饭？`,
+      success: (res) => {
+        if (res.confirm) {
+          // 用户点击了确认，处理添加逻辑
+          let body = {
+            user_openId: app.globalData.openId,
+            dinner_id: event.currentTarget.dataset.id,
+          };
+          deleteDinner(body).then(res => {
+            let updatedDinners = this.data.dinners.filter(dinner => dinner.id !== event.currentTarget.dataset.id);
+            this.setData({ dinners: updatedDinners });
+            Toast.success('删除成功');
+          }).catch(error => {
+            console.error('Upload failed', error);
+          });
+        }
+      }
     });
   },
 
