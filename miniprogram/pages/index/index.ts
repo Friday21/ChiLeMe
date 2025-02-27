@@ -1,219 +1,114 @@
-// index.ts
-// 获取应用实例
-import { getDinners, uploadDinner, likeDinner, clearLikeDinner, deleteDinner } from '../../utils/service';
-import Toast from '@vant/weapp/toast/toast';
-const app = getApp<IAppOption>();
+const app = getApp();
+
+interface PageItem {
+  id: string;
+  title: string;
+  icon: string;
+  iconActive: string;
+}
+
+const homeV2Enabled = true;
 
 Page({
   data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: 'https://www.creativefabrica.com/wp-content/uploads/2019/05/Add-icon-by-ahlangraphic-1-580x386.jpg', // 替换为实际的默认头像URL
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
-    dinners: [],
+    showingModal: null,
+    currentTab: "board",
+    navigationBarHeight: app.globalData.navigationBarHeight, // Safe area
+    selectedGenderIndex: 0,
+    homeV2Enabled,
+    pages: [
+      {
+        id: "board",
+        title: "Home",
+        icon: "../assets/ic_board.png",
+        iconActive: "../assets/ic_board_active.png",
+      },
+      {
+        id: "mall",
+        title: "Mall",
+        icon: "../assets/ic_mall.png",
+        iconActive: "../assets/ic_mall_active.png",
+      },
+      {
+        id: "connection",
+        title: "Connection",
+        icon: "../assets/ic_connect.png",
+        iconActive: "../assets/ic_connect_active.png",
+      },
+      {
+        id: "user",
+        title: "User",
+        icon: "../assets/ic_user.png",
+        iconActive: "../assets/ic_user_active.png",
+      },
+    ],
   },
 
-  onPullDownRefresh: function () {
-    var that = this;
-    that.setData({
-      dinners: [] //当前页的一些初始数据，视业务需求而定
-    })
-    this.loadDinners(); //重新加载onLoad()
-    wx.stopPullDownRefresh();
-  },
+  onLoad(options: Record<string, string>) {
+    const { page, productId } = options;
+    const { windowWidth, statusBarHeight } = app.globalData;
 
-  onLoad: function() {
-    this.waitForOpenId().then(openId => {
-      console.log("openId is not now", openId)
-      this.loadDinners();
-    }).catch(err => {
-      console.error(err);
+    if (productId) {
+      wx.setStorageSync("shared_product_id", productId);
+      this.setData({ currentTab: "mall" });
+    }
+
+    this.setData({
+      tabWidth: windowWidth / (this.data.pages.length + 1),
+      statusBarHeight,
     });
+
+    if (page) {
+      this.setData({ currentTab: page });
+    }
   },
 
-  waitForOpenId: function() {
-    return new Promise((resolve, reject) => {
-      const maxWaitTime = 30000;  // Maximum wait time is 30s
-      let waitedTime = 0;
+  onTabSelect(e: WechatMiniprogram.BaseEvent) {
+    const currentTab = e.currentTarget.dataset.tabid as string;
+    this.setData({ currentTab });
 
-      // Check openId every 100ms
-      let checkInterval = setInterval(() => {
-        if (app.globalData.openId) {
-          clearInterval(checkInterval);
-          resolve(app.globalData.openId);
-        } else {
-          waitedTime += 100;
-          if (waitedTime >= maxWaitTime) {
-            clearInterval(checkInterval);
-            reject('waitForOpenId timeout');
-          }
-        }
-      }, 100);
-    });
+    if (currentTab !== "mall") {
+      wx.removeStorageSync("shared_product_id");
+    }
   },
 
-  loadDinners: function() {
-    getDinners(app.globalData.openId!).then(dinnerData => {
-      this.setData({
-        dinners: dinnerData
+  onShow() {
+    if (app.globalData.pendingMessage) {
+      wx.showToast({
+        icon: "none",
+        duration: 3000,
+        title: app.globalData.pendingMessage,
       });
-    }).catch(err => {
-      console.error('获取dinners失败:', err);
-    });
+      app.globalData.pendingMessage = null;
+    }
   },
 
-  onAddDinner() {
-    wx.chooseMedia({
-      count: 1,
-      mediaType: ['image'],
-      sizeType:['compressed'],  // 选择压缩图
-      sourceType: ['album', 'camera'],
-      success: (res) => {
-        const tempFilePath = res.tempFiles[0].tempFilePath;
-        // 假设我们已经有一个函数 uploadImage 处理上传
-        this.uploadImage(tempFilePath).then((fileID: string) => {
-          let newDinner = {
-            location: 'Home',
-            file_id: fileID,
-            user_openId: app.globalData.openId,
-          };
-          uploadDinner(newDinner).then(dinner => {
-            console.log('Upload successful', dinner);
-            this.setData({dinners: [dinner, ...this.data.dinners]})
-          }).catch(error => {
-            console.error('Upload failed', error);
-          });
-        });
-      }
-    });
+  hideModal() {
+    this.setData({ showingModal: null });
   },
 
-  uploadImage(filePath: string) {
-    const cloudPath = `images/${app.globalData.openId}/${new Date().getTime()}-${Math.floor(Math.random() * 1000)}.png`;
-    
-    return new Promise((resolve, reject) => {
-      wx.cloud.uploadFile({
-        cloudPath, // 云存储路径
-        filePath, // 本地文件路径
-        success: (res) => {
-          console.log('上传成功', res);
-          resolve(res.fileID); // 使用resolve返回结果
-        },
-        fail: (err) => {
-          console.error('上传失败', err);
-          reject(err); // 如果出错，使用reject传递错误
-        },
-      });
-    });
-  },
+  onShareAppMessage() {
+    if (this.data.currentTab === "mall" && this.selectComponent("#mall")?.data.selectedProduct) {
+      const mall = this.selectComponent("#mall")!;
+      const product = mall.data.selectedProduct!;
+      const titlePrefix = product.type === "sell" ? "来捡漏啦！" : "诚求！";
+      const shareTitle = `${titlePrefix}${product.title}`;
 
-  updateDinner: function(dinner: object) {
-    let updatedDinners = this.data.dinners.map(item => {
-      if (item.id === dinner.id) {
-        return dinner;
-      } else {
-        return item;
-      }
-    });
-    this.setData({ dinners: updatedDinners });
-  },
+      return {
+        title: shareTitle,
+        imageUrl: product.pictures?.[0],
+        path: `/pages/index/index?page=mall&productId=${product._id}`,
+      };
+    }
 
-  rateHealthy(event: any) {
-    let body = {
-      from_openId: app.globalData.openId,
-      dinner_id: event.currentTarget.dataset.id,
-      healthy_star: event.detail,
+    return {
+      path: "/pages/index/index?page=" + this.data.currentTab,
     };
-    console.log("body", body)
-    likeDinner(body).then(dinner => {
-      console.log('like dinner successful', dinner);
-      this.updateDinner(dinner);
-    }).catch(error => {
-      console.error('Upload failed', error);
-    });
   },
 
-  rateDelicious(event: any) {
-    let body = {
-      from_openId: app.globalData.openId,
-      dinner_id: event.currentTarget.dataset.id,
-      delicious_star: event.detail,
+  onShareTimeline() {
+    return {
+      query: "page=" + this.data.currentTab,
     };
-    likeDinner(body).then(dinner => {
-      this.updateDinner(dinner);
-    }).catch(error => {
-      console.error('Upload failed', error);
-    });
   },
-
-  rateBeauty(event: any) {
-    let body = {
-      from_openId: app.globalData.openId,
-      dinner_id: event.currentTarget.dataset.id,
-      beauty_star: event.detail,
-    };
-    likeDinner(body).then(dinner => {
-      this.updateDinner(dinner);
-    }).catch(error => {
-      console.error('Upload failed', error);
-    });
-  },
-
-  clearRate(event: any) {
-    wx.showModal({
-      title: '清除评分',
-      content: `是否清除你对这顿饭的评分？`,
-      success: (res) => {
-        if (res.confirm) {
-          // 用户点击了确认，处理添加逻辑
-          let body = {
-            from_openId: app.globalData.openId,
-            dinner_id: event.currentTarget.dataset.id,
-          };
-          clearLikeDinner(body).then(dinner => {
-            this.updateDinner(dinner);
-            Toast.success('清除成功');
-          }).catch(error => {
-            console.error('Upload failed', error);
-          });
-        }
-      }
-    });
-  },
-
-  deleteDinner (event: any) {
-    wx.showModal({
-      title: '删除',
-      content: `是否删除这顿饭？`,
-      success: (res) => {
-        if (res.confirm) {
-          // 用户点击了确认，处理添加逻辑
-          let body = {
-            user_openId: app.globalData.openId,
-            dinner_id: event.currentTarget.dataset.id,
-          };
-          deleteDinner(body).then(res => {
-            let updatedDinners = this.data.dinners.filter(dinner => dinner.id !== event.currentTarget.dataset.id);
-            this.setData({ dinners: updatedDinners });
-            Toast.success('删除成功');
-          }).catch(error => {
-            console.error('Upload failed', error);
-          });
-        }
-      }
-    });
-  },
-
-  preview(event: any) {
-    let currentUrl = event.currentTarget.dataset.src
-    wx.previewImage({
-      current: currentUrl, // 当前显示图片的http链接
-      urls: [currentUrl] // 需要预览的图片http链接列表
-    })
-  }
-},
-);
+});

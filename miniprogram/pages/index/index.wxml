@@ -1,46 +1,20 @@
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
+<view class="main-container">
+  <view class="content">
+    <home wx:if="{{currentTab == 'board'}}" />
+    <mall id="mall" wx:if="{{currentTab == 'mall'}}" />
+    <connection wx:if="{{currentTab == 'connection'}}" />
+    <carpool wx:if="{{currentTab == 'carpool'}}" />
+    <user wx:if="{{currentTab == 'user'}}" />
+  </view>
 
-      <!-- Add Dinner Button -->
-      <button class="add-dinner-btn" bindtap="onAddDinner">
-        <image class="add-dinner-icon" src="../assets/addbutton.jpg" mode="aspectFill"></image>
-      </button>
-
-    <!-- Dinner List Section -->
-    <view class="dinner-list">
-      <!-- Dinner Items -->
-      <block wx:for="{{dinners}}" wx:key="id">
-        <view class="dinner-item">
-          <view class="dinner-left">
-            <van-image width="200" height="300" src="{{item.picUrl}}" fit="cover" data-src="{{item.picUrl}}" bindtap="preview" lazy-load/>
-          </view>
-          <view class="dinner-right">
-            <view class="dinner-alias">
-              <block wx:for="{{item.friends_avatars}}" wx:key="id" wx:for-item="avatar">
-                <van-image class="avatar" width="50" height="50" round src="{{avatar}}" fit="cover" data-src="{{avatar}}" lazy-load/>
-              </block>
-            </view>
-            <text class="dinner-time">{{item.date}}  {{item.type}}</text>
-            <view class="dinner-health">
-              <text>健康指数: </text>
-              <van-rate data-id="{{item.id}}" value="{{item.healthyStar / 10}}" bind:change="rateHealthy"/>
-            </view>
-            <view class="dinner-taste">
-              <text>好吃指数: </text>
-              <van-rate data-id="{{item.id}}" value="{{item.deliciousStar / 10}}" bind:change="rateDelicious"/>
-            </view>
-            <view class="dinner-beauty">
-              <text>瘦身指数: </text>
-              <van-rate data-id="{{item.id}}" value="{{item.beautyStar / 10}}" bind:change="rateBeauty"/>
-            </view>
-            <view class="dinner-operations">
-              <van-icon data-id="{{item.id}}" name="clear" color="red" size="20px" bind:tap="clearRate"/>
-              <van-icon data-id="{{item.id}}" class="dinner-operation" name="delete" color="red" size="20px" bind:tap="deleteDinner"/>
-              <van-toast id="van-toast" />
-            </view>
-          </view>
-        </view>
-      </block>
+  <!-- Bottom tab -->
+  <view class="bg-white tab-container" style="padding-bottom: {{navigationBarHeight > 0 ? (navigationBarHeight + 8) : 20}}rpx;">
+    <view bindtap="onTabSelect" class="{{currentTab === item.id ? 'tab-highlight' : 'tab'}} flex relative" data-tabid="{{item.id}}" style="width:{{currentTab === item.id ? tabWidth * 1.5 : tabWidth}}px;" wx:for="{{pages}}" wx:key="id">
+      <image class="tab-icon" src="{{currentTab === item.id ? item.iconActive : item.icon}}"></image>
+      <view wx:if="{{currentTab === item.id}}" class="tab-text margin-left-sm">{{item.title}}</view>
+      <view wx:if="{{item.isBeta && currentTab === item.id}}" class="text-beta absolute top-0 right-2 z-10 border border-solid rounded-full bg-blue-600 text-white px-1">
+        Beta
+      </view>
     </view>
   </view>
-</scroll-view>
+</view>

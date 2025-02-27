@@ -9,25 +9,22 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "Weixin",
     "navigationBarBackgroundColor": "#ffffff",
-    "enablePullDownRefresh": true
+    "enablePullDownRefresh": true,
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationStyle": "custom"
+  },
+
+  "useExtendedLib": {
+    "weui": true
+  },
+
+  "usingComponents": {
+    "mp-navigation-bar": "weui-miniprogram/navigation-bar/navigation-bar",
+    "toolbar": "/colorui/components/toolbar",
+    "mp-uploader": "weui-miniprogram/uploader/uploader"
   },
 
   "componentFramework": "glass-easel",
-  "lazyCodeLoading": "requiredComponents",
-  "tabBar": {
-    "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "吃饭"
-      },
-      {
-        "pagePath": "pages/friendDinner/friendDinner",
-        "text": "好友饭"
-      },
-      {
-        "pagePath": "pages/users/users",
-        "text": "我的"
-      }
-    ]
-  }
+  "lazyCodeLoading": "requiredComponents"
 }

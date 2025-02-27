@@ -6,6 +6,8 @@ App<IAppOption>({
     openId: "",   
     sessionId: "",
     userInfo: undefined,
+    windowWidth: 0,
+
   },
 
   onLaunch() {
@@ -58,6 +60,23 @@ App<IAppOption>({
           });
         },
       });
-    }
+    };
+
+    wx.getSystemInfo({
+      success: (e) => {
+        console.log(e);
+
+        this.globalData.windowWidth = e.windowWidth;
+        this.globalData.statusBarHeight = e.statusBarHeight;
+
+        // Bottom navigation bar
+        this.globalData.navigationBarHeight = e.screenHeight - e.safeArea.bottom;
+
+        // Toolbar
+        let menu = wx.getMenuButtonBoundingClientRect();
+        this.globalData.menu = menu;
+        this.globalData.toolbarHeight =  menu.height + (menu.top - e.statusBarHeight) * 2;
+      },
+    });
   },
 })

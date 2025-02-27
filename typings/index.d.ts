@@ -5,6 +5,11 @@ interface IAppOption {
     openId?: string,
     sessionId: string,
     userInfo?: object,
+    statusBarHeight?: Number,
+    navigationBarHeight?: Number,
+    windowWidth?: Number,
+    toolbarHeight?: Number,
+    menu?: any
   }
   userInfoReadyCallback?: WechatMiniprogram.GetUserInfoSuccessCallback,
 }
