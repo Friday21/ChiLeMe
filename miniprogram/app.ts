@@ -37,7 +37,6 @@ App<IAppOption>({
       // 本地存储中没有用户信息，进行登录
       wx.login({
         success: res => {
-          console.log(res.code)
           // 发送 res.code 到后台换取 openId, sessionKey, unionId
           let body = {
             code: res.code

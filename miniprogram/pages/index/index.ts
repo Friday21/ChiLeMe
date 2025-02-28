@@ -1,4 +1,4 @@
-const app = getApp();
+const app = getApp<IAppOption>();
 
 interface PageItem {
   id: string;
@@ -66,10 +66,6 @@ Page({
   onTabSelect(e: WechatMiniprogram.BaseEvent) {
     const currentTab = e.currentTarget.dataset.tabid as string;
     this.setData({ currentTab });
-
-    if (currentTab !== "mall") {
-      wx.removeStorageSync("shared_product_id");
-    }
   },
 
   onShow() {

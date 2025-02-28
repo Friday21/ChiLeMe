@@ -10,9 +10,5 @@
     "carpool": "/pages/friendDinner/friendDinner",
     "user": "/pages/users/users",
     "user-info-modal": "/pages/friendDinner/friendDinner"
-  },
-  "window": {
-    "enablePullDownRefresh": true,
-    "backgroundTextStyle": "dark"
   }
 }

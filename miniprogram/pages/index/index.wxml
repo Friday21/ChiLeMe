@@ -1,10 +1,10 @@
 <view class="main-container">
   <view class="content">
-    <home wx:if="{{currentTab == 'board'}}" />
-    <mall id="mall" wx:if="{{currentTab == 'mall'}}" />
-    <connection wx:if="{{currentTab == 'connection'}}" />
-    <carpool wx:if="{{currentTab == 'carpool'}}" />
-    <user wx:if="{{currentTab == 'user'}}" />
+    <home hidden="{{currentTab != 'board'}}"/>
+    <mall hidden="{{currentTab != 'mall'}}"/>
+    <connection hidden="{{currentTab != 'connection'}}"/>
+    <carpool hidden="{{currentTab != 'carpool'}}"/>
+    <user hidden="{{currentTab != 'user'}}"/>
   </view>
 
   <!-- Bottom tab -->
