@@ -1,9 +1,6 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/friends/friends",
-    "pages/users/users",
-    "pages/friendDinner/friendDinner"
+    "pages/index/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",

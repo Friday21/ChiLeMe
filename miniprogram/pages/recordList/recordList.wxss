@@ -1,0 +1,76 @@
+.records-container {
+  flex: 1;
+  padding: 30rpx;
+  box-sizing: border-box;
+  height: 100vh;
+  background: #f7f8fa;
+  overflow-y: auto;
+  margin-top: 50rpx;
+  -webkit-overflow-scrolling: touch;
+}
+
+.record-card {
+  margin: 0 !important;
+  background: #a1d1d1 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin-top: 20rpx;
+}
+
+.tag {
+  margin-right: 12rpx;
+  margin-top: 30rpx;
+  font-size: 24rpx !important;
+}
+
+.delete-btn {
+  height: 100%;
+  background-color: #ff4d4f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 130rpx;
+}
+
+/* 修改van-swipe-cell的样式 */
+:host {
+  --cell-background-color: transparent;
+}
+
+.van-swipe-cell {
+  margin-bottom: 20rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.van-cell-group {
+  background: transparent !important;
+}
+
+.dialog-content {
+  padding: 40rpx 30rpx;
+}
+
+.dialog-text {
+  font-size: 30rpx;
+  line-height: 1.6;
+  margin-bottom: 40rpx;
+  color: #333;
+  word-break: break-all;
+}
+
+.dialog-item {
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.dialog-label {
+  min-width: 160rpx;
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 20rpx;
+} 

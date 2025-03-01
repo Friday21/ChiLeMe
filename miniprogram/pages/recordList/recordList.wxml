@@ -1,0 +1,66 @@
+<scroll-view scroll-y class="records-container">
+  <van-empty wx:if="{{!records.length}}" description="暂无记录" />
+  <van-swipe-cell 
+    wx:for="{{records}}" 
+    wx:key="id"
+    right-width="{{ 65 }}"
+    async-close
+    name="{{item.id}}"
+  >
+    <van-cell-group>
+      <van-card
+        custom-class="record-card"
+        title="{{item.text}}"
+        desc="{{item.date}}"
+        bindtap="showEditDialog"
+        data-record="{{item}}"
+      >
+        <view slot="tags">
+          <van-tag type="primary" class="tag">{{item.category}}</van-tag>
+          <van-tag 
+            type="{{item.positive <= 2 ? 'danger' : item.positive == 3 ? 'warning' : 'success'}}" 
+            class="tag"
+          >
+            {{item.positive === 1 ? '特别消极' : 
+              item.positive === 2 ? '消极' : 
+              item.positive === 3 ? '中性' : 
+              item.positive === 4 ? '积极' : '非常积极'}}
+          </van-tag>
+        </view>
+      </van-card>
+    </van-cell-group>
+    <view slot="right" class="delete-btn" bindtap="deleteRecord" data-id="{{item.id}}">
+      <van-icon name="delete" size="36rpx"/>
+    </view>
+  </van-swipe-cell>
+</scroll-view>
+
+<!-- 编辑弹窗 -->
+<van-dialog
+  use-slot
+  title="编辑记录"
+  show="{{ showDialog }}"
+  showCancelButton
+  bind:confirm="handleEdit"
+  bind:close="closeDialog"
+>
+  <view class="dialog-content">
+    <view class="dialog-text">{{currentRecord.content}}</view>
+    <view class="dialog-item">
+      <view class="dialog-label">分类：</view>
+      <van-field
+        model:value="{{ editCategory }}"
+        placeholder="请输入分类"
+        border="{{ false }}"
+      />
+    </view>
+    <view class="dialog-item">
+      <view class="dialog-label">情感评分：</view>
+      <van-rate
+        value="{{ editPositive }}"
+        bind:change="onRateChange"
+        count="{{ 5 }}"
+      />
+    </view>
+  </view>
+</van-dialog> 

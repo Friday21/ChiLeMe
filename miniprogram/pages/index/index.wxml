@@ -1,11 +1,11 @@
 <view class="main-container">
   <view class="content">
-    <home hidden="{{currentTab != 'board'}}"/>
-    <mall hidden="{{currentTab != 'mall'}}"/>
-    <connection hidden="{{currentTab != 'connection'}}"/>
-    <carpool hidden="{{currentTab != 'carpool'}}"/>
-    <user hidden="{{currentTab != 'user'}}"/>
-  </view>
+  <voiceRecord wx:if="{{currentTab == 'record'}}"/>
+  <recordList wx:if="{{currentTab == 'recordList'}}"/>
+  <recordList wx:if="{{currentTab == 'connection'}}"/>
+  <user wx:if="{{currentTab == 'user'}}"/>
+</view>
+
 
   <!-- Bottom tab -->
   <view class="bg-white tab-container" style="padding-bottom: {{navigationBarHeight > 0 ? (navigationBarHeight + 8) : 20}}rpx;">

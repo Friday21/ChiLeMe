@@ -4,11 +4,10 @@
     "van-image": "@vant/weapp/image/index",
     "van-icon": "@vant/weapp/icon/index",
     "van-toast": "@vant/weapp/toast/index",
-    "home": "/pages/friendDinner/friendDinner",
-    "mall": "/pages/friendDinner/friendDinner",
-    "connection": "/pages/friendDinner/friendDinner",
-    "carpool": "/pages/friendDinner/friendDinner",
-    "user": "/pages/users/users",
-    "user-info-modal": "/pages/friendDinner/friendDinner"
+    "recordList": "/pages/recordList/recordList",
+    "voiceRecord": "/pages/voiceRecord/voiceRecord",
+    "mall": "/pages/recordList/recordList",
+    "connection": "/pages/recordList/recordList",
+    "user": "/pages/users/users"
   }
 }

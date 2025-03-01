@@ -12,26 +12,26 @@ const homeV2Enabled = true;
 Page({
   data: {
     showingModal: null,
-    currentTab: "board",
+    currentTab: "record",
     navigationBarHeight: app.globalData.navigationBarHeight, // Safe area
     selectedGenderIndex: 0,
     homeV2Enabled,
     pages: [
       {
-        id: "board",
-        title: "Home",
+        id: "recordList",
+        title: "往昔",
         icon: "../assets/ic_board.png",
         iconActive: "../assets/ic_board_active.png",
       },
       {
-        id: "mall",
-        title: "Mall",
-        icon: "../assets/ic_mall.png",
-        iconActive: "../assets/ic_mall_active.png",
+        id: "record",
+        title: "当下",
+        icon: "../assets/mutemic.png",
+        iconActive: "../assets/redmic.png",
       },
       {
         id: "connection",
-        title: "Connection",
+        title: "概览",
         icon: "../assets/ic_connect.png",
         iconActive: "../assets/ic_connect_active.png",
       },
