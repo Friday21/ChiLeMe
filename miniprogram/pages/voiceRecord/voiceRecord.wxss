@@ -29,6 +29,17 @@
   font-weight: 500;
 }
 
+.today-records {
+  padding: 20rpx;
+  padding-bottom: 280rpx; /* 为底部的录音按钮和导航栏留出空间 */
+  padding-top: 30rpx;
+  box-sizing: border-box;
+  height: 100vh;
+  background-color: #f5f7fa;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .records-container {
   flex: 1;
   padding: 20rpx;
