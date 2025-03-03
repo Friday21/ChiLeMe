@@ -1,10 +1,13 @@
 <view class="main-container">
   <view class="content">
-  <voiceRecord wx:if="{{currentTab == 'record'}}"/>
-  <recordList wx:if="{{currentTab == 'recordList'}}"/>
-  <recordList wx:if="{{currentTab == 'connection'}}"/>
-  <user wx:if="{{currentTab == 'user'}}"/>
-</view>
+    <view wx:if="{{currentTab == 'record'}}">
+      <voiceRecord/>
+      <recordList showTodayOnly="{{true}}"/>
+    </view>
+    <recordList wx:if="{{currentTab == 'recordList'}}" showTodayOnly="{{false}}"/>
+    <recordList wx:if="{{currentTab == 'connection'}}" showTodayOnly="{{false}}"/>
+    <user wx:if="{{currentTab == 'user'}}"/>
+  </view>
 
 
   <!-- Bottom tab -->

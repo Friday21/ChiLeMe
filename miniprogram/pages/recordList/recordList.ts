@@ -38,6 +38,13 @@ interface ComponentInstance {
 }
 
 Component<ComponentData, {}, ComponentMethods>({
+  properties: {
+    showTodayOnly: {
+      type: Boolean,
+      value: false
+    }
+  },
+
   data: {
     records: [],
     showDialog: false,
@@ -57,16 +64,50 @@ Component<ComponentData, {}, ComponentMethods>({
     async fetchRecords(this: ComponentInstance) {
       try {
         this.setData({ loading: true });
-        const records = await getRecords(app.globalData.openId || '');
-        console.log("records");
-        console.log(records);
-        this.setData({ records });
+        
+        // 检查 openId 是否存在
+        if (!app.globalData.openId) {
+          console.log('Waiting for openId...');
+          // 等待一段时间后重试
+          setTimeout(() => {
+            if (app.globalData.openId) {
+              this.fetchRecords();
+            }
+          }, 1000);
+          return;
+        }
+
+        const records = await getRecords(app.globalData.openId);
+        console.log('getRecords response:', records);
+        
+        // 如果只需要显示今天的记录
+        if (this.properties.showTodayOnly) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const todayRecords = records.filter(record => {
+            const recordDate = new Date(record.date);
+            recordDate.setHours(0, 0, 0, 0);
+            return recordDate.getTime() === today.getTime();
+          });
+          this.setData({ records: todayRecords });
+        } else {
+          this.setData({ records });
+        }
       } catch (err) {
         console.error('获取记录失败：', err);
-        wx.showToast({
-          title: '获取记录失败',
-          icon: 'none'
-        });
+        // 如果是 404 错误，可能是 openId 还未准备好，等待后重试
+        if (err.statusCode === 404 && !app.globalData.openId) {
+          setTimeout(() => {
+            if (app.globalData.openId) {
+              this.fetchRecords();
+            }
+          }, 1000);
+        } else {
+          wx.showToast({
+            title: '获取记录失败',
+            icon: 'none'
+          });
+        }
       } finally {
         this.setData({ loading: false });
       }
