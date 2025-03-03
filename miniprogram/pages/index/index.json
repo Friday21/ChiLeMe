@@ -8,6 +8,7 @@
     "voiceRecord": "/pages/voiceRecord/voiceRecord",
     "mall": "/pages/recordList/recordList",
     "connection": "/pages/recordList/recordList",
-    "user": "/pages/users/users"
+    "user": "/pages/users/users",
+    "history": "/pages/calendar/index"
   }
 }

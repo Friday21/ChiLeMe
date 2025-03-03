@@ -1,0 +1,17 @@
+<view class="container">
+  <van-calendar
+    class="calendar"
+    poppable="{{ false }}"
+    show-mark="{{ false }}"
+    show-title="{{ false }}"
+    show-subtitle="{{ false }}"
+    show-confirm="{{ false }}"
+    min-date="{{ minDate }}"
+    max-date="{{ maxDate }}"
+    default-date="{{ defaultDate }}"
+    type="single"
+    color="#ee0a24"
+    formatter="{{ formatter }}"
+    bind:select="onSelect"
+  />
+</view> 

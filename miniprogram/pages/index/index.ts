@@ -18,7 +18,7 @@ Page({
     homeV2Enabled,
     pages: [
       {
-        id: "recordList",
+        id: "history",
         title: "往昔",
         icon: "../assets/ic_board.png",
         iconActive: "../assets/ic_board_active.png",
