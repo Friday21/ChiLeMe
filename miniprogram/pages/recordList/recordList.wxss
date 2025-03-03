@@ -11,10 +11,33 @@
 
 .record-card {
   margin: 0 !important;
-  background: #a1d1d1 !important;
-  border-radius: 0 !important;
+  border-radius: 24rpx !important;
   box-shadow: none !important;
   margin-top: 20rpx;
+  padding: 30rpx !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 五种不同情感值对应的背景色 */
+.record-card.mood-1 {
+  background: #ffcdd2 !important; /* 特别消极 - 深红色 */
+}
+
+.record-card.mood-2 {
+  background: #ffe0b2 !important; /* 消极 - 橙色 */
+}
+
+.record-card.mood-3 {
+  background: #e0dfdf !important; /* 中性 - 灰色 */
+}
+
+.record-card.mood-4 {
+  background: #c8e6c9 !important; /* 积极 - 浅绿色 */
+}
+
+.record-card.mood-5 {
+  background: #b3e5fc !important; /* 非常积极 - 浅蓝色 */
 }
 
 .tag {
@@ -39,11 +62,12 @@
 }
 
 .van-swipe-cell {
-  margin-bottom: 20rpx;
-  border-radius: 16rpx;
+  margin-bottom: 12rpx;
+  border-radius: 24rpx;
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+  height: 250rpx;
 }
 
 .van-cell-group {
@@ -73,4 +97,13 @@
   font-size: 28rpx;
   color: #666;
   margin-right: 20rpx;
-} 
+}
+
+.card-wrapper {
+  margin-bottom: 12rpx;
+}
+
+.card-spacer {
+  height: 12rpx;
+  background-color: transparent;
+}
