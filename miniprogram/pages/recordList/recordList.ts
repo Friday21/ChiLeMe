@@ -44,11 +44,13 @@ Component<ComponentData, {}, ComponentMethods>({
     currentRecord: null,
     editCategory: '',
     editPositive: 3,
+    openId: '',
     loading: false
   },
 
   lifetimes: {
     attached(this: ComponentInstance) {
+      this.setData({ openId: app.globalData.openId || '' });
       this.fetchRecords();
     }
   },
@@ -80,7 +82,7 @@ Component<ComponentData, {}, ComponentMethods>({
           content: '确定要删除这条记录吗？',
           success: async (res) => {
             if (res.confirm) {
-              await deleteRecord(id);
+              await deleteRecord(this.data.openId, id);
               this.setData({
                 records: this.data.records.filter(record => record.id !== id)
               });
@@ -129,10 +131,10 @@ Component<ComponentData, {}, ComponentMethods>({
           positive: this.data.editPositive
         };
         
-        await updateRecord(updatedRecord);
+        await updateRecord(this.data.openId, this.data.currentRecord!.id, updatedRecord);
         
         const updatedRecords = this.data.records.map(record => {
-          if (record.id === this.data.currentRecord!.id) {
+          if (record.id === updatedRecord.id) {
             return updatedRecord;
           }
           return record;

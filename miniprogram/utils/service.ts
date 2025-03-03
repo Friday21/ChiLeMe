@@ -69,27 +69,19 @@ const getRecords = (openId: string): Promise<any> => {
 };
 
 const deleteRecord = (openId: string, recordId: string): Promise<any> => {
-  return callContainer("api/usernotes/" + openId + "/" + recordId + "/", "DELETE");
+  return callContainer(
+    "api/usernotes/" + openId + "/",
+    "DELETE",
+    { "id": recordId }
+  );
 };
 
 const updateRecord = (openId: string, recordId: string, recordData: object): Promise<any> => {
-  return callContainer("api/usernotes/" + openId + "/" + recordId + "/", "PUT", recordData);
-};
-
-const getDinners = (openId: string): Promise<any> => {
-  return callContainer("api/dinners/" + openId + "/", "GET");
-};
-
-const getFriendDinners = (openId: string): Promise<any> => {
-  return callContainer("api/friend/dinners/" + openId + "/", "GET");
-};
-
-const uploadDinner = (dinnerData: object): Promise<any> => {
-  return callContainer("api/dinners/" + dinnerData["user_openId"] + "/", "POST", dinnerData);
-};
-
-const deleteDinner = (dinnerData: object): Promise<any> => {
-  return callContainer("api/dinners/" + dinnerData["user_openId"] + "/", "DELETE", dinnerData);
+  return callContainer(
+    "api/usernotes/" + openId + "/",
+    "PUT",
+    {id: recordId, ...recordData}
+  );
 };
 
 const login = (body: object): Promise<any> => {
@@ -120,18 +112,14 @@ const getFriend = (openId: string): Promise<any> => {
   return callContainer("api/friends/" + openId + "/", "GET");
 };
 
-export { 
-  getDinners, 
-  uploadDinner, 
+export {  
   login, 
   createUser, 
-  getFriendDinners, 
   likeDinner, 
   addFriend, 
   removeFriend, 
   getFriend, 
   clearLikeDinner, 
-  deleteDinner,
   analyzeVoice,
   getRecords,
   deleteRecord,
