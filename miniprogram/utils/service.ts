@@ -13,9 +13,16 @@ const callContainer = (path: string, method: "GET" | "POST" | "PUT" | "DELETE" =
       method: method,
       data: data,
       success(res) {
-        resolve(res.data.data);
+        console.log('Container response:', res);
+        if (!res.data || !res.data.data) {
+          console.error('Invalid response format:', res);
+          resolve([]);
+        } else {
+          resolve(res.data.data);
+        }
       },
       fail(err) {
+        console.error('Container call failed:', err);
         reject(err);
       }
     });

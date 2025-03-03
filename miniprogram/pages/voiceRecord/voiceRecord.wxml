@@ -11,6 +11,9 @@
   <text class="recording-tip" wx:if="{{isRecording}}">正在分析...</text>
 </view>
 
+<!-- 今日记录列表 -->
+<recordList showTodayOnly="{{true}}" class="today-records"/>
+
 <scroll-view scroll-y class="records-container">
   <van-empty wx:if="{{!records.length}}" description="暂无记录" />
   <van-swipe-cell 

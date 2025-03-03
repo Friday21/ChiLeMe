@@ -3,7 +3,8 @@
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
     "van-card": "@vant/weapp/card/index",
-    "van-tag": "@vant/weapp/tag/index"
+    "van-tag": "@vant/weapp/tag/index",
+    "recordList": "/pages/recordList/recordList"
   },
   "navigationBarTitleText": "语音记录"
 } 
