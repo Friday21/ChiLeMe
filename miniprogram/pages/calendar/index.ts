@@ -36,7 +36,7 @@ Component({
         
         if(dayData) {
           // 设置心情对应的类名
-          day.className = `${dayData.positive >= 3 ? 'positive-mood' : 'negative-mood'}`;
+          day.className = `${dayData.positive >= 3 ? 'positive' : 'negative'}`;
           // 在日期下方显示分类
           day.bottomInfo = `${dayData.category}`;
         } 

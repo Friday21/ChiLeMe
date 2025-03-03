@@ -21,13 +21,13 @@ page {
 }
 
 /* 自定义日期样式 */
-.positive-mood {
-  background-color:rgb(251, 251, 250) !important;
+::v-deep .positive-mood {
+  background-color:#FFD580 !important;
   background: var(--calendar-range-edge-color,#FFD580);
   color: #333 !important;
 }
 
-.negative-mood {
+::v-deep .negative-mood {
   background-color: #4A6583 !important;
   color: #333 !important;
 }
