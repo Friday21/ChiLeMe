@@ -1,5 +1,7 @@
 import { getHistory } from "../../utils/service";
 
+const app = getApp<IAppOption>();
+
 interface DayData {
   date: string;
   positive: number;
@@ -54,11 +56,18 @@ Component({
   methods: {
     async loadMoodData() {
       try {
-        const openId = wx.getStorageSync('openId');
-        if (!openId) {
-          wx.showToast({ title: '请先登录', icon: 'none' });
+        // 检查 openId 是否存在
+        if (!app.globalData.openId) {
+          console.log('Waiting for openId...');
+          // 等待一段时间后重试
+          setTimeout(() => {
+            if (app.globalData.openId) {
+              this.fetchRecords();
+            }
+          }, 1000);
           return;
         }
+        const openId = app.globalData.openId;
 
         const records = await getHistory(openId);
         const moodData: Record<string, DayData> = {};
