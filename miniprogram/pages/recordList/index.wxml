@@ -1,0 +1,31 @@
+<van-popup
+  show="{{ show }}"
+  position="left"
+  custom-style="width: 80%; height: 100%"
+  bind:close="onClose"
+>
+  <view class="record-list-container">
+    <!-- 顶部标题栏 -->
+    <view class="header">
+      <van-icon name="arrow-left" size="24px" bind:tap="onClose" />
+      <text class="title">{{ date }} 的记录</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <van-loading wx:if="{{ loading }}" />
+
+    <!-- 记录列表 -->
+    <view class="records" wx:else>
+      <block wx:if="{{ records.length > 0 }}">
+        <view wx:for="{{ records }}" wx:key="id" class="record-item">
+          <view class="record-content">{{ item.text }}</view>
+          <view class="record-info">
+            <text class="category">{{ item.category }}</text>
+            <text class="time">{{ item.createAt }}</text>
+          </view>
+        </view>
+      </block>
+      <van-empty wx:else description="暂无记录" />
+    </view>
+  </view>
+</van-popup> 
