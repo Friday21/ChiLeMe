@@ -71,8 +71,8 @@ const analyzeVoice = async (filePath: string, openId: string): Promise<VoiceAnal
   }
 };
 
-const getRecords = (openId: string): Promise<any> => {
-  return callContainer("api/usernotes/" + openId + "/", "GET");
+const getRecords = (openId: string, date: string): Promise<any> => {
+  return callContainer("api/usernotes/" + openId + "/", "GET", { date: date });
 };
 
 const deleteRecord = (openId: string, recordId: string): Promise<any> => {
@@ -144,5 +144,6 @@ export {
   getRecords,
   deleteRecord,
   updateRecord,
-  getHistory
+  getHistory,
+  getRecordsByDate
 };

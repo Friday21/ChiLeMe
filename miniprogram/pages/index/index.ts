@@ -19,13 +19,13 @@ Page({
     pages: [
       {
         id: "history",
-        title: "往昔",
+        title: "忆往昔",
         icon: "../assets/ic_board.png",
         iconActive: "../assets/ic_board_active.png",
       },
       {
         id: "record",
-        title: "当下",
+        title: "记当下",
         icon: "../assets/mutemic.png",
         iconActive: "../assets/redmic.png",
       },

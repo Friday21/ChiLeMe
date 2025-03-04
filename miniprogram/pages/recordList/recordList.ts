@@ -21,6 +21,8 @@ interface ComponentData {
   editCategory: string;
   editPositive: number;
   loading: boolean;
+  date: string;
+  openId: string;
 }
 
 type ComponentMethods = Record<string, (...args: any[]) => any> & {
@@ -30,6 +32,7 @@ type ComponentMethods = Record<string, (...args: any[]) => any> & {
   closeDialog(): void;
   handleEdit(): void;
   onRateChange(e: WechatMiniprogram.TouchEvent): void;
+  formatDate(date: Date): string;
 }
 
 interface ComponentInstance {
@@ -42,6 +45,10 @@ Component<ComponentData, {}, ComponentMethods>({
     showTodayOnly: {
       type: Boolean,
       value: false
+    },
+    date: {
+      type: String,
+      value: ''
     }
   },
 
@@ -52,18 +59,26 @@ Component<ComponentData, {}, ComponentMethods>({
     editCategory: '',
     editPositive: 3,
     openId: '',
-    loading: false
+    loading: false,
+    date: ''
   },
 
   lifetimes: {
     attached(this: ComponentInstance) {
-      this.setData({ openId: app.globalData.openId || '' });
-      this.fetchRecords();
+      this.setData({ 
+        openId: app.globalData.openId || ''
+      });
+      if (this.properties.showTodayOnly) {
+        this.setData({ date: this.formatDate(new Date()) });
+      } else {
+        this.setData({ date: this.properties.date || this.formatDate(new Date()) });
+      }
+      this.fetchRecords(this.data.date);
     }
   },
 
   methods: {
-    async fetchRecords(this: ComponentInstance) {
+    async fetchRecords(this: ComponentInstance, date: string) {
       try {
         this.setData({ loading: true });
         
@@ -79,22 +94,9 @@ Component<ComponentData, {}, ComponentMethods>({
           return;
         }
 
-        const records = await getRecords(app.globalData.openId);
+        const records = await getRecords(app.globalData.openId, date);
+        this.setData({ records });
         console.log('getRecords response:', records);
-        
-        // 如果只需要显示今天的记录
-        if (this.properties.showTodayOnly) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const todayRecords = records.filter(record => {
-            const recordDate = new Date(record.date);
-            recordDate.setHours(0, 0, 0, 0);
-            return recordDate.getTime() === today.getTime();
-          });
-          this.setData({ records: todayRecords });
-        } else {
-          this.setData({ records });
-        }
       } catch (err) {
         console.error('获取记录失败：', err);
         // 如果是 404 错误，可能是 openId 还未准备好，等待后重试
@@ -205,6 +207,11 @@ Component<ComponentData, {}, ComponentMethods>({
       this.setData({
         editPositive: value
       });
+    },
+
+    // 格式化日期为 YYYY-MM-DD 格式
+    formatDate(date: Date): string {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
   }
 }); 

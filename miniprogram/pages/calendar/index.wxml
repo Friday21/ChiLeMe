@@ -12,7 +12,9 @@
     type="single"
     color="{{ todayColor }}"
     formatter="{{ formatter }}"
-    bind:select="onSelect"
+    bind:select="onDayClick"
+    bind:day-click="onDayClick"
     first-day-of-week="{{ 1 }}"
   />
-</view> 
+  <record-list-popup show="{{ showRecordList }}" date="{{ selectedDate }}" />
+</view>

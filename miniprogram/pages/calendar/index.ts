@@ -22,7 +22,9 @@ Component({
     moodData: {} as Record<string, DayData>,
     selectedDayCategories: [] as string[],
     formatter: null as unknown as (day: any) => any,
-    todayColor: NEUTRAL_COLOR
+    todayColor: NEUTRAL_COLOR,
+    showRecordList: false,
+    selectedDate: ''
   },
 
   lifetimes: {
@@ -92,22 +94,10 @@ Component({
       const dateStr = this.formatDate(new Date(timestamp));
       const dayData = this.data.moodData[dateStr];
 
-      console.log('Selected date:', dateStr, 'Data:', dayData);
+      console.log('Selected date:', dateStr, 'Data:', dayData); // 添加日志
 
       this.setData({
         selectedDayCategories: dayData ? dayData.category : []
-      });
-
-      // 跳转到记录列表页面，并传递选中的日期
-      wx.navigateTo({
-        url: `/pages/recordList/index?date=${dateStr}`,
-        fail: (err) => {
-          console.error('跳转失败：', err);
-          wx.showToast({ 
-            title: '跳转失败', 
-            icon: 'none' 
-          });
-        }
       });
 
       // 触发自定义事件
@@ -122,6 +112,16 @@ Component({
     // 刷新数据
     refresh() {
       this.loadMoodData();
+    },
+
+    onDayClick(event: any) {
+      const timestamp = event.detail as unknown as number;
+      const dateStr = this.formatDate(new Date(timestamp));
+      
+      this.setData({
+        showRecordList: true,
+        selectedDate: dateStr
+      });
     }
   }
 }); 
