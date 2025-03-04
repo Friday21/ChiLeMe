@@ -17,32 +17,34 @@
   padding: 30rpx !important;
   display: flex !important;
   flex-direction: column !important;
+  color: white;
+  font-size: 34rpx !important;
 }
 
 /* 五种不同情感值对应的背景色 */
 .record-card.mood-1 {
-  background: #ffcdd2 !important; /* 特别消极 - 深红色 */
+  background-image: url('https://7072-prod-9g5b6d374032de85-1327836217.tcb.qcloud.la/resource/flash2.jpg'); 
 }
 
 .record-card.mood-2 {
-  background: #ffe0b2 !important; /* 消极 - 橙色 */
+  background-image: url('https://7072-prod-9g5b6d374032de85-1327836217.tcb.qcloud.la/resource/rain.jpg'); 
 }
 
 .record-card.mood-3 {
-  background: #e0dfdf !important; /* 中性 - 灰色 */
+  background-image: url('https://7072-prod-9g5b6d374032de85-1327836217.tcb.qcloud.la/resource/clouds.jpg'); 
 }
 
 .record-card.mood-4 {
-  background: #c8e6c9 !important; /* 积极 - 浅绿色 */
+  background-image: url('https://7072-prod-9g5b6d374032de85-1327836217.tcb.qcloud.la/resource/sunny2.jpg'); 
 }
 
 .record-card.mood-5 {
-  background: #b3e5fc !important; /* 非常积极 - 浅蓝色 */
+  background-image: url('https://7072-prod-9g5b6d374032de85-1327836217.tcb.qcloud.la/resource/color.jpg'); 
 }
 
 .tag {
   margin-right: 12rpx;
-  margin-top: 30rpx;
+  margin-top: 40rpx;
   font-size: 24rpx !important;
 }
 
@@ -82,7 +84,7 @@
   font-size: 30rpx;
   line-height: 1.6;
   margin-bottom: 40rpx;
-  color: #333;
+  color: white;
   word-break: break-all;
 }
 

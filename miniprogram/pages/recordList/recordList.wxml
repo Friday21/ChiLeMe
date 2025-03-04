@@ -10,14 +10,13 @@
         <van-card
           custom-class="record-card mood-{{item.positive}}"
           title="{{item.text}}"
-          desc="{{item.date}}"
           bindtap="showEditDialog"
           data-record="{{item}}"
         >
           <view slot="tags">
-            <van-tag type="primary" class="tag">{{item.category}}</van-tag>
-            <van-tag 
-              type="{{item.positive <= 2 ? 'danger' : item.positive == 3 ? 'warning' : 'success'}}" 
+            <van-tag round type="success" size="medium" class="tag">{{item.category}}</van-tag>
+            <van-tag round size="medium"
+            color = "{{item.positive <= 2 ? '#A0A0A0' : item.positive == 3 ? '#f7b733' : '#FFD580'}}" 
               class="tag"
             >
               {{item.positive === 1 ? '特别消极' : 
