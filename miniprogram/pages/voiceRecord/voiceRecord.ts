@@ -1,4 +1,5 @@
 import { analyzeVoice } from '../../utils/service';
+import Toast from '@vant/weapp/toast/toast';
 
 const app = getApp<IAppOption>();
 
@@ -81,6 +82,10 @@ Component<ComponentData, {}, ComponentMethods>({
         try {
           // 调用语音分析服务
           const result = await analyzeVoice(res.tempFilePath, app.globalData.openId || '');
+          if (result.text == "未识别语音") {
+            Toast.fail(result.text);
+            return;
+          }
 
           // 添加新记录
           const newRecord = {

@@ -1,3 +1,4 @@
+<van-toast id="van-toast" />
 <view class="main-container">
   <view class="content">
     <voiceRecord wx:if="{{currentTab == 'record'}}"/>
