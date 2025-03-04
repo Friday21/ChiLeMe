@@ -14,7 +14,7 @@
     <view
       wx:for="{{ days }}"
       wx:key="index"
-      style="{{ computed.getDayStyle(item.type, index, date, rowHeight, color, firstDayOfWeek) }}; {{ item.className === 'positive' ? 'background-color: #FFD580; color: #333;' : item.className === 'negative' ? 'background-color: #90EE90; color: #333;' : '' }}"
+      style="{{ computed.getDayStyle(item.type, index, date, rowHeight, color, firstDayOfWeek) }}; {{ item.className ? 'background-color: ' + item.className + '; color: #333;' : '' }}"
       class="{{ utils.bem('calendar__day', [item.type]) }} {{ item.className }}"
       data-index="{{ index }}"
       bindtap="onClick"

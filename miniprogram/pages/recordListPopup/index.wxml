@@ -1,0 +1,8 @@
+<van-popup
+  show="{{ show }}"
+  position="left"
+  custom-style="width: 90%; height: 100%"
+  bind:close="onClose"
+>
+  <record-list id="recordList" date="{{ date }}" />
+</van-popup> 

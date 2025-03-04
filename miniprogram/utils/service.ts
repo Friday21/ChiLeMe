@@ -71,8 +71,8 @@ const analyzeVoice = async (filePath: string, openId: string): Promise<VoiceAnal
   }
 };
 
-const getRecords = (openId: string): Promise<any> => {
-  return callContainer("api/usernotes/" + openId + "/", "GET");
+const getRecords = (openId: string, date: string): Promise<any> => {
+  return callContainer("api/usernotes/" + openId + "/", "GET", { date: date });
 };
 
 const deleteRecord = (openId: string, recordId: string): Promise<any> => {
@@ -119,6 +119,19 @@ const getFriend = (openId: string): Promise<any> => {
   return callContainer("api/friends/" + openId + "/", "GET");
 };
 
+const getHistory = (openId: string): Promise<any> => {
+  return callContainer("api/usernoteshistory/" + openId + "/", "GET");
+};
+
+export const getRecordsByDate = async (openId: string, date: string) => {
+  try {
+    return await callContainer(`api/usernoteshistory/${openId}/${date}`, 'GET');
+  } catch (error) {
+    console.error('获取指定日期记录失败：', error);
+    throw error;
+  }
+};
+
 export {  
   login, 
   createUser, 
@@ -130,5 +143,7 @@ export {
   analyzeVoice,
   getRecords,
   deleteRecord,
-  updateRecord
+  updateRecord,
+  getHistory,
+  getRecordsByDate
 };

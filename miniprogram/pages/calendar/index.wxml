@@ -3,15 +3,18 @@
     class="calendar"
     poppable="{{ false }}"
     show-mark="{{ false }}"
-    show-title="{{ false }}"
-    show-subtitle="{{ false }}"
+    show-title="{{ true }}"
+    show-subtitle="{{ true }}"
     show-confirm="{{ false }}"
     min-date="{{ minDate }}"
     max-date="{{ maxDate }}"
-    default-date="{{ defaultDate }}"
+    title="心情日历"
     type="single"
-    color="#ee0a24"
+    color="{{ todayColor }}"
     formatter="{{ formatter }}"
-    bind:select="onSelect"
+    bind:select="onDayClick"
+    bind:day-click="onDayClick"
+    first-day-of-week="{{ 1 }}"
   />
-</view> 
+  <record-list-popup show="{{ showRecordList }}" date="{{ selectedDate }}" />
+</view>

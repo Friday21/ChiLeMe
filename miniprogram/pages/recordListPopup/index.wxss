@@ -1,0 +1,19 @@
+.record-list-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.header {
+  padding: 20rpx;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.title {
+  margin-left: 20rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+} 

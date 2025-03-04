@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "van-calendar": "/component/vant/calendar/index"
+    "van-calendar": "/component/vant/calendar/index",
+    "record-list-popup": "/pages/recordListPopup/index"
   }
 } 

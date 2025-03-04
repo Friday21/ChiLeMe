@@ -1,4 +1,4 @@
-import { getRecords } from "../../utils/service";
+import { getHistory } from "../../utils/service";
 
 interface DayData {
   date: string;
@@ -6,37 +6,41 @@ interface DayData {
   category: string;
 }
 
-// 模拟数据的分类选项
-const MOCK_CATEGORIES = [
-  '工作', '学习', '生活', '娱乐', '运动', 
-  '家庭', '社交', '旅行', '美食', '购物'
-];
+const POSITIVE_COLOR = '#FFD580';
+const NEGATIVE_COLOR = '#A0A0A0';
+const NEUTRAL_COLOR = '#f7b733';
 
 Component({
   data: {
-    minDate: new Date(2020, 0, 1).getTime(),
-    maxDate: new Date().getTime(),
+    minDate: new Date(2025, 0, 1).getTime(),
+    maxDate: (() => {
+      const now = new Date();
+      // 获取当前月份的最后一天
+      return new Date(now.getFullYear(), now.getMonth() + 1, 0).getTime();
+    })(),
     defaultDate: new Date().getTime(),
     moodData: {} as Record<string, DayData>,
     selectedDayCategories: [] as string[],
-    formatter: null as unknown as (day: any) => any
+    formatter: null as unknown as (day: any) => any,
+    todayColor: NEUTRAL_COLOR,
+    showRecordList: false,
+    selectedDate: ''
   },
 
   lifetimes: {
-    attached() {
-      // 初始化模拟数据
-      this.initMockData();
+    async attached() {
+      // 先加载数据
+      await this.loadMoodData();
 
-      // 设置日期格式化函数
+      // 再设置日期格式化函数
       const formatter = (day: any) => {
         const date = new Date(day.date);
         const dateStr = this.formatDate(date);
         const dayData = this.data.moodData[dateStr];
 
-        
         if(dayData) {
-          // 设置心情对应的类名
-          day.className = `${dayData.positive >= 3 ? 'positive' : 'negative'}`;
+          // 设置心情对应的颜色
+          day.className = dayData.positive >= 3 ? POSITIVE_COLOR : NEGATIVE_COLOR;
           // 在日期下方显示分类
           day.bottomInfo = `${dayData.category}`;
         } 
@@ -48,34 +52,6 @@ Component({
   },
 
   methods: {
-    // 生成模拟数据
-    initMockData() {
-      const moodData: Record<string, DayData> = {};
-      const today = new Date();
-
-      // 生成最近10天的模拟数据
-      for (let i = 0; i < 10; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        const dateStr = this.formatDate(date);
-
-        // 随机生成2-4个分类
-        const categoryCount = Math.floor(Math.random() * 3) + 2;
-        const shuffledCategories = [...MOCK_CATEGORIES].sort(() => Math.random() - 0.5);
-        const categories = shuffledCategories.slice(0, categoryCount);
-
-        moodData[dateStr] = {
-          date: dateStr,
-          // 随机生成1-5之间的情绪值
-          positive: Math.floor(Math.random() * 5) + 1,
-          category: categories[0]
-        };
-      }
-
-      console.log('Mock data generated:', moodData); // 添加日志
-      this.setData({ moodData });
-    },
-
     async loadMoodData() {
       try {
         const openId = wx.getStorageSync('openId');
@@ -84,20 +60,29 @@ Component({
           return;
         }
 
-        const records = await getRecords(openId);
+        const records = await getHistory(openId);
         const moodData: Record<string, DayData> = {};
 
         // 处理心情数据
         records.forEach((record: any) => {
-          const date = record.date.split('T')[0];
-          moodData[date] = {
-            date,
+          // 直接使用后台返回的date，因为格式已经是YYYY-MM-DD
+          moodData[record.date] = {
+            date: record.date,
             positive: record.positive,
             category: record.category
           };
         });
 
         this.setData({ moodData });
+        
+        // 获取当前天的心情
+        const currentDateStr = this.formatDate(new Date());
+        const currentDayData = moodData[currentDateStr];
+        if (currentDayData) {
+          this.setData({ todayColor: currentDayData.positive >= 3 ? POSITIVE_COLOR : NEGATIVE_COLOR });
+        } else {
+          this.setData({ todayColor: NEUTRAL_COLOR });
+        }
       } catch (error) {
         console.error('加载心情数据失败：', error);
         wx.showToast({ title: '加载失败', icon: 'none' });
@@ -127,6 +112,16 @@ Component({
     // 刷新数据
     refresh() {
       this.loadMoodData();
+    },
+
+    onDayClick(event: any) {
+      const timestamp = event.detail as unknown as number;
+      const dateStr = this.formatDate(new Date(timestamp));
+      
+      this.setData({
+        showRecordList: true,
+        selectedDate: dateStr
+      });
     }
   }
 }); 
