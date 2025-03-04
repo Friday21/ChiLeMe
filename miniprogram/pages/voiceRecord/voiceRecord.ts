@@ -4,6 +4,7 @@ const app = getApp<IAppOption>();
 
 interface ComponentData {
   isRecording: boolean;
+  isAnalyzing: boolean;
   records: Array<{
     id: string;
     content: string;
@@ -42,6 +43,7 @@ interface ComponentInstance {
 Component<ComponentData, {}, ComponentMethods>({
   data: {
     isRecording: false,
+    isAnalyzing: false,
     records: [],
     recorderManager: null,
     showDialog: false,
@@ -68,12 +70,13 @@ Component<ComponentData, {}, ComponentMethods>({
           title: '录音失败',
           icon: 'none'
         });
-        this.setData({ isRecording: false });
+        this.setData({ isRecording: false, isAnalyzing: false });
       });
 
       // 监听结束事件
       recorderManager.onStop(async (res) => {
         console.log("录音文件路径", res.tempFilePath);
+        this.setData({ isRecording: false, isAnalyzing: true });
         
         try {
           // 调用语音分析服务
@@ -89,7 +92,6 @@ Component<ComponentData, {}, ComponentMethods>({
           };
 
           this.setData({
-            isRecording: false,
             records: [newRecord, ...this.data.records]
           });
 
@@ -99,7 +101,8 @@ Component<ComponentData, {}, ComponentMethods>({
             title: '处理失败',
             icon: 'none'
           });
-          this.setData({ isRecording: false });
+        } finally {
+          this.setData({ isAnalyzing: false });
         }
       });
 

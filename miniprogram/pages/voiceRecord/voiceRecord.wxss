@@ -14,19 +14,139 @@
   box-sizing: border-box;
 }
 
+.button-container {
+  width: 90%;
+  display: flex;
+  gap: 20rpx;
+  justify-content: space-between;
+}
+
 .voice-btn {
-  width: 90% !important;
-  margin-bottom: 16rpx;
-  border-radius: 12rpx !important;
   height: 88rpx !important;
-  line-height: 88rpx !important;
+  border-radius: 44rpx !important;
+  background: #ffffff !important;
+  border: 2rpx solid #1989fa !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 4rpx 12rpx rgba(25, 137, 250, 0.1) !important;
+  flex: 1;
+  padding: 0 30rpx !important;
+}
+
+/* 左侧录音按钮 */
+.voice-btn:first-child {
+  flex: 1;
+}
+
+/* 右侧播放按钮 */
+.right-btn {
+  flex: 1;
+  background: #ffffff !important;
+}
+
+.voice-btn.recording {
+  background: linear-gradient(135deg, #1989fa, #1677ff) !important;
+  border-color: transparent !important;
+  box-shadow: 0 4rpx 16rpx rgba(25, 137, 250, 0.3) !important;
+  transform: scale(0.98) !important;
+}
+
+.mic-icon {
+  position: absolute;
+  left: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.voice-btn.recording .mic-icon {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.btn-text {
+  font-size: 32rpx;
+  color: #1989fa;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: center;
+  width: 100%;
+  position: relative;
+  z-index: 0;
+}
+
+.voice-btn.recording .btn-text {
+  color: #ffffff;
+  font-weight: 600;
+  z-index: 0;
+}
+
+.wave-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wave {
+  position: absolute;
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: wave 1.5s infinite;
+}
+
+.wave1 {
+  animation-delay: 0s;
+}
+
+.wave2 {
+  animation-delay: 0.5s;
+}
+
+.wave3 {
+  animation-delay: 1s;
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
 .recording-tip {
   color: #ff4d4f;
   font-size: 28rpx;
-  margin-bottom: 8rpx;
+  margin-bottom: 16rpx;
   font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .today-records {

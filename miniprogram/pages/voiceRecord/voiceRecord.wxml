@@ -1,55 +1,31 @@
 <!-- 语音输入区域 -->
 <view class="voice-input-container">
-  <van-button 
-    type="primary" 
-    size="large" 
-    bind:touchstart="startRecord" 
-    bind:touchend="stopRecord"
-    class="voice-btn">
-    按住记录
-  </van-button>
-  <text class="recording-tip" wx:if="{{isRecording}}">正在分析...</text>
+  <text class="recording-tip" wx:if="{{isAnalyzing}}">正在分析...</text>
+  <view class="button-container">
+    <view 
+      class="voice-btn {{isRecording ? 'recording' : ''}}"
+      bind:touchstart="startRecord" 
+      bind:touchend="stopRecord"
+    >
+      <view class="mic-icon">
+        <view class="wave-container" wx:if="{{isRecording}}">
+          <view class="wave wave1"></view>
+          <view class="wave wave2"></view>
+          <view class="wave wave3"></view>
+        </view>
+        <van-icon name="microphone" size="48rpx" color="{{isRecording ? '#ffffff' : '#1989fa'}}"/>
+      </view>
+      <text class="btn-text">{{isRecording ? '松开发送' : '按住说话'}}</text>
+    </view>
+    <view class="voice-btn right-btn">
+      <van-icon name="edit" size="48rpx" color="#1989fa"/>
+      <text class="btn-text">输入文字</text>
+    </view>
+  </view>
 </view>
 
 <!-- 今日记录列表 -->
 <recordList showTodayOnly="{{true}}" class="today-records"/>
-
-<scroll-view scroll-y class="records-container">
-  <van-empty wx:if="{{!records.length}}" description="暂无记录" />
-  <van-swipe-cell 
-    wx:for="{{records}}" 
-    wx:key="id"
-    right-width="{{ 65 }}"
-    async-close
-    name="{{item.id}}"
-  >
-    <van-cell-group>
-      <van-card
-        custom-class="record-card"
-        title="{{item.text}}"
-        desc="{{item.date}}"
-        bindtap="showEditDialog"
-        data-record="{{item}}"
-      >
-        <view slot="tags">
-          <van-tag type="primary" class="tag">{{item.category}}</van-tag>
-          <van-tag 
-            type="{{item.positive <= 2 ? 'danger' : item.positive == 3 ? 'warning' : 'success'}}" 
-            class="tag"
-          >
-            {{item.positive === 1 ? '特别消极' : 
-              item.positive === 2 ? '消极' : 
-              item.positive === 3 ? '中性' : 
-              item.positive === 4 ? '积极' : '非常积极'}}
-          </van-tag>
-        </view>
-      </van-card>
-    </van-cell-group>
-    <view slot="right" class="delete-btn" bindtap="deleteRecord" data-id="{{item.id}}">
-      <van-icon name="delete" size="36rpx"/>
-    </view>
-  </van-swipe-cell>
-</scroll-view>
 
 <!-- 编辑弹窗 -->
 <van-dialog
