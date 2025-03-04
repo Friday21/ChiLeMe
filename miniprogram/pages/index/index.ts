@@ -20,8 +20,8 @@ Page({
       {
         id: "history",
         title: "忆往昔",
-        icon: "../assets/ic_board.png",
-        iconActive: "../assets/ic_board_active.png",
+        icon: "../assets/calendar_muted.png",
+        iconActive: "../assets/calendar_active.png",
       },
       {
         id: "record",
@@ -37,7 +37,7 @@ Page({
       },
       {
         id: "user",
-        title: "User",
+        title: "Me",
         icon: "../assets/ic_user.png",
         iconActive: "../assets/ic_user_active.png",
       },
