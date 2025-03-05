@@ -99,6 +99,13 @@ Component<ComponentData, {}, ComponentMethods>({
           this.setData({
             records: [newRecord, ...this.data.records]
           });
+          
+          // 刷新recordList组件
+          const recordListComponent = this.selectComponent('#recordList');
+          if (recordListComponent) {
+            const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
+            recordListComponent.fetchRecords(formattedDate);
+          }
 
         } catch (err) {
           console.error('处理失败：', err);
