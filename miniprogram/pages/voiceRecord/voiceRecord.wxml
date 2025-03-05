@@ -4,6 +4,9 @@
     <van-loading size="24px">分析中...</van-loading>
   </view>
   <view class="button-container">
+    <view class="voice-btn right-btn {{isAnalyzing ? 'disabled' : ''}}">
+      <text class="btn-text">输入文字</text><van-icon name="edit" color="#1989fa"/>
+    </view>
     <view 
       class="voice-btn {{isRecording ? 'recording' : ''}} {{isAnalyzing ? 'disabled' : ''}}"
       bind:touchstart="startRecord" 
@@ -17,11 +20,7 @@
         </view>
         <van-icon name="microphone" size="48rpx" color="{{isRecording ? '#ffffff' : '#1989fa'}}"/>
       </view>
-      <text class="btn-text">{{isRecording ? '松开发送' : '按住说话'}}</text>
-    </view>
-    <view class="voice-btn right-btn {{isAnalyzing ? 'disabled' : ''}}">
-      <van-icon name="edit" size="48rpx" color="#1989fa"/>
-      <text class="btn-text">输入文字</text>
+      <text class="btn-text">{{isRecording ? '松开发送' : '按住说话'}}</text><van-icon name="/pages/assets/redmic.png"/>
     </view>
   </view>
 </view>

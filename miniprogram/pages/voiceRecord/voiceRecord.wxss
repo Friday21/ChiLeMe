@@ -34,7 +34,7 @@
   flex: 1;
   padding: 0 30rpx !important;
 }
-.voice-btn:first-child {
+.voice-btn:last-child {
   flex: 1;
 }
 .right-btn {

@@ -6,6 +6,7 @@
     "van-tag": "@vant/weapp/tag/index",
     "van-toast": "@vant/weapp/toast/index",
     "van-loading": "@vant/weapp/loading/index",
+    "van-icon": "@vant/weapp/icon/index",
     "recordList": "/pages/recordList/recordList"
   },
   "navigationBarTitleText": "语音记录"
