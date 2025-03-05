@@ -5,6 +5,7 @@
     "van-card": "@vant/weapp/card/index",
     "van-tag": "@vant/weapp/tag/index",
     "van-toast": "@vant/weapp/toast/index",
+    "van-loading": "@vant/weapp/loading/index",
     "recordList": "/pages/recordList/recordList"
   },
   "navigationBarTitleText": "语音记录"

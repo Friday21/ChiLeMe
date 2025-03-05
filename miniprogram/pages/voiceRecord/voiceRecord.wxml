@@ -1,6 +1,8 @@
 <!-- 语音输入区域 -->
 <view class="voice-input-container">
-  <text class="recording-tip" wx:if="{{isAnalyzing}}">正在分析...</text>
+  <view class="recording-tip" wx:if="{{isAnalyzing}}">
+    <van-loading size="24px">分析中...</van-loading>
+  </view>
   <view class="button-container">
     <view 
       class="voice-btn {{isRecording ? 'recording' : ''}} {{isAnalyzing ? 'disabled' : ''}}"
