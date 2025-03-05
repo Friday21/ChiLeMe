@@ -60,7 +60,7 @@ Component({
   methods: {
     async getServerData(openId: string) {
       // 模拟从服务器获取数据时的延时
-      const resp = await getReport(openId)
+      const resp = await getReport(openId);
       const weekChartData = {
         categories: [
           { value: 0.2, color: "#A0A0A0" },
@@ -70,7 +70,7 @@ Component({
         series: [
           {
             name: "不虚度指数",
-            data: resp.weekData
+            data: resp.weekData / 100
           }
         ]
       };
@@ -84,7 +84,7 @@ Component({
         series: [
           {
             name: "不虚度指数",
-            data: resp.monthData
+            data: resp.monthData / 100
           }
         ]
       };
