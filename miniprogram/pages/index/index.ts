@@ -30,10 +30,10 @@ Page({
         iconActive: "../assets/redmic.png",
       },
       {
-        id: "connection",
-        title: "概览",
-        icon: "../assets/ic_connect.png",
-        iconActive: "../assets/ic_connect_active.png",
+        id: "report",
+        title: "知虚度",
+        icon: "../assets/report.png",
+        iconActive: "../assets/report_active.png",
       },
       {
         id: "user",

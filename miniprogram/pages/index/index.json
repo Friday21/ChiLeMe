@@ -9,6 +9,7 @@
     "mall": "/pages/recordList/recordList",
     "connection": "/pages/recordList/recordList",
     "user": "/pages/users/users",
-    "history": "/pages/calendar/index"
+    "history": "/pages/calendar/index",
+    "report": "/pages/statistics/index"
   }
 }

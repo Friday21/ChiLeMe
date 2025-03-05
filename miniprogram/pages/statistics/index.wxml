@@ -1,0 +1,39 @@
+<view class="container">
+  <view class="statistics-container">
+    <view class="chart-section">
+      <view class="chart-title">本周不虚度指数</view>
+      <ucharts
+        type="gauge"
+        opts="{{weekopts}}"
+        canvas2d="{{true}}"
+        chartData="{{weekchartData}}"
+        canvas-id="weekChart"
+      />
+      <text>本周有{{ weekGoodDay }}天不虚度， 继续加油吧！</text>
+    </view>
+
+    <view class="chart-section">
+      <view class="chart-title">本月不虚度指数</view>
+      <ucharts
+        type="gauge"
+        opts="{{monthopts}}"
+        canvas2d="{{true}}"
+        chartData="{{monthchartData}}"
+        canvas-id="monthChart"
+      />
+      <text>本月有{{ monthGoodDay }}天不虚度， 继续加油吧！</text>
+    </view>
+
+    <view class="chart-section">
+      <view class="chart-title">本年不虚度指数</view>
+      <ucharts
+        type="column"
+        opts="{{yearopts}}"
+        canvas2d="{{true}}"
+        chartData="{{yearchartData}}"
+        canvas-id="yearChart"
+      />
+      <text>本年有{{ yearGoodDay }}天不虚度， 继续加油吧！</text>
+    </view>
+  </view>
+</view>
