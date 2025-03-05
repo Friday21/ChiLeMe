@@ -4,7 +4,7 @@
     <van-loading size="24px">分析中...</van-loading>
   </view>
   <view class="button-container">
-    <view class="voice-btn right-btn {{isAnalyzing ? 'disabled' : ''}}">
+    <view class="voice-btn right-btn {{isAnalyzing ? 'disabled' : ''}}" bindtap="showTextInput">
       <text class="btn-text">输入文字</text><van-icon name="edit" color="#1989fa"/>
     </view>
     <view 
@@ -62,3 +62,28 @@
     </view>
   </block>
 </van-dialog>
+
+<!-- 文字输入弹窗 -->
+<van-dialog
+  use-slot
+  title="输入文字"
+  show="{{ showTextInput }}"
+  showCancelButton
+  bind:confirm="handleTextSubmit"
+  bind:close="closeTextInput"
+  confirmButtonText="确认"
+>
+  <view class="text-input-content">
+    <van-field
+      model:value="{{ inputText }}"
+      type="textarea"
+      placeholder="请输入内容"
+      autosize="{{ {maxHeight: 200, minHeight: 100} }}"
+      border="{{ false }}"
+      custom-class="text-input-field"
+    />
+  </view>
+</van-dialog>
+
+<!-- 添加 Toast 组件 -->
+<van-toast id="van-toast" />

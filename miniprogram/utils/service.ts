@@ -71,6 +71,18 @@ const analyzeVoice = async (filePath: string, openId: string): Promise<VoiceAnal
   }
 };
 
+const analyzeText = async (text: string, openId: string): Promise<VoiceAnalyzeResult> => {
+  const result = await callContainer(
+    "api/usernotes/" + openId + "/",
+    "POST",
+    {
+      text: text,
+      user_openId: openId
+    }
+  );
+  return result as VoiceAnalyzeResult;
+};
+
 const getRecords = (openId: string, date: string): Promise<any> => {
   return callContainer("api/usernotes/" + openId + "/", "GET", { date: date });
 };
@@ -141,6 +153,7 @@ export {
   getFriend, 
   clearLikeDinner, 
   analyzeVoice,
+  analyzeText,
   getRecords,
   deleteRecord,
   updateRecord,
