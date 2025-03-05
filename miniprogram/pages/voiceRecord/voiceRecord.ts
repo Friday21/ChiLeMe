@@ -1,4 +1,4 @@
-import { analyzeVoice } from '../../utils/service';
+import { analyzeVoice, analyzeText } from '../../utils/service';
 import Toast from '@vant/weapp/toast/toast';
 
 const app = getApp<IAppOption>();
@@ -24,6 +24,8 @@ interface ComponentData {
   } | null;
   editCategory: string;
   editPositive: number;
+  showTextInput: boolean;
+  inputText: string;
 }
 
 type ComponentMethods = Record<string, (...args: any[]) => any> & {
@@ -34,6 +36,9 @@ type ComponentMethods = Record<string, (...args: any[]) => any> & {
   closeDialog(): void;
   handleEdit(): void;
   onRateChange(e: WechatMiniprogram.TouchEvent): void;
+  showTextInput(): void;
+  closeTextInput(): void;
+  handleTextSubmit(): void;
 }
 
 interface ComponentInstance {
@@ -50,7 +55,9 @@ Component<ComponentData, {}, ComponentMethods>({
     showDialog: false,
     currentRecord: null,
     editCategory: '',
-    editPositive: 3
+    editPositive: 3,
+    showTextInput: false,
+    inputText: ''
   },
 
   lifetimes: {
@@ -214,6 +221,65 @@ Component<ComponentData, {}, ComponentMethods>({
       this.setData({
         editPositive: value
       });
+    },
+
+    // 显示文字输入弹窗
+    showTextInput() {
+      this.setData({
+        showTextInput: true,
+        inputText: ''
+      });
+    },
+
+    // 关闭文字输入弹窗
+    closeTextInput() {
+      this.setData({
+        showTextInput: false,
+        inputText: ''
+      });
+    },
+
+    // 处理文字提交
+    async handleTextSubmit() {
+      if (!this.data.inputText.trim()) {
+        Toast.fail('请输入内容');
+        return;
+      }
+
+      this.setData({ isAnalyzing: true });
+      
+      try {
+        // 调用文字分析服务
+        const result = await analyzeText(this.data.inputText, app.globalData.openId || '');
+
+        // 添加新记录
+        const newRecord = {
+          id: result.id,
+          content: result.text,
+          category: Array.isArray(result.category) ? result.category[0] : result.category,
+          positive: typeof result.positive === 'string' ? 3 : Number(result.positive),
+          date: new Date().toLocaleString()
+        };
+
+        this.setData({
+          records: [newRecord, ...this.data.records],
+          showTextInput: false,
+          inputText: ''
+        });
+
+        // 刷新recordList组件
+        const recordListComponent = this.selectComponent('#recordList');
+        if (recordListComponent) {
+          const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
+          recordListComponent.fetchRecords(formattedDate);
+        }
+
+      } catch (err) {
+        console.error('处理失败：', err);
+        Toast.fail('处理失败');
+      } finally {
+        this.setData({ isAnalyzing: false });
+      }
     }
   }
 });
