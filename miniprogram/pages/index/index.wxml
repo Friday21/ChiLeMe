@@ -3,7 +3,7 @@
   <view class="content">
     <voiceRecord wx:if="{{currentTab == 'record'}}"/>
     <history wx:if="{{currentTab == 'history'}}" showTodayOnly="{{false}}"/>
-    <recordList wx:if="{{currentTab == 'connection'}}" showTodayOnly="{{false}}"/>
+    <report wx:if="{{currentTab == 'report'}}" showTodayOnly="{{false}}"/>
     <user wx:if="{{currentTab == 'user'}}"/>
   </view>
 
