@@ -3,13 +3,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #fff;
+  background: #F6F6F6;
   position: fixed;
-  bottom: 120rpx;
+  bottom: 180rpx;
   left: 0;
   right: 0;
   width: 100%;
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
   z-index: 10;
   box-sizing: border-box;
 }
@@ -20,10 +19,9 @@
   gap: 20rpx;
   justify-content: space-between;
 }
-
 .voice-btn {
-  height: 88rpx !important;
-  border-radius: 44rpx !important;
+  height: 100rpx !important;
+  border-radius: 50rpx !important;
   background: #ffffff !important;
   border: 2rpx solid #1989fa !important;
   display: flex !important;
@@ -36,25 +34,31 @@
   flex: 1;
   padding: 0 30rpx !important;
 }
-
-/* 左侧录音按钮 */
 .voice-btn:first-child {
   flex: 1;
 }
-
-/* 右侧播放按钮 */
 .right-btn {
   flex: 1;
   background: #ffffff !important;
+  transition: opacity 0.3s ease !important;
 }
-
+.recording + .right-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .voice-btn.recording {
+  position: fixed !important;
+  left: 5% !important;
+  right: 5% !important;
+  bottom: 180rpx !important;
+  width: 90% !important;
+  height: 120rpx !important;
+  z-index: 100 !important;
   background: linear-gradient(135deg, #1989fa, #1677ff) !important;
   border-color: transparent !important;
   box-shadow: 0 4rpx 16rpx rgba(25, 137, 250, 0.3) !important;
-  transform: scale(0.98) !important;
+  transform: scale(1.05) !important;
 }
-
 .mic-icon {
   position: absolute;
   left: 30rpx;
@@ -66,12 +70,10 @@
   transition: all 0.3s ease;
   z-index: 1;
 }
-
 .voice-btn.recording .mic-icon {
   transform: scale(1.1);
   z-index: 1;
 }
-
 .btn-text {
   font-size: 32rpx;
   color: #1989fa;
@@ -82,13 +84,11 @@
   position: relative;
   z-index: 0;
 }
-
 .voice-btn.recording .btn-text {
   color: #ffffff;
   font-weight: 600;
   z-index: 0;
 }
-
 .wave-container {
   position: absolute;
   width: 100%;
@@ -97,7 +97,6 @@
   align-items: center;
   justify-content: center;
 }
-
 .wave {
   position: absolute;
   width: 60rpx;
@@ -106,19 +105,15 @@
   border-radius: 50%;
   animation: wave 1.5s infinite;
 }
-
 .wave1 {
   animation-delay: 0s;
 }
-
 .wave2 {
   animation-delay: 0.5s;
 }
-
 .wave3 {
   animation-delay: 1s;
 }
-
 @keyframes wave {
   0% {
     transform: scale(0.8);
@@ -129,7 +124,6 @@
     opacity: 0;
   }
 }
-
 .recording-tip {
   color: #ff4d4f;
   font-size: 28rpx;
@@ -137,7 +131,6 @@
   font-weight: 500;
   animation: fadeIn 0.3s ease;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -148,7 +141,6 @@
     transform: translateY(0);
   }
 }
-
 .today-records {
   padding: 20rpx;
   padding-bottom: 280rpx; /* 为底部的录音按钮和导航栏留出空间 */
@@ -159,7 +151,6 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-
 .records-container {
   flex: 1;
   padding: 20rpx;
@@ -171,7 +162,6 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-
 .record-card {
   margin: 0 !important;
   background: #ffffff !important;
@@ -179,19 +169,16 @@
   box-shadow: none !important;
   width: 100% !important;
 }
-
 .tag-container {
   display: flex;
   flex-wrap: wrap;
   gap: 8rpx;
   margin-top: 12rpx;
 }
-
 .tag {
   margin: 0 !important;
   font-size: 24rpx !important;
 }
-
 .swipe-delete-btn {
   height: 100%;
   width: 65px;
@@ -202,12 +189,10 @@
   justify-content: center;
   font-size: 28rpx;
 }
-
 /* 修改van-swipe-cell的样式 */
 :host {
   --cell-background-color: transparent;
 }
-
 .van-swipe-cell {
   margin-bottom: 20rpx;
   border-radius: 16rpx;
@@ -215,33 +200,27 @@
   background: #fff;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
 }
-
 .van-cell-group {
   background: transparent !important;
 }
-
 /* 确保内容区域宽度正确 */
 .van-swipe-cell__left,
 .van-swipe-cell__right {
   display: flex;
   align-items: center;
 }
-
 .van-swipe-cell__wrapper {
   position: relative;
   width: 100% !important;
 }
-
 /* 编辑弹窗样式 */
 .edit-dialog {
   border-radius: 16rpx !important;
   overflow: hidden;
 }
-
 .dialog-content {
   padding: 30rpx;
 }
-
 .dialog-text {
   font-size: 28rpx;
   line-height: 1.6;
@@ -249,23 +228,34 @@
   color: #333;
   word-break: break-all;
 }
-
 .dialog-item {
   margin-bottom: 24rpx;
   display: flex;
   align-items: center;
 }
-
 .dialog-label {
   min-width: 140rpx;
   font-size: 28rpx;
   color: #666;
   flex-shrink: 0;
 }
-
 .edit-field {
   flex: 1;
   background: #f7f8fa !important;
   border-radius: 8rpx !important;
   padding: 8rpx 16rpx !important;
-} 
+}
+.voice-btn.disabled {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+  background: #f5f5f5 !important;
+  border-color: #dcdee0 !important;
+}
+
+.voice-btn.disabled .btn-text {
+  color: #999 !important;
+}
+
+.voice-btn.disabled .mic-icon van-icon {
+  color: #999 !important;
+}

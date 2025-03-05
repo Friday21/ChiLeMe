@@ -124,10 +124,10 @@ Component<ComponentData, {}, ComponentMethods>({
 
   methods: {
     startRecord(this: ComponentInstance) {
-      if (this.data.recorderManager) {
+      if (this.data.recorderManager && !this.data.isRecording) {
         // 开始录音
         this.data.recorderManager.start({
-          duration: 60000,     // 最长录音时间，单位 ms
+          duration: 30000,     // 最长录音时间，单位 ms
           sampleRate: 16000,   // 采样率 16kHz
           numberOfChannels: 1,  // 单声道
           encodeBitRate: 48000, // 编码率设为允许范围内的值

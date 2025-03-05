@@ -3,7 +3,7 @@
   <text class="recording-tip" wx:if="{{isAnalyzing}}">正在分析...</text>
   <view class="button-container">
     <view 
-      class="voice-btn {{isRecording ? 'recording' : ''}}"
+      class="voice-btn {{isRecording ? 'recording' : ''}} {{isAnalyzing ? 'disabled' : ''}}"
       bind:touchstart="startRecord" 
       bind:touchend="stopRecord"
     >
@@ -17,7 +17,7 @@
       </view>
       <text class="btn-text">{{isRecording ? '松开发送' : '按住说话'}}</text>
     </view>
-    <view class="voice-btn right-btn">
+    <view class="voice-btn right-btn {{isAnalyzing ? 'disabled' : ''}}">
       <van-icon name="edit" size="48rpx" color="#1989fa"/>
       <text class="btn-text">输入文字</text>
     </view>
@@ -60,4 +60,4 @@
       </view>
     </view>
   </block>
-</van-dialog> 
+</van-dialog>
