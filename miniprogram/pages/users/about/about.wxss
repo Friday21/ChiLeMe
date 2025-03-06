@@ -1,5 +1,5 @@
 .about-container {
-  padding: 40rpx;
+  padding: 10rpx;
   min-height: 100vh;
   background-color: #fafafa;
 }
