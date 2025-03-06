@@ -43,8 +43,12 @@
       <view class="modal-title">赞助支持</view>
     </view>
     <view class="text-black mt-2">您的支持是我更新的最大动力 ❤️</view>
-    <image mode="widthFix" show-menu-by-longpress="true" class="w-full mt-4" src="../assets/personal_sponsor.png" />
-    <view class="text-grey text-sm mt-2">长按保存赞赏码</view>
+    <image 
+      mode="widthFix" 
+      show-menu-by-longpress="true" 
+      class="w-full mt-4" 
+      src="../assets/personal_sponsor.png" />
+    <view class="text-grey text-sm mt-2">长按图片识别赞赏码</view>
     <view class="flex items-center justify-end mt-4">
       <view catch:tap="onDismissModal" class="cu-btn modal-btn-ok">关闭</view>
     </view>
