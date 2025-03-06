@@ -1,177 +1,253 @@
-import { createUser, addFriend, removeFriend, getFriend } from '../../utils/service';
-import Toast from '@vant/weapp/toast/toast';
+import { createUser } from '../../utils/service';
 
 const app = getApp<IAppOption>();
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 
-Page({
-  data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    avatarFileId: '',
-    showFriends: false,
-    sharedBy: '',  // 新增字段记录分享者的 openId
-    sharedAlias: '',
-    sharedTimestamp: '',
+interface UserInfo {
+  avatar_url: string;
+  alias: string;
+  open_id: string;
+}
+
+interface IUserInfo {
+  avatarUrl: string;
+  nickName: string;
+}
+
+interface IAmount {
+  label: string;
+  value: number;
+}
+
+interface IData {
+  userInfo: IUserInfo;
+  isNicknameSet: boolean;
+  showingModal: string;
+  tempUserInfo: IUserInfo;
+  sponsorPayEnabled: boolean;
+  amounts: IAmount[];
+  sponsors: any[];
+}
+
+interface IProps {
+  // Add any properties that might be passed to the component
+}
+
+interface IMethod {
+  onContributionClick(): void;
+  onAvatarClick(): void;
+  onNicknameInput(e: any): void;
+  onChooseAvatar(e: WechatMiniprogram.CustomEvent): void;
+  onCancelEdit(): void;
+  onSaveProfile(): Promise<void>;
+  onHideModal(): void;
+  onSponsorClick(): void;
+  onSelectAmount(e: WechatMiniprogram.TouchEvent): void;
+  onOtherAmountClick(): void;
+  onDismissModal(): void;
+  onAboutClick(): void;
+}
+
+Component<IData, IProps, IMethod>({
+  options: {
+    addGlobalClass: true,
+    multipleSlots: true
   },
-  onLoad: function (options) {
-    if (options.sharerOpenId) {
-      const currentTime = new Date().getTime();
-      const sharedTimestamp = options.timestamp ? parseInt(options.timestamp) : null;
-      const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
-      if (sharedTimestamp && (currentTime - sharedTimestamp < oneDay)) {
-        // 如果分享时间在24小时内
-        console.log("Shared by:", options.sharerOpenId);
+  data: {
+    userInfo: {
+      avatarUrl: '',
+      nickName: ''
+    },
+    isNicknameSet: false,
+    showingModal: '',
+    tempUserInfo: {
+      avatarUrl: '',
+      nickName: ''
+    },
+    sponsorPayEnabled: true,
+    amounts: [
+      { label: '￥6.66', value: 6.66 },
+      { label: '￥16.66', value: 16.66 },
+      { label: '￥66.66', value: 66.66 }
+    ],
+    sponsors: []
+  },
+
+  lifetimes: {
+    attached() {
+      // Load user info from storage if available
+      const storedUserInfo = wx.getStorageSync('userInfo');
+      console.log("load user info", storedUserInfo)
+      if (storedUserInfo) {
         this.setData({
-          sharedBy: options.sharerOpenId,
-          sharedAlias: options.shareAlias,
-          sharedTimestamp: sharedTimestamp,
-        });
-        this.showAddFriendPopup();
-      } else {
-        // 分享已失效
-        wx.showModal({
-          title: '分享已失效',
-          content: '该分享链接已超过24小时，请让您的朋友重新分享。',
-          showCancel: false, // 不显示取消按钮
-          confirmText: '确定',
+          'userInfo.avatarUrl': storedUserInfo.avatar_url === 'default' ? '' : storedUserInfo.avatar_url,
+          'userInfo.nickName': storedUserInfo.alias,
         });
       }
     }
-
-    this.waitForOpenId().then(openId => {
-      console.log("openId is not ready now", openId);
-      if (app.globalData.userInfo) {
-        this.setData({
-          "userInfo.avatarUrl": app.globalData.userInfo.avatar_url,
-          "userInfo.nickName": app.globalData.userInfo.alias,
-          hasUserInfo: true,
-        });
-      }
-    }).catch(err => {
-      console.error(err);
-    });
   },
 
-  waitForOpenId: function () {
-    return new Promise((resolve, reject) => {
-      const maxWaitTime = 30000;  // Maximum wait time is 30s
-      let waitedTime = 0;
+  methods: {
+    onAvatarClick() {
+      this.setData({ showingModal: 'profile' });
+    },
 
-      // Check openId every 100ms
-      let checkInterval = setInterval(() => {
-        if (app.globalData.openId) {
-          clearInterval(checkInterval);
-          resolve(app.globalData.openId);
-        } else {
-          waitedTime += 100;
-          if (waitedTime >= maxWaitTime) {
-            clearInterval(checkInterval);
-            reject('waitForOpenId timeout');
+    onChooseAvatar(e: WechatMiniprogram.CustomEvent) {
+      this.setData({
+        ['tempUserInfo.avatarUrl']: e.detail.avatarUrl,
+        ['tempUserInfo.nickName']: this.data.userInfo.nickName
+      });
+    },
+
+    onNicknameInput(e: any) {
+      const { value } = e.detail;
+      this.setData({
+        ['tempUserInfo.nickName']: value,
+        ['tempUserInfo.avatarUrl']: this.data.userInfo.avatarUrl
+      });
+    },
+
+    onCancelEdit() {
+      this.setData({
+        showingModal: '',
+        tempUserInfo: this.data.userInfo
+      });
+    },
+
+    onHideModal() {
+      this.setData({ showingModal: '' });
+    },
+
+    async onSaveProfile() {
+      const { tempUserInfo } = this.data;
+
+      console.log("tempUserInfo", tempUserInfo)
+      
+      if (!tempUserInfo.nickName.trim()) {
+        wx.showToast({
+          title: 'Please enter your nickname',
+          icon: 'none'
+        });
+        return;
+      }
+
+      wx.showLoading({
+        title: 'Saving...',
+      });
+
+      try {
+        let avatarFileId = this.data.userInfo.avatarUrl || 'default';
+        
+        // Upload new avatar if changed
+        if (tempUserInfo.avatarUrl && tempUserInfo.avatarUrl !== this.data.userInfo.avatarUrl) {
+          const cloudPath = `images/${app.globalData.openId}/${Date.now()}.png`;
+          const uploadResult = await wx.cloud.uploadFile({
+            cloudPath,
+            filePath: tempUserInfo.avatarUrl,
+          });
+          if (!uploadResult.fileID) {
+            throw new Error('Failed to upload avatar');
           }
+          avatarFileId = uploadResult.fileID;
         }
-      }, 100);
-    });
-  },
 
-  // 事件处理函数
-  bindViewTap() {
-    wx.navigateTo({
-      url: '../logs/logs',
-    });
-  },
+        // Update user info
+        const user: UserInfo = {
+          open_id: app.globalData.openId || '',
+          avatar_url: avatarFileId,
+          alias: tempUserInfo.nickName,
+        };
 
-  onChooseAvatar(e: any) {
-    const { avatarUrl } = e.detail;
-    const { nickName } = this.data.userInfo;
-    const cloudPath = `images/${app.globalData.openId}/${new Date().getTime()}-${Math.floor(Math.random() * 1000)}.png`;
-    console.log('上传头像', avatarUrl);
-    wx.cloud.uploadFile({
-      cloudPath, // 云存储路径
-      filePath: avatarUrl, // 本地文件路径
-      success: (res) => {
-        console.log('上传成功', res);
+        await createUser(user);
+        app.globalData.userInfo = user;
+        wx.setStorageSync('userInfo', user);
+
         this.setData({
-          "userInfo.avatarUrl": avatarUrl,
-          "avatarFileId": res.fileID,
-          hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-        });
-      },
-      fail: (err) => {
-        console.error('上传失败', err);
-      }
-    })
-  },
-
-  onInputChange(e: any) {
-    const nickName = e.detail.value;
-    const { avatarUrl } = this.data.userInfo;
-    this.setData({
-      "userInfo.nickName": nickName,
-      hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
-    });
-  },
-
-  updateUserInfo(e: any) {
-    let user = {
-      "open_id": app.globalData.openId,
-      "avatar_url": this.data.avatarFileId !== "" ? this.data.avatarFileId : this.data.userInfo.avatarUrl,
-      "alias": this.data.userInfo.nickName,
-    };
-    createUser(user).then(userInfo => {
-      app.globalData.userInfo = userInfo;
-      console.log("created user", app.globalData.userInfo);
-      wx.setStorageSync('userInfo', userInfo);
-      Toast.success('更新成功');
-    });
-  },
-
-  showPopup() {
-    console.log("pop up");
-    wx.navigateTo({
-      url: '../friends/friends',
-    });
-  },
-
-  onClose() {
-    this.setData({ showFriends: false });
-  },
-
-  // 分享功能
-  onShareAppMessage: function () {
-    const currentTime = new Date().getTime();
-    return {
-      title: `${app.globalData.userInfo!.alias}邀请你成为吃饭搭子`,
-      path: `/pages/users/users?sharerOpenId=${app.globalData.openId}&shareAlias=${app.globalData.userInfo!.alias}&timestamp=${currentTime}`,
-      success: function (res) {
-        Toast.success('分享成功');
-      },
-      fail: function (res) {
-        Toast.fail('分享失败');
-      }
-    };
-  },
-
-  showAddFriendPopup() {
-    wx.showModal({
-      title: '添加吃饭搭子',
-      content: `是否添加${this.data.sharedAlias}为吃饭搭子?`,
-      success: (res) => {
-        if (res.confirm) {
-          // 用户点击了确认，处理添加逻辑
-          let body = {
-            user_openId: app.globalData.openId,
-            friend_openId: this.data.sharedBy
+          userInfo: {
+            avatarUrl: avatarFileId === 'default' ? '' : avatarFileId,
+            nickName: tempUserInfo.nickName,
+          },
+          showingModal: '',
+          tempUserInfo: {
+            avatarUrl: avatarFileId === 'default' ? '' : avatarFileId,
+            nickName: tempUserInfo.nickName,
           }
-          addFriend(body).then(resp => {
-            Toast.success('添加成功');
+        });
+
+        wx.showToast({
+          title: 'Profile updated',
+          icon: 'success'
+        });
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+        wx.showToast({
+          title: 'Failed to update profile',
+          icon: 'none'
+        });
+      } finally {
+        wx.hideLoading();
+      }
+    },
+
+    onSponsorClick() {
+      this.setData({ showingModal: 'sponsor' });
+    },
+
+    onSelectAmount(e: WechatMiniprogram.TouchEvent) {
+      const amount = e.currentTarget.dataset.amount;
+      console.log('Selected amount:', amount);
+      // Implement payment logic here
+    },
+
+    onOtherAmountClick() {
+      // Implement custom amount input logic
+      console.log('Other amount clicked');
+    },
+
+    onContributionClick() {
+      wx.navigateTo({
+        url: '/pages/users/contributions/contributions',
+        events: {
+          pageLoaded: () => {
+            console.log('Contributions page loaded successfully');
+          }
+        },
+        success: (res) => {
+          console.log('Navigation to contributions page successful');
+        },
+        fail: (err) => {
+          console.error('Navigation failed:', err);
+          wx.showToast({
+            title: 'Navigation failed',
+            icon: 'none'
           });
         }
-      }
-    });
-  },
+      });
+    },
+
+    onAboutClick() {
+      wx.navigateTo({
+        url: '/pages/users/about/about',
+        events: {
+          pageLoaded: () => {
+            console.log('About page loaded successfully');
+          }
+        },
+        success: (res) => {
+          console.log('Navigation to about page successful');
+        },
+        fail: (err) => {
+          console.error('Navigation failed:', err);
+          wx.showToast({
+            title: 'Navigation failed',
+            icon: 'none'
+          });
+        }
+      });
+    },
+
+    onDismissModal() {
+      this.setData({ showingModal: '' });
+    }
+  }
 });

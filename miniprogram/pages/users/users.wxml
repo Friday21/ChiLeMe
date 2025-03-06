@@ -1,17 +1,76 @@
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="text" class="nickname-input" placeholder="请输入昵称" bindinput="onInputChange" value="{{userInfo.nickName}}" />
+<view class="main">
+  <view class="flex justify-between items-center">
+    <view class="flex items-center">
+      <image bind:tap="onAvatarClick" class="avatar rounded-full w-16 h-16" src="{{ userInfo.avatarUrl || '../assets/default_avatar.png' }}" mode="aspectFill" />
+      <view class="ml-4" bind:tap="onAvatarClick">
+        <view class="text-foreground font-semibold truncate text-lg">{{userInfo.nickName || '点击设置用户名'}}</view>
+      </view>
+    </view>
+    <image src="../assets/ic_edit.png" bind:tap="onAvatarClick" class="w-6 h-6" />
+  </view>
+  <view class="mt-10 bg-white rounded-2xl">
+    <view class="flex flex-col">
+      <view bind:tap="onContributionClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <view class="flex items-center justify-center bg-white rounded-full">
+            <image class="w-5 h-5" src="../assets/ic_contribution.png" />
+          </view>
+          <view class="text-title">幕后功臣</view>
         </view>
-        <van-button type="primary" bindtap="updateUserInfo" class="confirm-button">更新个人信息</van-button>
-        <van-cell title="饭搭子列表" is-link bind:click="showPopup" class="friends-list" />
-        <van-button type="info" open-type="share" class="share-button">邀请朋友成为吃饭搭子</van-button>
-        <van-toast id="van-toast" />
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
+      <view bind:tap="onSponsorClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <image class="w-5 h-5" src="../assets/ic_user_sponsor.png" />
+          <view class="text-title">赏个咖啡，感谢支持</view>
+        </view>
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
+      <view bind:tap="onAboutClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <image class="w-5 h-5" src="../assets/ic_about.png" />
+          <view class="text-title">了解这个项目</view>
+        </view>
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
     </view>
   </view>
-</scroll-view>
+</view>
+<!-- Sponsor -->
+<view class="cu-modal {{showingModal === 'sponsor' ? 'show' : ''}}" bind:tap="onHideModal">
+  <view class="cu-dialog modal-main" catch:tap>
+    <view class="flex justify-between">
+      <view class="modal-title">赞助支持</view>
+    </view>
+    <view class="text-black mt-2">您的支持是我更新的最大动力 ❤️</view>
+    <image 
+      mode="widthFix" 
+      show-menu-by-longpress="true" 
+      class="w-full mt-4" 
+      src="../assets/personal_sponsor.png" />
+    <view class="text-grey text-sm mt-2">长按图片识别赞赏码</view>
+    <view class="flex items-center justify-end mt-4">
+      <view catch:tap="onDismissModal" class="cu-btn modal-btn-ok">关闭</view>
+    </view>
+  </view>
+</view>
+<!-- Profile Edit -->
+<view class="cu-modal {{showingModal === 'profile' ? 'show' : ''}}" bind:tap="onHideModal">
+  <view class="cu-dialog modal-main" catch:tap>
+    <view class="flex justify-between">
+      <view class="modal-title">Edit Profile</view>
+    </view>
+    <view class="flex flex-col items-center mt-6">
+      <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar rounded-full w-24 h-24" src="{{ tempUserInfo.avatarUrl || userInfo.avatarUrl || '../assets/default_avatar.png' }}" mode="aspectFill" />
+      </button>
+      <view class="text-sm text-gray-500 mt-2">Tap to change avatar</view>
+      <input type="nickname" class="nickname-input mt-6" placeholder="Enter your nickname" value="{{tempUserInfo.nickName || userInfo.nickName}}" bindinput="onNicknameInput" />
+    </view>
+    <view class="flex justify-end mt-8 gap-4">
+      <view catch:tap="onCancelEdit" class="cu-btn modal-btn-cancel">Cancel</view>
+      <view catch:tap="onSaveProfile" class="cu-btn modal-btn-ok">Save</view>
+    </view>
+  </view>
+</view>
+

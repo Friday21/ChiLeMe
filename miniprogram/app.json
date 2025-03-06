@@ -1,6 +1,9 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/users/users",
+    "pages/users/contributions/contributions",
+    "pages/users/about/about"
   ],
   "window": {
     "navigationBarTextStyle": "black",

@@ -1,0 +1,110 @@
+.container {
+  padding: 100rpx 30rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.banner {
+  width: 100%;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  margin: 20rpx 0 50rpx 0;
+  transition: transform 0.3s ease;
+}
+
+.banner:active {
+  transform: scale(0.98);
+}
+
+.section {
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.section:active {
+  transform: translateY(2rpx);
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+  color: #2c3e50;
+  position: relative;
+  padding-bottom: 16rpx;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60rpx;
+  height: 4rpx;
+  background: #007aff;
+  border-radius: 4rpx;
+}
+
+.description {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20rpx;
+}
+
+.contributor {
+  background-color: #f8f9fa;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12rpx;
+  transition: background-color 0.2s ease;
+}
+
+.contributor:active {
+  background-color: #f0f2f5;
+}
+
+.role {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-right: 10rpx;
+}
+
+.highlight {
+  color: #007aff;
+  font-weight: 500;
+  background-color: rgba(0, 122, 255, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+  margin: 4rpx;
+  transition: all 0.2s ease;
+}
+
+.highlight:active {
+  background-color: rgba(0, 122, 255, 0.2);
+  transform: scale(0.98);
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.grid-image {
+  width: 48%;
+  height: 150rpx;
+  border-radius: 10rpx;
+  object-fit: cover;
+  margin-bottom: 10rpx;
+}
