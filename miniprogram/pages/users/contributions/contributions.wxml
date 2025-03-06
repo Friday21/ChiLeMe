@@ -1,20 +1,20 @@
 <view class="container">
   <image class="banner" src="../../assets/contributions-banner.jpg" mode="widthFix"></image>
 
-  <!-- Contributing Section -->
+  <!-- 贡献指南 -->
   <view class="section">
-    <text class="title">How to Contribute</text>
+    <text class="title">如何参与贡献</text>
     <view class="description">
-      We welcome your ideas and contributions! If you'd like to help improve this app, you can:
-      <text class="highlight">Contact us at dongyongli@microsoft.com</text>
-      or
-      <text class="highlight">Open an issue on our repository</text>
+      我们欢迎您的想法和贡献！如果您想帮助改进这个应用，您可以：
+      <text class="highlight">联系我们：dongyongli@microsoft.com</text>
+      或者
+      <text class="highlight">在我们的代码仓库中提交问题</text>
     </view>
   </view>
 
-  <!-- Contributors List -->
+  <!-- 贡献者列表 -->
   <view class="section">
-    <text class="title">Our Amazing Contributors</text>
+    <text class="title">我们出色的贡献者</text>
     <block wx:for="{{contributors}}" wx:key="index">
       <view class="contributor">
         <text class="role">{{item.role}}</text>
@@ -25,11 +25,11 @@
     </block>
   </view>
 
-  <!-- Join Us Section -->
+  <!-- 加入我们 -->
   <view class="section">
-    <text class="title">Join Our Project</text>
+    <text class="title">加入我们的项目</text>
     <text class="description">
-      We're excited to have more passionate contributors join our project. Every contribution, big or small, makes a difference. Thank you for your interest and support in making this app better for everyone!
+      我们期待更多热情的贡献者加入我们的项目。每一份贡献，无论大小，都能带来改变。感谢您对改进这个应用的兴趣和支持！
     </text>
   </view>
 </view>
