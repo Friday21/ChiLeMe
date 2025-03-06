@@ -3,8 +3,7 @@
     <view class="flex items-center">
       <image bind:tap="onAvatarClick" class="avatar rounded-full w-16 h-16" src="{{ userInfo.avatarUrl || '../assets/default_avatar.png' }}" mode="aspectFill" />
       <view class="ml-4" bind:tap="onAvatarClick">
-        <view class="text-foreground font-semibold truncate text-lg">{{userInfo.nickName || 'Set your nickname'}}</view>
-        <view wx:if="{{!isNicknameSet}}" class="text-sm text-red-500">Please set your nickname</view>
+        <view class="text-foreground font-semibold truncate text-lg">{{userInfo.nickName || '点击设置用户名'}}</view>
       </view>
     </view>
     <image src="../assets/ic_edit.png" bind:tap="onAvatarClick" class="w-6 h-6" />
@@ -16,21 +15,21 @@
           <view class="flex items-center justify-center bg-white rounded-full">
             <image class="w-5 h-5" src="../assets/ic_contribution.png" />
           </view>
-          <view class="text-title">Contributions</view>
+          <view class="text-title">幕后功臣</view>
         </view>
         <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
       </view>
       <view bind:tap="onSponsorClick" class="flex items-center justify-between px-6 py-6">
         <view class="flex items-center gap-4">
           <image class="w-5 h-5" src="../assets/ic_user_sponsor.png" />
-          <view class="text-title">Buy developer a coffee</view>
+          <view class="text-title">赏个咖啡，感谢支持</view>
         </view>
         <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
       </view>
       <view bind:tap="onAboutClick" class="flex items-center justify-between px-6 py-6">
         <view class="flex items-center gap-4">
           <image class="w-5 h-5" src="../assets/ic_about.png" />
-          <view class="text-title">About</view>
+          <view class="text-title">了解这个项目</view>
         </view>
         <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
       </view>

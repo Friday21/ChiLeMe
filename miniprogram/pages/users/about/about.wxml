@@ -28,7 +28,7 @@
         </view>
         <view class="feature-item">
           <text class="feature-icon">🔒</text>
-          <text class="feature-text">隐私保护：确保您的心情日记安全私密</text>
+          <text class="feature-text">隐私保护：心情日记不会明文存储， 语音信息分析完之后立即删除</text>
         </view>
       </view>
     </view>
