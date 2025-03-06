@@ -80,6 +80,7 @@
       placeholder="请输入内容"
       autosize="{{ {maxHeight: 200, minHeight: 100} }}"
       border="{{ false }}"
+      maxlength="{{ 120 }}"
       custom-class="text-input-field"
     />
   </view>
