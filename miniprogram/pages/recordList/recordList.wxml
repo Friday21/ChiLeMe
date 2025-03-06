@@ -12,6 +12,7 @@
           title="{{item.text}}"
           bindtap="showEditDialog"
           data-record="{{item}}"
+          title-class="titleClass"
         >
           <view slot="tags">
             <van-tag round type="success" size="medium" class="tag">{{item.category}}</van-tag>
