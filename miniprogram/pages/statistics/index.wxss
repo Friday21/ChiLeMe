@@ -6,6 +6,7 @@
 
 .statistics-container {
   padding: 20rpx;
+  margin-top: 40rpx;
   background-color: #f5f5f5;
 }
 
