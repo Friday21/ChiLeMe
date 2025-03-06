@@ -40,48 +40,14 @@
 <view class="cu-modal {{showingModal === 'sponsor' ? 'show' : ''}}" bind:tap="onHideModal">
   <view class="cu-dialog modal-main" catch:tap>
     <view class="flex justify-between">
-      <view class="modal-title">Sponsor</view>
+      <view class="modal-title">赞助支持</view>
     </view>
     <view class="text-black mt-2">您的支持是我更新的最大动力 ❤️</view>
-    <block wx:if="{{sponsorPayEnabled}}">
-      <view class="flex flex-col w-full margin-top">
-        <view class="grid grid-cols-3 gap-3 w-full mt-2">
-          <view wx:for="{{amounts}}" wx:key="value" data-amount="{{item.value}}" bind:tap="onSelectAmount" class="text-center p-1 rounded-lg border-4 border-solid border-blue-400 text-blue-500">
-            {{item.label}}
-          </view>
-          <view bind:tap="onOtherAmountClick" class="text-center p-1 rounded-lg border-4 border-solid border-blue-400 text-blue-500">
-            Other
-          </view>
-        </view>
-        <view class="margin-top-lg text-gray-600 text-sm">
-          Sponsors ❤️ ({{sponsors.length}})
-          <text class="text-red-900 text-xs"></text>
-        </view>
-        <scroll-view class="sponsor-list-height" scroll-y="true">
-          <block wx:for="{{sponsors}}" wx:key="_id">
-            <view class="flex items-center gap-2 mt-3">
-              <image bind:tap="onAvatarClick" class="shrink-0 w-10 h-10 rounded-full bg-gray-200 border-gray-light" src="{{item.anonymous ? null : item.user.avatarUrl}}" data-id="{{item.user._id}}" mode="aspectFill" lazy-load="{{true}}" />
-              <view>
-                <view class="text-xs text-gray-500">
-                  {{item.anonymous ? 'Anonymous' : item.user.nickName}}
-                </view>
-                <view class="mt-1 text-sm bg-gray-100 rounded-lg px-2 py-1">
-                  {{item.message ? item.message : "[No message]"}}
-                </view>
-              </view>
-            </view>
-          </block>
-        </scroll-view>
-      </view>
-    </block>
-    <block wx:else>
-      <image mode="heightFix" show-menu-by-longpress="true" class="pay margin-top-sm" src="../../images/img_praise.png" />
-      <view class="text-grey">Long press to save QR code</view>
-      <view class="text-red text-bold">THANK YOU!</view>
-      <view class="flex items-center justify-end margin-top-lg">
-        <view catch:tap="onDismissModal" class="cu-btn modal-btn-ok">Done</view>
-      </view>
-    </block>
+    <image mode="widthFix" show-menu-by-longpress="true" class="w-full mt-4" src="../assets/personal_sponsor.png" />
+    <view class="text-grey text-sm mt-2">长按保存赞赏码</view>
+    <view class="flex items-center justify-end mt-4">
+      <view catch:tap="onDismissModal" class="cu-btn modal-btn-ok">关闭</view>
+    </view>
   </view>
 </view>
 <!-- Profile Edit -->
