@@ -93,7 +93,7 @@
     </view>
     <view class="flex flex-col items-center mt-6">
       <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <image class="avatar rounded-full w-24 h-24" src="{{ tempUserInfo.avatarUrl || userInfo.avatarUrl || '/images/default_avatar.png' }}" mode="aspectFill" />
+        <image class="avatar rounded-full w-24 h-24" src="{{ tempUserInfo.avatarUrl || userInfo.avatarUrl || '../assets/default_avatar.png' }}" mode="aspectFill" />
       </button>
       <view class="text-sm text-gray-500 mt-2">Tap to change avatar</view>
       <input type="nickname" class="nickname-input mt-6" placeholder="Enter your nickname" value="{{tempUserInfo.nickName || userInfo.nickName}}" bindinput="onNicknameInput" />

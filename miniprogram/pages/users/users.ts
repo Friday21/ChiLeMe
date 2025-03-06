@@ -9,6 +9,40 @@ interface UserInfo {
   open_id: string;
 }
 
+interface IUserInfo {
+  avatarUrl: string;
+  nickName: string;
+}
+
+interface IAmount {
+  label: string;
+  value: number;
+}
+
+interface IData {
+  userInfo: IUserInfo;
+  isNicknameSet: boolean;
+  showingModal: string;
+  tempUserInfo: IUserInfo;
+  sponsorPayEnabled: boolean;
+  amounts: IAmount[];
+  sponsors: any[];
+}
+
+interface ICustom {
+  onContributionClick(): void;
+  onAvatarClick(): void;
+  onNicknameInput(e: any): void;
+  onChooseAvatar(e: any): void;
+  onCancelEdit(): void;
+  onSaveProfile(): void;
+  onHideModal(): void;
+  onSponsorClick(): void;
+  onSelectAmount(e: any): void;
+  onOtherAmountClick(): void;
+  onDismissModal(): void;
+}
+
 interface PageData {
   userInfo: {
     avatarUrl: string;
@@ -53,25 +87,25 @@ interface PageInstance {
   onContributionClick(): void;
 }
 
-Page<PageData, PageInstance>({
+Page<IData, ICustom>({
   data: {
     userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
+      avatarUrl: '',
+      nickName: ''
     },
+    isNicknameSet: false,
+    showingModal: '',
     tempUserInfo: {
       avatarUrl: '',
-      nickName: '',
+      nickName: ''
     },
-    avatarFileId: '',
-    showingModal: '',
-    sponsors: [],
     sponsorPayEnabled: true,
     amounts: [
-      { value: 6.66, label: '¥6.66' },
-      { value: 16.66, label: '¥16.66' },
-      { value: 66.66, label: '¥66.66' }
+      { label: '￥6.66', value: 6.66 },
+      { label: '￥16.66', value: 16.66 },
+      { label: '￥66.66', value: 66.66 }
     ],
+    sponsors: []
   },
 
   onLoad() {
@@ -86,41 +120,31 @@ Page<PageData, PageInstance>({
   },
 
   onAvatarClick() {
-    this.setData({
-      showingModal: 'profile',
-      'tempUserInfo.avatarUrl': this.data.userInfo.avatarUrl,
-      'tempUserInfo.nickName': this.data.userInfo.nickName,
-    });
+    this.setData({ showingModal: 'profile' });
   },
 
   onChooseAvatar(e: WechatMiniprogram.CustomEvent) {
-    const { avatarUrl } = e.detail;
     this.setData({
-      'tempUserInfo.avatarUrl': avatarUrl
+      ['tempUserInfo.avatarUrl']: e.detail.avatarUrl
     });
   },
 
-  onNicknameInput(e: WechatMiniprogram.Input) {
-    const value = e.detail.value;
+  onNicknameInput(e: any) {
+    const { value } = e.detail;
     this.setData({
-      'tempUserInfo.nickName': value === undefined ? '' : value
+      ['tempUserInfo.nickName']: value
     });
   },
 
   onCancelEdit() {
     this.setData({
       showingModal: '',
-      tempUserInfo: {
-        avatarUrl: '',
-        nickName: '',
-      }
+      tempUserInfo: this.data.userInfo
     });
   },
 
   onHideModal() {
-    this.setData({
-      showingModal: ''
-    });
+    this.setData({ showingModal: '' });
   },
 
   async onSaveProfile() {
@@ -192,11 +216,8 @@ Page<PageData, PageInstance>({
     }
   },
 
-  // Sponsor related methods
   onSponsorClick() {
-    this.setData({
-      showingModal: 'sponsor'
-    });
+    this.setData({ showingModal: 'sponsor' });
   },
 
   onSelectAmount(e: WechatMiniprogram.TouchEvent) {
@@ -205,21 +226,33 @@ Page<PageData, PageInstance>({
     // Implement payment logic here
   },
 
-  onDismissModal() {
-    this.setData({
-      showingModal: ''
-    });
-  },
-
   onOtherAmountClick() {
     // Implement custom amount input logic
     console.log('Other amount clicked');
   },
 
   onContributionClick() {
-    // Implement contribution page navigation
     wx.navigateTo({
-      url: '../contribution/contribution'
+      url: '/pages/users/contributions/contributions',
+      events: {
+        pageLoaded: () => {
+          console.log('Contributions page loaded successfully');
+        }
+      },
+      success: (res) => {
+        console.log('Navigation to contributions page successful');
+      },
+      fail: (err) => {
+        console.error('Navigation failed:', err);
+        wx.showToast({
+          title: 'Navigation failed',
+          icon: 'none'
+        });
+      }
     });
+  },
+
+  onDismissModal() {
+    this.setData({ showingModal: '' });
   }
 });
