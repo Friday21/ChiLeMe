@@ -33,12 +33,21 @@
       </view>
     </view>
 
+    <view class="section">
+      <view class="rules-content">
+        <text class="rules-text">💡 虚度规则：</text>
+        <text class="rules-text">记录每天的心情与事件，回顾自己的生活点滴。</text>
+        <text class="rules-text highlight">只要一天中至少有一件积极的事情，这一天就不算虚度！</text>
+        <text class="rules-text">✨ 让每一天都有意义，不教一日虚度！</text>
+      </view>
+    </view>
+
     <view class="section quote-section">
       <text class="quote">" 记录当下，珍惜当下 "</text>
     </view>
   </view>
 
   <view class="footer">
-    <text class="copyright">© 2024 一日虚度</text>
+    <text class="copyright">© 2025 一日虚度</text>
   </view>
 </view>

@@ -93,4 +93,28 @@
 .copyright {
   font-size: 24rpx;
   color: #999;
+}
+
+.rules-content {
+  background-color: #f8f8ff;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  margin: 20rpx 0;
+}
+
+.rules-text {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.8;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.rules-text:last-child {
+  margin-bottom: 0;
+}
+
+.rules-text.highlight {
+  color: #4a90e2;
+  font-weight: 500;
 } 
