@@ -98,15 +98,14 @@ Component<ComponentData, {}, ComponentMethods>({
           const newRecord = {
             id: result.id,
             content: result.text,
-            category: Array.isArray(result.category) ? result.category[0] : result.category,
+            category: result.category,
             positive: typeof result.positive === 'string' ? 3 : Number(result.positive),
             date: new Date().toLocaleString()
           };
-
           this.setData({
             records: [newRecord, ...this.data.records]
           });
-          
+
           // 刷新recordList组件
           const recordListComponent = this.selectComponent('#recordList');
           if (recordListComponent) {
@@ -114,6 +113,7 @@ Component<ComponentData, {}, ComponentMethods>({
             recordListComponent.fetchRecords(formattedDate);
           }
 
+          Toast.success({duration:4000, message: result.comment});
         } catch (err) {
           console.error('处理失败：', err);
           wx.showToast({
@@ -256,7 +256,7 @@ Component<ComponentData, {}, ComponentMethods>({
         const newRecord = {
           id: result.id,
           content: result.text,
-          category: Array.isArray(result.category) ? result.category[0] : result.category,
+          category: result.category,
           positive: typeof result.positive === 'string' ? 3 : Number(result.positive),
           date: new Date().toLocaleString()
         };
@@ -273,6 +273,8 @@ Component<ComponentData, {}, ComponentMethods>({
           const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
           recordListComponent.fetchRecords(formattedDate);
         }
+
+        Toast.success({duration:4000, message: result.comment});
 
       } catch (err) {
         console.error('处理失败：', err);

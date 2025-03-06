@@ -5,7 +5,7 @@
   align-items: center;
   background: #F6F6F6;
   position: fixed;
-  bottom: 180rpx;
+  bottom: 120rpx;
   left: 0;
   right: 0;
   width: 100%;

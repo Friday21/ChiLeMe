@@ -49,6 +49,10 @@ Component<ComponentData, {}, ComponentMethods>({
     date: {
       type: String,
       value: ''
+    },
+    sayHi: {
+      type: Boolean,
+      value: false
     }
   },
 
@@ -60,7 +64,8 @@ Component<ComponentData, {}, ComponentMethods>({
     editPositive: 3,
     openId: '',
     loading: false,
-    date: ''
+    date: '',
+    hello: "暂无记录"
   },
 
   lifetimes: {
@@ -74,6 +79,10 @@ Component<ComponentData, {}, ComponentMethods>({
         this.setData({ date: this.properties.date || this.formatDate(new Date()) });
       }
       this.fetchRecords(this.data.date);
+      if (this.properties.sayHi){
+        const alias = app.globalData.userInfo?.alias ?? "朋友"
+        this.setData({hello: `Hi, ${alias}, 今天心情怎么样？ 一句话记录下吧！`})
+      }
     }
   },
 

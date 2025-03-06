@@ -1,11 +1,8 @@
 <van-popup
   show="{{ show }}"
   position="left"
-  custom-style="width: 90%; height: 100%"
+  custom-style="width: 85%; height: 100%"
   bind:close="onClose"
-  catchtouchstart="onTouchStart"
-  catchtouchmove="onTouchMove"
-  catchtouchend="onTouchEnd"
 >
   <record-list id="recordList" date="{{ date }}" />
 </van-popup> 

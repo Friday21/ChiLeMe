@@ -1,5 +1,5 @@
 <scroll-view scroll-y class="records-container">
-  <van-empty wx:if="{{!records.length}}" description="暂无记录" />
+  <van-empty wx:if="{{!records.length}}" description="{{hello}}" />
   <view class="card-wrapper" wx:for="{{records}}" wx:key="id">
     <van-swipe-cell 
       right-width="{{ 65 }}"

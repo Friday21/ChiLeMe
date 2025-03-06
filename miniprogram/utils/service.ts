@@ -34,9 +34,10 @@ interface VoiceAnalyzeResult {
   id: string;
   text: string;      // 识别出的文字
   positive: number;  // 情感分析结果
-  category: string[]; // 内容分类
+  category: string; // 内容分类
   date: string; // 日期
   createAt: string; // 创建时间
+  comment: string; // comment
 }
 
 const analyzeVoice = async (filePath: string, openId: string): Promise<VoiceAnalyzeResult> => {
