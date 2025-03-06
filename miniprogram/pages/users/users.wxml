@@ -1,7 +1,7 @@
 <view class="main">
   <view class="flex justify-between items-center">
     <view class="flex items-center">
-      <image bind:tap="onAvatarClick" class="avatar rounded-full w-16 h-16" src="{{ userInfo.avatarUrl || '/images/default_avatar.png' }}" mode="aspectFill" />
+      <image bind:tap="onAvatarClick" class="avatar rounded-full w-16 h-16" src="{{ userInfo.avatarUrl || '../assets/default_avatar.png' }}" mode="aspectFill" />
       <view class="ml-4" bind:tap="onAvatarClick">
         <view class="text-foreground font-semibold truncate text-lg">{{userInfo.nickName || 'Set your nickname'}}</view>
         <view wx:if="{{!isNicknameSet}}" class="text-sm text-red-500">Please set your nickname</view>

@@ -1,7 +1,7 @@
 import { createUser } from '../../utils/service';
 
 const app = getApp<IAppOption>();
-const defaultAvatarUrl = '/images/default_avatar.png';
+const defaultAvatarUrl = '../assets/default_avatar.png';
 
 interface UserInfo {
   avatar_url: string;
