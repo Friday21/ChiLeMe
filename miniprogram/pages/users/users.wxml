@@ -1,17 +1,107 @@
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="text" class="nickname-input" placeholder="请输入昵称" bindinput="onInputChange" value="{{userInfo.nickName}}" />
+<view class="main">
+  <view class="flex justify-between items-center">
+    <view class="flex items-center">
+      <image bind:tap="onAvatarClick" class="avatar rounded-full w-16 h-16" src="{{ userInfo.avatarUrl || '/images/default_avatar.png' }}" mode="aspectFill" />
+      <view class="ml-4" bind:tap="onAvatarClick">
+        <view class="text-foreground font-semibold truncate text-lg">{{userInfo.nickName || 'Set your nickname'}}</view>
+        <view wx:if="{{!isNicknameSet}}" class="text-sm text-red-500">Please set your nickname</view>
+      </view>
+    </view>
+    <image src="../assets/ic_edit.png" bind:tap="onAvatarClick" class="w-6 h-6" />
+  </view>
+  <view class="mt-10 bg-white rounded-2xl">
+    <view class="flex flex-col">
+      <view bind:tap="onContributionClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <view class="flex items-center justify-center bg-white rounded-full">
+            <image class="w-5 h-5" src="../assets/ic_contribution.png" />
+          </view>
+          <view class="text-title">Contributions</view>
         </view>
-        <van-button type="primary" bindtap="updateUserInfo" class="confirm-button">更新个人信息</van-button>
-        <van-cell title="饭搭子列表" is-link bind:click="showPopup" class="friends-list" />
-        <van-button type="info" open-type="share" class="share-button">邀请朋友成为吃饭搭子</van-button>
-        <van-toast id="van-toast" />
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
+      <view bind:tap="onSponsorClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <image class="w-5 h-5" src="../assets/ic_user_sponsor.png" />
+          <view class="text-title">Buy developer a coffee</view>
+        </view>
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
+      <view bind:tap="onSponsorClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <image class="w-5 h-5" src="../assets/ic_about.png" />
+          <view class="text-title">About</view>
+        </view>
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
     </view>
   </view>
-</scroll-view>
+</view>
+<!-- Sponsor -->
+<view class="cu-modal {{showingModal === 'sponsor' ? 'show' : ''}}" bind:tap="onHideModal">
+  <view class="cu-dialog modal-main" catch:tap>
+    <view class="flex justify-between">
+      <view class="modal-title">Sponsor</view>
+    </view>
+    <view class="text-black mt-2">您的支持是我更新的最大动力 ❤️</view>
+    <block wx:if="{{sponsorPayEnabled}}">
+      <view class="flex flex-col w-full margin-top">
+        <view class="grid grid-cols-3 gap-3 w-full mt-2">
+          <view wx:for="{{amounts}}" wx:key="value" data-amount="{{item.value}}" bind:tap="onSelectAmount" class="text-center p-1 rounded-lg border-4 border-solid border-blue-400 text-blue-500">
+            {{item.label}}
+          </view>
+          <view bind:tap="onOtherAmountClick" class="text-center p-1 rounded-lg border-4 border-solid border-blue-400 text-blue-500">
+            Other
+          </view>
+        </view>
+        <view class="margin-top-lg text-gray-600 text-sm">
+          Sponsors ❤️ ({{sponsors.length}})
+          <text class="text-red-900 text-xs"></text>
+        </view>
+        <scroll-view class="sponsor-list-height" scroll-y="true">
+          <block wx:for="{{sponsors}}" wx:key="_id">
+            <view class="flex items-center gap-2 mt-3">
+              <image bind:tap="onAvatarClick" class="shrink-0 w-10 h-10 rounded-full bg-gray-200 border-gray-light" src="{{item.anonymous ? null : item.user.avatarUrl}}" data-id="{{item.user._id}}" mode="aspectFill" lazy-load="{{true}}" />
+              <view>
+                <view class="text-xs text-gray-500">
+                  {{item.anonymous ? 'Anonymous' : item.user.nickName}}
+                </view>
+                <view class="mt-1 text-sm bg-gray-100 rounded-lg px-2 py-1">
+                  {{item.message ? item.message : "[No message]"}}
+                </view>
+              </view>
+            </view>
+          </block>
+        </scroll-view>
+      </view>
+    </block>
+    <block wx:else>
+      <image mode="heightFix" show-menu-by-longpress="true" class="pay margin-top-sm" src="../../images/img_praise.png" />
+      <view class="text-grey">Long press to save QR code</view>
+      <view class="text-red text-bold">THANK YOU!</view>
+      <view class="flex items-center justify-end margin-top-lg">
+        <view catch:tap="onDismissModal" class="cu-btn modal-btn-ok">Done</view>
+      </view>
+    </block>
+  </view>
+</view>
+<!-- Profile Edit -->
+<view class="cu-modal {{showingModal === 'profile' ? 'show' : ''}}" bind:tap="onHideModal">
+  <view class="cu-dialog modal-main" catch:tap>
+    <view class="flex justify-between">
+      <view class="modal-title">Edit Profile</view>
+    </view>
+    <view class="flex flex-col items-center mt-6">
+      <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar rounded-full w-24 h-24" src="{{ tempUserInfo.avatarUrl || userInfo.avatarUrl || '/images/default_avatar.png' }}" mode="aspectFill" />
+      </button>
+      <view class="text-sm text-gray-500 mt-2">Tap to change avatar</view>
+      <input type="nickname" class="nickname-input mt-6" placeholder="Enter your nickname" value="{{tempUserInfo.nickName || userInfo.nickName}}" bindinput="onNicknameInput" />
+    </view>
+    <view class="flex justify-end mt-8 gap-4">
+      <view catch:tap="onCancelEdit" class="cu-btn modal-btn-cancel">Cancel</view>
+      <view catch:tap="onSaveProfile" class="cu-btn modal-btn-ok">Save</view>
+    </view>
+  </view>
+</view>
+
