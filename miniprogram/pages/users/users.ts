@@ -41,6 +41,7 @@ interface ICustom {
   onSelectAmount(e: any): void;
   onOtherAmountClick(): void;
   onDismissModal(): void;
+  onAboutClieck(): void;
 }
 
 interface PageData {
@@ -241,6 +242,27 @@ Page<IData, ICustom>({
       },
       success: (res) => {
         console.log('Navigation to contributions page successful');
+      },
+      fail: (err) => {
+        console.error('Navigation failed:', err);
+        wx.showToast({
+          title: 'Navigation failed',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  onAboutClick() {
+    wx.navigateTo({
+      url: '/pages/users/about/about',
+      events: {
+        pageLoaded: () => {
+          console.log('About page loaded successfully');
+        }
+      },
+      success: (res) => {
+        console.log('Navigation to about page successful');
       },
       fail: (err) => {
         console.error('Navigation failed:', err);

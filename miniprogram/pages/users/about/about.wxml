@@ -1,0 +1,44 @@
+<!--pages/users/about/about.wxml-->
+<view class="about-container">
+  <view class="header">
+    <text class="title">关于一日虚度</text>
+    <text class="subtitle">记录每一天的心情轨迹</text>
+  </view>
+
+  <view class="content">
+    <view class="section">
+      <text class="section-title">项目简介</text>
+      <text class="section-content">一日虚度是一款关注个人情绪记录的小程序。在这个快节奏的时代，我们希望通过简单的心情记录，帮助用户更好地了解自己，留住生活中的每一个瞬间。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">主要功能</text>
+      <view class="feature-list">
+        <view class="feature-item">
+          <text class="feature-icon">📝</text>
+          <text class="feature-text">心情记录：随时记录当下的情绪状态</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">📊</text>
+          <text class="feature-text">情绪追踪：查看历史心情变化趋势</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">📅</text>
+          <text class="feature-text">每日回顾：重温过往的心情记录</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">🔒</text>
+          <text class="feature-text">隐私保护：确保您的心情日记安全私密</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section quote-section">
+      <text class="quote">" 记录当下，珍惜当下 "</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text class="copyright">© 2024 一日虚度</text>
+  </view>
+</view>

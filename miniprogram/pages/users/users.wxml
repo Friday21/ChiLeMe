@@ -27,7 +27,7 @@
         </view>
         <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
       </view>
-      <view bind:tap="onSponsorClick" class="flex items-center justify-between px-6 py-6">
+      <view bind:tap="onAboutClick" class="flex items-center justify-between px-6 py-6">
         <view class="flex items-center gap-4">
           <image class="w-5 h-5" src="../assets/ic_about.png" />
           <view class="text-title">About</view>

@@ -27,9 +27,9 @@
 
   <!-- Join Us Section -->
   <view class="section">
-    <text class="title">Join Our Community</text>
+    <text class="title">Join Our Project</text>
     <text class="description">
-      We're excited to have more passionate contributors join our community. Every contribution, big or small, makes a difference. Thank you for your interest and support in making this app better for everyone!
+      We're excited to have more passionate contributors join our project. Every contribution, big or small, makes a difference. Thank you for your interest and support in making this app better for everyone!
     </text>
   </view>
 </view>
