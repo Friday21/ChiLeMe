@@ -6,6 +6,7 @@ const app = getApp<IAppOption>();
 Component({
   data: {
     openId: "",
+    showInfo: false,
     weekchartData: {} as { categories: Array<{ value: number; color: string }>; series: Array<{ name: string; data: number }> },
     monthchartData: {} as { categories: Array<{ value: number; color: string }>; series: Array<{ name: string; data: number }> },
     yearchartData: {} as { categories: Array<{ value: number; color: string }>; series: Array<{ name: string; data: number }> },
@@ -58,6 +59,15 @@ Component({
     }
   },
   methods: {
+    showInfoModal() {
+      wx.showModal({
+        title: "说明",
+        content: "一天内如果至少有一个积极记录，则该天算作“不虚度”",
+        showCancel: false,
+        confirmText: "我知道了"
+      });
+    },
+
     async getServerData(openId: string) {
       // 模拟从服务器获取数据时的延时
       const resp = await getReport(openId);

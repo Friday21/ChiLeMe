@@ -9,7 +9,10 @@
         chartData="{{weekchartData}}"
         canvas-id="weekChart"
       />
-      <text>本周有{{ weekGoodDay }}天不虚度， 继续加油吧！</text>
+      <view class="week-text">
+        <text>本周有{{ weekGoodDay }}天不虚度，继续加油吧！</text>
+        <text class="info-icon" bindtap="showInfoModal">ℹ️</text>
+     </view>
     </view>
 
     <view class="chart-section">
