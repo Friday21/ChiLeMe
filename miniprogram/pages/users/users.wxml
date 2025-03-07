@@ -33,8 +33,8 @@
 </view>
 
 <!-- Profile Edit -->
-<view class="cu-modal {{showingModal === 'profile' ? 'show' : ''}}" bind:tap="onHideModal">
-  <view class="cu-dialog modal-main" catch:tap>
+<view class="cu-modal {{showingModal === 'profile' ? 'show' : ''}}">
+  <view class="cu-dialog modal-main">
     <view class="flex justify-between">
       <view class="modal-title">Edit Profile</view>
     </view>
