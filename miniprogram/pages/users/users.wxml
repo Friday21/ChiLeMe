@@ -10,6 +10,15 @@
   </view>
   <view class="mt-10 bg-white rounded-2xl">
     <view class="flex flex-col">
+
+      <view bind:tap="onAboutClick" class="flex items-center justify-between px-6 py-6">
+        <view class="flex items-center gap-4">
+          <image class="w-5 h-5" src="../assets/ic_about.png" />
+          <view class="text-title">关于</view>
+        </view>
+        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
+      </view>
+
       <view bind:tap="onContributionClick" class="flex items-center justify-between px-6 py-6">
         <view class="flex items-center gap-4">
           <view class="flex items-center justify-center bg-white rounded-full">
@@ -19,41 +28,10 @@
         </view>
         <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
       </view>
-      <view bind:tap="onSponsorClick" class="flex items-center justify-between px-6 py-6">
-        <view class="flex items-center gap-4">
-          <image class="w-5 h-5" src="../assets/ic_user_sponsor.png" />
-          <view class="text-title">赏个咖啡，感谢支持</view>
-        </view>
-        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
-      </view>
-      <view bind:tap="onAboutClick" class="flex items-center justify-between px-6 py-6">
-        <view class="flex items-center gap-4">
-          <image class="w-5 h-5" src="../assets/ic_about.png" />
-          <view class="text-title">了解这个项目</view>
-        </view>
-        <image class="w-4 h-4" src="../assets/ic_arrow_right.svg" />
-      </view>
     </view>
   </view>
 </view>
-<!-- Sponsor -->
-<view class="cu-modal {{showingModal === 'sponsor' ? 'show' : ''}}" bind:tap="onHideModal">
-  <view class="cu-dialog modal-main" catch:tap>
-    <view class="flex justify-between">
-      <view class="modal-title">赞助支持</view>
-    </view>
-    <view class="text-black mt-2">您的支持是我更新的最大动力 ❤️</view>
-    <image 
-      mode="widthFix" 
-      show-menu-by-longpress="true" 
-      class="w-full mt-4" 
-      src="../assets/personal_sponsor.png" />
-    <view class="text-grey text-sm mt-2">长按图片识别赞赏码</view>
-    <view class="flex items-center justify-end mt-4">
-      <view catch:tap="onDismissModal" class="cu-btn modal-btn-ok">关闭</view>
-    </view>
-  </view>
-</view>
+
 <!-- Profile Edit -->
 <view class="cu-modal {{showingModal === 'profile' ? 'show' : ''}}" bind:tap="onHideModal">
   <view class="cu-dialog modal-main" catch:tap>
