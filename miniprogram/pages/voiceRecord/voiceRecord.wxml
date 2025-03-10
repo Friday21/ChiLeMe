@@ -82,6 +82,7 @@
       border="{{ false }}"
       maxlength="{{ 120 }}"
       custom-class="text-input-field"
+      focus="{{ focus }}" 
     />
   </view>
 </van-dialog>

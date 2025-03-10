@@ -57,7 +57,8 @@ Component<ComponentData, {}, ComponentMethods>({
     editCategory: '',
     editPositive: 3,
     showTextInput: false,
-    inputText: ''
+    inputText: '',
+    focus: false
   },
 
   lifetimes: {
@@ -225,9 +226,10 @@ Component<ComponentData, {}, ComponentMethods>({
 
     // 显示文字输入弹窗
     showTextInput() {
-      this.setData({
-        showTextInput: true,
-        inputText: ''
+      this.setData({ showTextInput: true }, () => {
+        setTimeout(() => {
+          this.setData({ focus: true });
+        }, 300); // 延迟一点，确保弹框完全展开
       });
     },
 
@@ -235,6 +237,7 @@ Component<ComponentData, {}, ComponentMethods>({
     closeTextInput() {
       this.setData({
         showTextInput: false,
+        focus: false,
         inputText: ''
       });
     },
@@ -264,6 +267,7 @@ Component<ComponentData, {}, ComponentMethods>({
         this.setData({
           records: [newRecord, ...this.data.records],
           showTextInput: false,
+          focus: false,
           inputText: ''
         });
 
