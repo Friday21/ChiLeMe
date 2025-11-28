@@ -23,6 +23,5 @@
     "toolbar": "/colorui/components/toolbar"
   },
 
-  "componentFramework": "glass-easel",
   "lazyCodeLoading": "requiredComponents"
 }
