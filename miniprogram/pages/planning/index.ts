@@ -1,4 +1,4 @@
-import { getPlanningData, updatePlanningData, manageAsset, manageFixedItem, manageLoan } from '../../utils/service';
+import { getPlanningData, updatePlanningData, manageAsset, manageFixedItem, manageLoan, manageFutureItem } from '../../utils/service';
 
 Page({
   data: {
@@ -172,6 +172,45 @@ Page({
       tempEditData: { type: 'cash' }
     });
   },
+  editFutureItem(e: any) {
+    const item = e.currentTarget.dataset.item;
+    const isStock = item.type === 'stock';
+    
+    const fields = [
+      { 
+        key: 'type', 
+        label: '类型', 
+        value: item.type || 'cash', 
+        inputType: 'radio', 
+        options: [
+          { label: '现金', value: 'cash' },
+          { label: '股票', value: 'stock' }
+        ]
+      },
+      { key: 'text', label: '标题', value: item.text, placeholder: '例如：年终奖' }
+    ];
+
+    if (isStock) {
+      fields.push(
+        { key: 'stockCode', label: '股票代码', value: item.stockCode || '', placeholder: '例如：00700' },
+        { key: 'shares', label: '股票份数', value: item.shares || '', placeholder: '例如：100' }
+      );
+    } else {
+      fields.push(
+        { key: 'amount', label: '金额', value: item.amount, placeholder: '请输入金额' }
+      );
+    }
+    fields.push({ key: 'desc', label: '描述', value: item.desc, placeholder: '例如：2025-12-25 · 预计入账' });
+
+    this.setData({
+      showEditPopup: true,
+      editTitle: '编辑未来收入',
+      currentEditType: 'future',
+      isEditMode: true,
+      editFields: fields,
+      tempEditData: { ...item }
+    });
+  },
 
   // Loan Handlers
   addLoan() {
@@ -292,6 +331,8 @@ Page({
       promise = manageFixedItem(isEditMode ? 'update' : 'add', tempEditData);
     } else if (currentEditType === 'loan') {
       promise = manageLoan(isEditMode ? 'update' : 'add', tempEditData);
+    } else if (currentEditType === 'future') {
+      promise = manageFutureItem(isEditMode ? 'update' : 'add', tempEditData);
     } else {
       promise = updatePlanningData(currentEditType, tempEditData);
     }
@@ -318,6 +359,8 @@ Page({
             promise = manageFixedItem('delete', tempEditData);
           } else if (currentEditType === 'loan') {
             promise = manageLoan('delete', tempEditData);
+          } else if (currentEditType === 'future') {
+            promise = manageFutureItem('delete', tempEditData);
           } else {
             // Future items or others if needed
             promise = Promise.resolve();

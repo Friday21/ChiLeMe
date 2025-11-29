@@ -176,7 +176,8 @@ export {
   updatePlanningData,
   manageAsset,
   manageFixedItem,
-  manageLoan
+  manageLoan,
+  manageFutureItem
 };
 
 // --- Mock Data APIs for Financial Features ---
@@ -249,6 +250,19 @@ const manageLoan = (action: 'add'|'update'|'delete', data: any): Promise<any> =>
   return new Promise((resolve) => {
     setTimeout(() => {
       console.log(`Loan ${action}:`, data);
+      resolve({ success: true });
+    }, 500);
+  });
+};
+
+const manageFutureItem = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
+  // Backend API: 
+  // add -> POST /api/future-items/
+  // update -> PUT /api/future-items/:id/
+  // delete -> DELETE /api/future-items/:id/
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Future Item ${action}:`, data);
       resolve({ success: true });
     }, 500);
   });

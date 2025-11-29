@@ -51,12 +51,20 @@
     <!-- Future Income -->
     <van-tab title="未来收入">
       <view class="p-4">
-        <van-steps
-          steps="{{ steps }}"
-          active="{{ activeStep }}"
-          direction="vertical"
-          active-color="#38f"
-        />
+        <block wx:for="{{ steps }}" wx:key="index">
+          <view class="bg-white rounded-lg shadow-sm mb-3 p-4 flex justify-between items-center" bindtap="editFutureItem" data-item="{{item}}">
+            <view class="flex items-center">
+              <view class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center mr-3 text-xl">
+                📅
+              </view>
+              <view>
+                <view class="font-bold text-gray-800">{{ item.text }}</view>
+                <view class="text-xs text-gray-500 mt-1">{{ item.desc }}</view>
+              </view>
+            </view>
+            <view class="font-bold text-lg text-purple-600">{{ item.amount || '待定' }}</view>
+          </view>
+        </block>
       </view>
     </van-tab>
 
