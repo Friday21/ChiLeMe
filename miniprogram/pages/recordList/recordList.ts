@@ -1,4 +1,4 @@
-import { getRecords, updateRecord, deleteRecord } from '../../utils/service';
+import { getRecords, updateRecord, deleteRecord, addRecord } from '../../utils/service';
 
 const app = getApp<IAppOption>();
 
@@ -62,6 +62,11 @@ Component<ComponentData, {}, ComponentMethods>({
     currentRecord: null,
     editCategory: '',
     editPositive: 3,
+    editDate: '',
+    showDatePicker: false,
+    currentDate: new Date().getTime(),
+    minDate: new Date(2020, 0, 1).getTime(),
+    maxDate: new Date().getTime(),
     openId: '',
     loading: false,
     date: '',
@@ -160,7 +165,8 @@ Component<ComponentData, {}, ComponentMethods>({
         showDialog: true,
         currentRecord: record,
         editCategory: record.category,
-        editPositive: record.positive
+        editPositive: record.positive,
+        editDate: record.date
       });
     },
 
@@ -169,7 +175,8 @@ Component<ComponentData, {}, ComponentMethods>({
         showDialog: false,
         currentRecord: null,
         editCategory: '',
-        editPositive: 3
+        editPositive: 3,
+        editDate: ''
       });
     },
 
@@ -180,32 +187,43 @@ Component<ComponentData, {}, ComponentMethods>({
         const updatedRecord = {
           ...this.data.currentRecord,
           category: this.data.editCategory,
-          positive: this.data.editPositive
+          positive: this.data.editPositive,
+          date: this.data.editDate
         };
         
-        await updateRecord(this.data.openId, this.data.currentRecord!.id, updatedRecord);
-        
-        const updatedRecords = this.data.records.map(record => {
-          if (record.id === updatedRecord.id) {
-            return updatedRecord;
-          }
-          return record;
-        });
+        if (!updatedRecord.id) {
+          const newRecord = await addRecord(this.data.openId, updatedRecord);
+          this.setData({
+            records: [newRecord, ...this.data.records],
+            showDialog: false,
+            currentRecord: null
+          });
+          wx.showToast({ title: '添加成功', icon: 'success' });
+        } else {
+          await updateRecord(this.data.openId, this.data.currentRecord!.id, updatedRecord);
+          
+          const updatedRecords = this.data.records.map(record => {
+            if (record.id === updatedRecord.id) {
+              return updatedRecord;
+            }
+            return record;
+          });
 
-        this.setData({
-          records: updatedRecords,
-          showDialog: false,
-          currentRecord: null
-        });
+          this.setData({
+            records: updatedRecords,
+            showDialog: false,
+            currentRecord: null
+          });
 
-        wx.showToast({
-          title: '更新成功',
-          icon: 'success'
-        });
+          wx.showToast({
+            title: '更新成功',
+            icon: 'success'
+          });
+        }
       } catch (err) {
-        console.error('更新失败：', err);
+        console.error('操作失败：', err);
         wx.showToast({
-          title: '更新失败',
+          title: '操作失败',
           icon: 'none'
         });
       }
@@ -215,6 +233,33 @@ Component<ComponentData, {}, ComponentMethods>({
       const value = Number(e.detail);
       this.setData({
         editPositive: value
+      });
+    },
+
+    onAddTransaction() {
+      this.setData({
+        showDialog: true,
+        currentRecord: { id: '', content: '', category: '', positive: 3, date: this.data.date },
+        editCategory: '',
+        editPositive: 3,
+        editDate: this.data.date
+      });
+    },
+
+    openDatePicker() {
+      this.setData({ showDatePicker: true, currentDate: new Date(this.data.editDate).getTime() });
+    },
+
+    closeDatePicker() {
+      this.setData({ showDatePicker: false });
+    },
+
+    onConfirmDate(event: any) {
+      const date = new Date(event.detail);
+      const formattedDate = this.formatDate(date);
+      this.setData({
+        editDate: formattedDate,
+        showDatePicker: false
       });
     },
 

@@ -1,0 +1,49 @@
+<view class="bg-gray-50 min-h-screen w-full">
+  <!-- User Info -->
+  <view class="bg-white p-6 flex items-center mb-4" bindtap="editProfile">
+    <van-image round width="60px" height="60px" src="{{ userInfo.avatar }}" />
+    <view class="ml-4 flex-1">
+      <view class="font-bold text-xl flex items-center">
+        {{ userInfo.name }}
+        <van-icon name="edit" class="ml-2 text-gray-400 text-base" />
+      </view>
+      <view class="text-gray-500 text-sm mt-1">记账 {{ userInfo.days }} 天</view>
+    </view>
+    <van-icon name="arrow" class="text-gray-300" />
+  </view>
+
+  <!-- Settings -->
+  <van-cell-group title="设置">
+    <van-cell title="净资产包含房产">
+      <van-switch checked="{{ settings.includeRealEstate }}" size="24px" bind:change="onToggleRealEstate" />
+    </van-cell>
+    <van-cell title="关于" is-link bind:click="goToAbout" />
+  </van-cell-group>
+
+  <!-- Edit Profile Popup -->
+  <van-popup show="{{ showEditPopup }}" position="bottom" round custom-style="height: 40%;" bind:close="onCloseEditPopup">
+    <view class="p-4">
+      <view class="text-center font-bold text-lg mb-6">修改个人信息</view>
+      
+      <view class="flex justify-center mb-6">
+        <button class="w-20 h-20 rounded-full p-0 flex items-center justify-center overflow-hidden bg-gray-100 relative" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+          <image class="w-full h-full" src="{{ tempUserInfo.avatar || userInfo.avatar }}" />
+          <view class="absolute bottom-0 w-full bg-black bg-opacity-30 text-white text-xs text-center py-1">修改</view>
+        </button>
+      </view>
+
+      <van-field
+        label="昵称"
+        value="{{ tempUserInfo.name }}"
+        placeholder="请输入昵称"
+        type="nickname"
+        bind:change="onNameChange"
+        bind:blur="onNameBlur"
+      />
+
+      <view class="mt-8 px-4">
+        <van-button type="info" block round bind:click="saveProfile">保存</van-button>
+      </view>
+    </view>
+  </van-popup>
+</view>

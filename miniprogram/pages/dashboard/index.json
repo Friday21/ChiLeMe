@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "总览",
+  "usingComponents": {
+    "qiun-wx-ucharts": "/component/uchart/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-image": "@vant/weapp/image/index",
+    "van-button": "@vant/weapp/button/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-action-sheet": "@vant/weapp/action-sheet/index"
+  }
+}

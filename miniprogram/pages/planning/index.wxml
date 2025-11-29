@@ -1,0 +1,131 @@
+<view class="bg-gray-50 min-h-screen w-full">
+  <van-tabs active="{{ activeTab }}" bind:change="onChangeTab" sticky>
+    <!-- Assets List -->
+    <van-tab title="我的资产">
+      <view class="p-4">
+        <block wx:for="{{ assets }}" wx:key="id">
+          <view class="bg-white rounded-lg shadow-sm mb-3 p-4 flex justify-between items-center" bindtap="editAsset" data-item="{{item}}">
+            <view class="flex items-center">
+              <view class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3 text-xl">
+                {{ item.type === 'cash' ? '💰' : (item.type === 'stock' ? '📈' : '🏠') }}
+              </view>
+              <view>
+                <view class="font-bold text-gray-800">{{ item.name }}</view>
+                <view class="text-xs text-gray-500 mt-1">{{ item.desc }}</view>
+              </view>
+            </view>
+            <view class="font-bold text-lg">{{ item.value }}</view>
+          </view>
+        </block>
+      </view>
+    </van-tab>
+
+    <!-- Fixed Expenses -->
+    <van-tab title="固定收支">
+      <view class="p-4">
+        <block wx:for="{{ fixed }}" wx:key="id">
+          <view class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden" bindtap="editFixedItem" data-item="{{item}}">
+            <view class="p-3 {{ item.type === 'income' ? 'bg-blue-50 border-blue-100' : 'bg-orange-50 border-orange-100' }} border-b flex justify-between items-center">
+              <view class="font-bold {{ item.type === 'income' ? 'text-blue-800' : 'text-orange-800' }}">{{ item.name }} ({{ item.type === 'income' ? '收入' : '支出' }})</view>
+              <van-switch checked="{{ item.enabled }}" size="20px" catchtap="noop" />
+            </view>
+            <view class="p-4">
+              <view class="flex justify-between mb-2">
+                <view class="text-gray-500">金额</view>
+                <view class="font-bold {{ item.type === 'income' ? 'text-green-600' : 'text-red-600' }}">{{ item.amount }}</view>
+              </view>
+              <view class="flex justify-between mb-2">
+                <view class="text-gray-500">日期</view>
+                <view>{{ item.date }}</view>
+              </view>
+              <view class="flex justify-between">
+                <view class="text-gray-500">账户</view>
+                <view>{{ item.account }}</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </van-tab>
+
+    <!-- Future Income -->
+    <van-tab title="未来收入">
+      <view class="p-4">
+        <van-steps
+          steps="{{ steps }}"
+          active="{{ activeStep }}"
+          direction="vertical"
+          active-color="#38f"
+        />
+      </view>
+    </van-tab>
+
+    <!-- Mortgage Plan -->
+    <van-tab title="房贷计划">
+      <view class="p-4">
+        <block wx:for="{{ loans }}" wx:key="id">
+          <view class="bg-white rounded-lg shadow-sm mb-4 p-4" bindtap="editLoan" data-item="{{item}}">
+            <view class="flex justify-between items-center mb-3 border-b border-gray-100 pb-2">
+              <view class="font-bold text-gray-800">{{ item.name }}</view>
+              <van-tag type="primary" plain>{{ item.method === 'equal_principal_interest' ? '等额本息' : '等额本金' }}</van-tag>
+            </view>
+            <view class="grid grid-cols-2 gap-4">
+              <view>
+                <view class="text-xs text-gray-500">剩余本金</view>
+                <view class="font-bold text-lg">{{ item.principal }}</view>
+              </view>
+              <view>
+                <view class="text-xs text-gray-500">剩余期数</view>
+                <view class="font-bold text-lg">{{ item.periods }}</view>
+              </view>
+              <view>
+                <view class="text-xs text-gray-500">年利率</view>
+                <view class="font-bold">{{ item.rate }}%</view>
+              </view>
+              <view>
+                <view class="text-xs text-gray-500">还款日</view>
+                <view class="font-bold">{{ item.repaymentDate }}</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </van-tab>
+  </van-tabs>
+
+  <!-- Floating Action Button -->
+  <view class="fixed bottom-10 right-6 z-50">
+    <view class="w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white active:opacity-80 transition-opacity" style="background-color: #6366f1;" bindtap="onAddClick">
+      <van-icon name="plus" size="28px" />
+    </view>
+  </view>
+
+  <!-- Edit Popup -->
+  <van-popup show="{{ showEditPopup }}" position="bottom" round custom-style="height: 50%;" bind:close="onCloseEditPopup">
+    <view class="p-4">
+      <view class="text-center font-bold text-lg mb-4">{{ editTitle }}</view>
+      <van-cell-group>
+        <block wx:for="{{ editFields }}" wx:key="key">
+          <view wx:if="{{ item.inputType === 'radio' }}" class="p-3 bg-white border-b border-gray-100">
+             <view class="text-sm text-gray-500 mb-2">{{item.label}}</view>
+             <van-radio-group value="{{ item.value }}" direction="horizontal" data-key="{{ item.key }}" bind:change="onEditFieldChange">
+               <van-radio wx:for="{{ item.options }}" wx:key="value" name="{{ item.value }}" custom-class="mr-4">{{ item.label }}</van-radio>
+             </van-radio-group>
+          </view>
+          <van-field
+            wx:else
+            label="{{ item.label }}"
+            value="{{ item.value }}"
+            placeholder="{{ item.placeholder }}"
+            data-key="{{ item.key }}"
+            bind:change="onEditFieldChange"
+          />
+        </block>
+      </van-cell-group>
+      <view class="mt-8 px-4 flex space-x-4">
+        <van-button wx:if="{{ isEditMode }}" type="danger" block round bind:click="deleteItem" custom-class="flex-1 mr-2">删除</van-button>
+        <van-button type="info" block round bind:click="submitEdit" custom-class="flex-1">保存</van-button>
+      </view>
+    </view>
+  </van-popup>
+</view>

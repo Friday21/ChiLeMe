@@ -1,0 +1,29 @@
+<view class="container block bg-gray-50 min-h-screen p-4">
+  <view class="text-sm text-gray-500 mb-4">如果系统记录与你银行/券商实际金额有偏差，可以在这里一次性校正。</view>
+
+  <view class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+    <view class="p-3 bg-gray-100 font-bold">银行现金</view>
+    <van-cell-group>
+      <van-field label="系统记录" value="¥50,000" readonly />
+      <van-field label="实际金额" value="{{ cashReal }}" placeholder="请输入实际金额" type="number" bind:change="onCashChange" />
+      <view class="p-3 text-right text-sm {{ cashDiff >= 0 ? 'text-green-600' : 'text-red-600' }}">
+        差额: {{ cashDiff >= 0 ? '+' : '' }}{{ cashDiff }}
+      </view>
+    </van-cell-group>
+  </view>
+
+  <view class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
+    <view class="p-3 bg-gray-100 font-bold">股票市值</view>
+    <van-cell-group>
+      <van-field label="系统记录" value="¥200,000" readonly />
+      <van-field label="实际金额" value="{{ stockReal }}" placeholder="请输入实际金额" type="number" bind:change="onStockChange" />
+      <view class="p-3 text-right text-sm {{ stockDiff >= 0 ? 'text-green-600' : 'text-red-600' }}">
+        差额: {{ stockDiff >= 0 ? '+' : '' }}{{ stockDiff }}
+      </view>
+    </van-cell-group>
+  </view>
+
+  <view class="mt-6">
+    <van-button type="primary" block bind:click="saveCorrection">保存校正并生成记录</van-button>
+  </view>
+</view>

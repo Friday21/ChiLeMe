@@ -36,6 +36,13 @@
   </view>
 </scroll-view>
 
+<!-- Floating Action Button -->
+<view class="fixed bottom-10 right-6 z-50">
+  <view class="w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white active:opacity-80 transition-opacity" style="background-color: #6366f1;" bindtap="onAddTransaction">
+    <van-icon name="plus" size="28px" />
+  </view>
+</view>
+
 <!-- 编辑弹窗 -->
 <van-dialog
   use-slot
@@ -63,5 +70,20 @@
         count="{{ 5 }}"
       />
     </view>
+    <view class="dialog-item">
+      <view class="dialog-label">日期：</view>
+      <view bindtap="openDatePicker" class="text-blue-500">{{ editDate }}</view>
+    </view>
   </view>
-</van-dialog> 
+</van-dialog>
+
+<van-popup show="{{ showDatePicker }}" position="bottom" bind:close="closeDatePicker">
+  <van-datetime-picker
+    type="date"
+    value="{{ currentDate }}"
+    min-date="{{ minDate }}"
+    max-date="{{ maxDate }}"
+    bind:confirm="onConfirmDate"
+    bind:cancel="closeDatePicker"
+  />
+</van-popup> 

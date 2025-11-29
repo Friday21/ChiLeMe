@@ -1,5 +1,9 @@
 {
   "pages": [
+    "pages/dashboard/index",
+    "pages/transactions/index",
+    "pages/planning/index",
+    "pages/profile/index",
     "pages/index/index",
     "pages/users/users",
     "pages/users/contributions/contributions",
@@ -7,11 +11,43 @@
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "ChiLeMe",
     "navigationBarBackgroundColor": "#ffffff",
     "enablePullDownRefresh": true,
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1890FF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/dashboard/index",
+        "text": "总览",
+        "iconPath": "pages/assets/ic_board.png",
+        "selectedIconPath": "pages/assets/ic_board_active.png"
+      },
+      {
+        "pagePath": "pages/transactions/index",
+        "text": "明细",
+        "iconPath": "pages/assets/ic_mall.png",
+        "selectedIconPath": "pages/assets/ic_mall_active.png"
+      },
+      {
+        "pagePath": "pages/planning/index",
+        "text": "资产",
+        "iconPath": "pages/assets/calendar_muted.png",
+        "selectedIconPath": "pages/assets/calendar_active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "pages/assets/ic_user.png",
+        "selectedIconPath": "pages/assets/ic_user_active.png"
+      }
+    ]
   },
 
   "useExtendedLib": {

@@ -1,0 +1,111 @@
+<view class="bg-gray-50 min-h-screen w-full">
+  <!-- Top Filter -->
+  <view class="bg-white sticky top-0 z-10">
+    <view class="flex justify-between items-center px-4 py-4 border-b border-gray-100">
+      <view class="flex items-center" bindtap="showDatePicker">
+        <view class="mr-2 font-bold text-lg">{{ currentMonth }}</view>
+        <van-icon name="arrow-down" size="12px" />
+      </view>
+    </view>
+  </view>
+
+  <!-- Transaction List -->
+  <view class="p-4 pb-24">
+    <block wx:for="{{transactions}}" wx:key="id">
+      <view class="bg-white p-4 rounded-lg mb-3 shadow-sm flex justify-between items-center" bindtap="goToDetail" data-id="{{item.id}}">
+        <view class="flex items-center">
+          <view class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-xl">
+            {{item.icon}}
+          </view>
+          <view>
+            <view class="font-bold text-base">{{item.category}}</view>
+            <view class="text-xs text-gray-400 mt-1">{{item.date}} · {{item.account}}</view>
+            <view wx:if="{{item.note}}" class="text-xs text-gray-500 mt-1">{{item.note}}</view>
+          </view>
+        </view>
+        <view class="text-right">
+          <view class="font-bold text-lg {{item.type === 'income' ? 'text-green-600' : 'text-red-600'}}">
+            {{item.type === 'income' ? '+' : '-'}}{{item.amount}}
+          </view>
+          <van-tag wx:if="{{item.isLarge}}" type="danger" size="mini">大额</van-tag>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- FAB -->
+  <view class="fixed bottom-10 right-6 z-50">
+    <view class="w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white active:opacity-80 transition-opacity" style="background-color: #6366f1;" bindtap="showRecordForm">
+      <van-icon name="plus" size="28px" />
+    </view>
+  </view>
+
+  <!-- Date Picker Popup -->
+  <van-popup show="{{ showDate }}" position="bottom" bind:close="onCloseDate">
+    <van-datetime-picker
+      type="year-month"
+      value="{{ currentDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
+      bind:confirm="onConfirmDate"
+      bind:cancel="onCloseDate"
+    />
+  </van-popup>
+
+  <!-- Record Transaction Popup -->
+  <van-popup show="{{ showRecordForm }}" position="bottom" round custom-style="height: 60%;" bind:close="onCloseRecordForm">
+    <view class="p-4">
+      <view class="text-center font-bold text-lg mb-4">记一笔</view>
+      
+      <van-cell-group>
+        <van-cell title="类型">
+          <van-radio-group value="{{ recordForm.type }}" direction="horizontal" bind:change="onRecordTypeChange">
+            <van-radio name="expense">支出</van-radio>
+            <van-radio name="income">收入</van-radio>
+          </van-radio-group>
+        </van-cell>
+        
+        <van-field
+          value="{{ recordForm.amount }}"
+          label="金额"
+          type="digit"
+          placeholder="请输入金额"
+          bind:change="onRecordAmountChange"
+        />
+        
+        <van-field
+          value="{{ recordForm.category }}"
+          label="分类"
+          placeholder="例如：餐饮、交通"
+          bind:change="onRecordCategoryChange"
+        />
+
+        <van-field
+          value="{{ recordForm.note }}"
+          label="备注"
+          placeholder="选填"
+          bind:change="onRecordNoteChange"
+        />
+
+        <van-cell title="日期" is-link value="{{ recordForm.date }}" bind:click="openRecordDate" />
+      </van-cell-group>
+
+      <view class="mt-8 px-4 flex space-x-4">
+        <van-button wx:if="{{ isEditMode }}" type="danger" block round bind:click="deleteRecord" custom-class="flex-1 mr-2">删除</van-button>
+        <van-button type="info" block round bind:click="submitRecord" custom-class="flex-1">保存</van-button>
+      </view>
+    </view>
+  </van-popup>
+
+  <!-- Record Date Picker -->
+  <van-popup show="{{ showRecordDate }}" position="bottom" bind:close="closeRecordDate">
+    <van-datetime-picker
+      type="date"
+      value="{{ currentRecordDate }}"
+      min-date="{{ minDate }}"
+      max-date="{{ maxDate }}"
+      bind:confirm="onConfirmRecordDate"
+      bind:cancel="closeRecordDate"
+    />
+  </van-popup>
+</view>

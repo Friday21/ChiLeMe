@@ -1,0 +1,95 @@
+<view class="pb-20 bg-gray-50 min-h-screen w-full">
+  <!-- Header -->
+  <view class="flex justify-between items-center p-4 bg-white mb-3">
+    <view class="flex items-center">
+      <van-image round width="40px" height="40px" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+      <view class="ml-3">
+        <view class="text-xs text-gray-500">早上好</view>
+        <view class="font-bold text-lg">FridayLi</view>
+      </view>
+    </view>
+    <view class="text-right">
+      <view class="text-xs text-gray-500 mb-1">{{todayDate}}</view>
+      <van-icon name="calendar-o" size="20px" color="#666" />
+    </view>
+  </view>
+
+  <!-- Net Worth Card -->
+  <view class="mx-4 mb-4 p-5 bg-white rounded-xl shadow-sm flex justify-between items-center relative overflow-hidden">
+    <view class="z-10">
+      <view class="text-sm text-gray-500 mb-1">净资产 (¥)</view>
+      <view class="text-3xl font-bold text-gray-800">{{netWorth}}</view>
+      <view class="text-xs text-green-500 mt-2 bg-green-50 inline-block px-2 py-1 rounded">较上月 +{{netWorthChange}}</view>
+    </view>
+    <view style="width: 120px; height: 120px; margin-right: -10px;">
+       <qiun-wx-ucharts type="ring" opts="{{ringOpts}}" chartData="{{ringData}}" canvas2d="{{true}}" canvasId="netWorthRing" />
+    </view>
+  </view>
+
+  <!-- Asset Distribution -->
+  <view class="mb-4">
+    <scroll-view scroll-x class="whitespace-nowrap px-4" style="width: 100%;" enable-flex="true">
+      <view class="inline-block w-32 p-3 bg-white rounded-lg mr-3 shadow-sm border border-gray-100">
+        <view class="flex items-center mb-2">
+          <view class="w-2 h-2 rounded-full bg-green-500 mr-2"></view>
+          <view class="text-xs text-gray-500">银行现金</view>
+        </view>
+        <view class="text-lg font-bold text-gray-800">{{cashAmount}}</view>
+        <view class="text-xs text-gray-400 mt-1">2个账户</view>
+      </view>
+      
+      <view class="inline-block w-32 p-3 bg-white rounded-lg mr-3 shadow-sm border border-gray-100">
+        <view class="flex items-center mb-2">
+          <view class="w-2 h-2 rounded-full bg-blue-500 mr-2"></view>
+          <view class="text-xs text-gray-500">股票市值</view>
+        </view>
+        <view class="text-lg font-bold text-gray-800">{{stockAmount}}</view>
+        <view class="text-xs text-red-500 mt-1">+1.2%</view>
+      </view>
+
+      <view class="inline-block w-32 p-3 bg-white rounded-lg mr-3 shadow-sm border border-gray-100">
+        <view class="flex items-center mb-2">
+          <view class="w-2 h-2 rounded-full bg-orange-500 mr-2"></view>
+          <view class="text-xs text-gray-500">房贷余额</view>
+        </view>
+        <view class="text-lg font-bold text-gray-800">{{mortgageAmount}}</view>
+        <view class="text-xs text-gray-400 mt-1">剩余 240 期</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- Monthly Summary -->
+  <view class="mx-4 mb-4 p-4 bg-white rounded-xl shadow-sm">
+    <view class="flex justify-between items-center mb-3">
+      <view class="font-bold text-gray-800">本月收支</view>
+      <view class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">结余: +{{monthlyBalance}}</view>
+    </view>
+    
+    <view class="flex items-center mb-1">
+       <view class="flex-1 bg-green-100 h-3 rounded-l-full relative overflow-hidden">
+          <view class="absolute top-0 left-0 h-full bg-green-500" style="width: {{incomePercent}}%"></view>
+       </view>
+       <view class="flex-1 bg-red-100 h-3 rounded-r-full relative overflow-hidden">
+          <view class="absolute top-0 right-0 h-full bg-red-500" style="width: {{expensePercent}}%"></view>
+       </view>
+    </view>
+    
+    <view class="flex justify-between text-xs text-gray-400 mb-4">
+      <view>收入 {{monthlyIncome}}</view>
+      <view>支出 {{monthlyExpense}}</view>
+    </view>
+
+    <view class="flex justify-between items-center pt-3 border-t border-gray-50">
+      <view class="text-xs text-gray-500">股票涨跌</view>
+      <view class="text-sm font-bold text-red-500">{{monthlyStockProfit}}</view>
+    </view>
+  </view>
+
+  <!-- Asset Trend -->
+  <view class="mx-4 pb-24">
+    <view class="font-bold mb-3 text-gray-800">资产趋势 (12月内)</view>
+    <view class="bg-white rounded-xl shadow-sm overflow-hidden p-2" style="height: 220px;">
+      <qiun-wx-ucharts type="line" opts="{{trendOpts}}" chartData="{{trendData}}" canvas2d="{{true}}" canvasId="assetTrendLine" />
+    </view>
+  </view>
+</view>
