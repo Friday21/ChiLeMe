@@ -76,7 +76,6 @@ Page({
     this.fetchData();
   },
   fetchData() {
-    this.setData({ ringData: {} });
     getDashboardData().then(data => {
       const finalNetWorth = parseFloat(data.netWorth.replace(/,/g, ''));
 

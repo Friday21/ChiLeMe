@@ -22,7 +22,7 @@
       <view class="text-xs text-green-500 mt-2 bg-green-50 inline-block px-2 py-1 rounded">较上月 +{{netWorthChange}}</view>
     </view>
     <view style="width: 120px; height: 120px; margin-right: -10px;">
-       <qiun-wx-ucharts type="ring" opts="{{ringOpts}}" chartData="{{ringData}}" canvas2d="{{true}}" canvasId="netWorthRing" />
+       <qiun-wx-ucharts type="ring" opts="{{ringOpts}}" chartData="{{ringData}}" canvas2d="{{true}}" canvas-id="netWorthRing" />
     </view>
   </view>
 
@@ -89,7 +89,7 @@
   <view class="mx-4 pb-24">
     <view class="font-bold mb-3 text-gray-800">资产趋势 (12月内)</view>
     <view class="bg-white rounded-xl shadow-sm overflow-hidden p-2" style="height: 220px;">
-      <qiun-wx-ucharts type="line" opts="{{trendOpts}}" chartData="{{trendData}}" canvas2d="{{true}}" canvasId="assetTrendLine" />
+      <qiun-wx-ucharts type="line" opts="{{trendOpts}}" chartData="{{trendData}}" canvas2d="{{true}}" canvas-id="assetTrendLine" />
     </view>
   </view>
 </view>

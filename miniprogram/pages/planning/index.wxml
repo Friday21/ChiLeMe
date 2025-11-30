@@ -27,7 +27,6 @@
           <view class="bg-white rounded-lg shadow-sm mb-4 overflow-hidden" bindtap="editFixedItem" data-item="{{item}}">
             <view class="p-3 {{ item.type === 'income' ? 'bg-blue-50 border-blue-100' : 'bg-orange-50 border-orange-100' }} border-b flex justify-between items-center">
               <view class="font-bold {{ item.type === 'income' ? 'text-blue-800' : 'text-orange-800' }}">{{ item.name }} ({{ item.type === 'income' ? '收入' : '支出' }})</view>
-              <van-switch checked="{{ item.enabled }}" size="20px" catchtap="noop" />
             </view>
             <view class="p-4">
               <view class="flex justify-between mb-2">
@@ -55,7 +54,7 @@
           <view class="bg-white rounded-lg shadow-sm mb-3 p-4 flex justify-between items-center" bindtap="editFutureItem" data-item="{{item}}">
             <view class="flex items-center">
               <view class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center mr-3 text-xl">
-                📅
+                {{ item.type === 'stock' ? '📈' : '💰' }}
               </view>
               <view>
                 <view class="font-bold text-gray-800">{{ item.text }}</view>
@@ -75,7 +74,7 @@
           <view class="bg-white rounded-lg shadow-sm mb-4 p-4" bindtap="editLoan" data-item="{{item}}">
             <view class="flex justify-between items-center mb-3 border-b border-gray-100 pb-2">
               <view class="font-bold text-gray-800">{{ item.name }}</view>
-              <van-tag type="primary" plain>{{ item.method === 'equal_principal_interest' ? '等额本息' : '等额本金' }}</van-tag>
+              <van-tag type="{{ item.method === 'equal_principal_interest' ? 'primary' : 'success' }}" plain size="medium">{{ item.method === 'equal_principal_interest' ? '等额本息' : '等额本金' }}</van-tag>
             </view>
             <view class="grid grid-cols-2 gap-4">
               <view>

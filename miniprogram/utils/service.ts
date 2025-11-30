@@ -335,18 +335,21 @@ const getPlanningData = (): Promise<any> => {
         ],
         futureSteps: [
           {
+            type: 'cash',
             text: '年终奖 +20,000',
             desc: '2025-12-25 · 预计入账',
             inactiveIcon: 'circle',
             activeIcon: 'checked'
           },
           {
+            type: 'stock',
             text: 'RSU 10 股归属',
             desc: '2026-01-15 · 约 +8,000',
             inactiveIcon: 'circle',
             activeIcon: 'checked'
           },
           {
+            type: 'cash',
             text: '季度奖金',
             desc: '2026-03-31 · 待定',
             inactiveIcon: 'circle',
