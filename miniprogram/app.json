@@ -39,7 +39,7 @@
         "pagePath": "pages/transactions/index",
         "text": "明细",
         "iconPath": "pages/assets/report.png",
-        "selectedIconPath": "pages/assets/ic_mall_active.png"
+        "selectedIconPath": "pages/assets/report_active.png"
       },
       {
         "pagePath": "pages/profile/index",
