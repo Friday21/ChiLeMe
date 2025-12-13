@@ -42,26 +42,22 @@ Page({
   },
   fetchData() {
     getDashboardData().then(data => {
-      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? false;
+      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? true;
       
       const cash = parseFloat(data.cashAmount.replace(/,/g, ''));
       const stock = parseFloat(data.stockAmount.replace(/,/g, ''));
       const house = parseFloat((data.houseAmount || '5,320,000').replace(/,/g, ''));
       const mortgage = parseFloat(data.mortgageAmount.replace(/,/g, ''));
       
-      let netWorthVal = cash + stock - mortgage;
+      let netWorthVal = cash + stock;
       if (includeRealEstate) {
-        netWorthVal += house;
+        netWorthVal = netWorthVal + house - mortgage;
       }
       
       const finalNetWorth = netWorthVal;
 
       // Use asset items from API
       let assetItems = data.assetItems || [];
-
-      if (!includeRealEstate) {
-        assetItems = assetItems.filter((item: any) => item.name !== '固定资产');
-      }
 
       this.setData({
         netWorthChange: data.netWorthChange,

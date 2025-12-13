@@ -25,13 +25,13 @@
     "list": [
       {
         "pagePath": "pages/dashboard/index",
-        "text": "总览",
-        "iconPath": "pages/assets/mutemic.png",
-        "selectedIconPath": "pages/assets/redmic.png"
+        "text": "资产",
+        "iconPath": "pages/assets/money.png",
+        "selectedIconPath": "pages/assets/money_active.png"
       },
       {
         "pagePath": "pages/planning/index",
-        "text": "资产",
+        "text": "管理",
         "iconPath": "pages/assets/calendar_muted.png",
         "selectedIconPath": "pages/assets/calendar_active.png"
       },

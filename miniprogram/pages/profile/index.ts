@@ -19,7 +19,7 @@ Page({
   },
   fetchData() {
     getProfileData().then(data => {
-      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? false;
+      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? true;
       this.setData({
         userInfo: data.userInfo,
         settings: {
