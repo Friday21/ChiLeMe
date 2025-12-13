@@ -19,11 +19,12 @@ Page({
   },
   fetchData() {
     getProfileData().then(data => {
+      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? false;
       this.setData({
         userInfo: data.userInfo,
         settings: {
           ...data.settings,
-          includeRealEstate: true // Default value
+          includeRealEstate: includeRealEstate
         }
       });
     });
@@ -70,11 +71,11 @@ Page({
 
   // Settings
   onToggleRealEstate(e: any) {
+    const value = e.detail;
     this.setData({
-      'settings.includeRealEstate': e.detail
+      'settings.includeRealEstate': value
     });
-    // Here you would typically call an API to save the setting
-    console.log('Include Real Estate:', e.detail);
+    wx.setStorageSync('includeRealEstate', value);
   },
   goToAbout() {
     wx.showModal({

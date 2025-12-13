@@ -74,19 +74,13 @@
         />
         
         <van-field
-          value="{{ recordForm.category }}"
-          label="分类"
-          placeholder="例如：餐饮、交通"
-          bind:change="onRecordCategoryChange"
-        />
-
-        <van-field
           value="{{ recordForm.note }}"
           label="备注"
           placeholder="选填"
           bind:change="onRecordNoteChange"
         />
 
+        <van-cell title="账户" is-link value="{{ recordForm.account || '请选择' }}" bind:click="openAccountPicker" />
         <van-cell title="日期" is-link value="{{ recordForm.date }}" bind:click="openRecordDate" />
       </van-cell-group>
 
@@ -98,7 +92,7 @@
   </van-popup>
 
   <!-- Record Date Picker -->
-  <van-popup show="{{ showRecordDate }}" position="bottom" bind:close="closeRecordDate">
+  <van-popup show="{{ showRecordDate }}" position="bottom" bind:close="closeRecordDate" z-index="200">
     <van-datetime-picker
       type="date"
       value="{{ currentRecordDate }}"
@@ -106,6 +100,16 @@
       max-date="{{ maxDate }}"
       bind:confirm="onConfirmRecordDate"
       bind:cancel="closeRecordDate"
+    />
+  </van-popup>
+
+  <!-- Account Picker -->
+  <van-popup show="{{ showAccountPicker }}" position="bottom" bind:close="closeAccountPicker" z-index="200">
+    <van-picker
+      show-toolbar
+      columns="{{ accountColumns }}"
+      bind:confirm="onConfirmAccount"
+      bind:cancel="closeAccountPicker"
     />
   </van-popup>
 </view>

@@ -1,3 +1,14 @@
+<wxs module="utils">
+  function getPickerDisplay(options, range, value) {
+    if (!options || !range || !value) return '请选择';
+    var index = range.indexOf(value);
+    if (index > -1) {
+      return options[index];
+    }
+    return '请选择';
+  }
+  module.exports.getPickerDisplay = getPickerDisplay;
+</wxs>
 <view class="bg-gray-50 min-h-screen w-full">
   <van-tabs active="{{ activeTab }}" bind:change="onChangeTab" sticky>
     <!-- Assets List -->
@@ -108,7 +119,7 @@
   </view>
 
   <!-- Edit Popup -->
-  <van-popup show="{{ showEditPopup }}" position="bottom" round custom-style="height: 50%;" bind:close="onCloseEditPopup">
+  <van-popup show="{{ showEditPopup }}" position="bottom" round custom-style="height: 60%;" bind:close="onCloseEditPopup">
     <view class="p-4">
       <view class="text-center font-bold text-lg mb-4">{{ editTitle }}</view>
       <van-cell-group>
@@ -116,9 +127,39 @@
           <view wx:if="{{ item.inputType === 'radio' }}" class="p-3 bg-white border-b border-gray-100">
              <view class="text-sm text-gray-500 mb-2">{{item.label}}</view>
              <van-radio-group value="{{ item.value }}" direction="horizontal" data-key="{{ item.key }}" bind:change="onEditFieldChange">
-               <van-radio wx:for="{{ item.options }}" wx:key="value" name="{{ item.value }}" custom-class="mr-4">{{ item.label }}</van-radio>
+               <van-radio wx:for="{{ item.options }}" wx:for-item="option" wx:key="value" name="{{ option.value }}" custom-class="mr-4">{{ option.label }}</van-radio>
              </van-radio-group>
           </view>
+          <van-cell 
+            wx:elif="{{ item.inputType === 'picker' }}"
+            title="{{ item.label }}"
+            value="{{ utils.getPickerDisplay(item.options, item.range, item.value) }}"
+            is-link
+            data-key="{{ item.key }}"
+            bind:click="onPickerShow"
+          />
+          <van-cell 
+            wx:elif="{{ item.inputType === 'date-picker' }}"
+            title="{{ item.label }}"
+            value="{{ item.value || '请选择' }}"
+            is-link
+            data-frequency="{{ item.frequency }}"
+            bind:click="onDatePickerShow"
+          />
+          <van-cell 
+            wx:elif="{{ item.inputType === 'account-picker' }}"
+            title="{{ item.label }}"
+            value="{{ item.value || '请选择' }}"
+            is-link
+            bind:click="onAccountPickerShow"
+          />
+          <van-cell 
+            wx:elif="{{ item.inputType === 'calendar' }}"
+            title="{{ item.label }}"
+            value="{{ item.value || '请选择' }}"
+            is-link
+            bind:click="onCalendarShow"
+          />
           <van-field
             wx:else
             label="{{ item.label }}"
@@ -135,4 +176,37 @@
       </view>
     </view>
   </van-popup>
+
+  <!-- Frequency Picker (Reused as Generic Picker) -->
+  <van-popup show="{{ showFrequencyPicker }}" position="bottom" round bind:close="onFrequencyPickerCancel" z-index="200">
+    <van-picker
+      show-toolbar
+      columns="{{ frequencyColumns }}"
+      bind:confirm="onPickerConfirm"
+      bind:cancel="onFrequencyPickerCancel"
+    />
+  </van-popup>
+
+  <!-- Date Picker -->
+  <van-popup show="{{ showDatePicker }}" position="bottom" round bind:close="onDatePickerCancel" z-index="200">
+    <van-picker
+      show-toolbar
+      columns="{{ dateColumns }}"
+      bind:confirm="onDatePickerConfirm"
+      bind:cancel="onDatePickerCancel"
+    />
+  </van-popup>
+
+  <!-- Account Picker -->
+  <van-popup show="{{ showAccountPicker }}" position="bottom" round bind:close="onAccountPickerCancel" z-index="200">
+    <van-picker
+      show-toolbar
+      columns="{{ accountColumns }}"
+      bind:confirm="onAccountPickerConfirm"
+      bind:cancel="onAccountPickerCancel"
+    />
+  </van-popup>
+
+  <!-- Calendar -->
+  <van-calendar show="{{ showCalendar }}" bind:close="onCalendarClose" bind:confirm="onCalendarConfirm" z-index="200" />
 </view>

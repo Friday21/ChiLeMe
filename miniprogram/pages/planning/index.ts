@@ -13,7 +13,15 @@ Page({
     editFields: [],
     currentEditType: '',
     tempEditData: {},
-    isEditMode: false
+    isEditMode: false,
+    showFrequencyPicker: false,
+    showDatePicker: false,
+    showAccountPicker: false,
+    showCalendar: false,
+    frequencyColumns: ['每周', '每月', '每年'],
+    dateColumns: [] as any[],
+    accountColumns: [] as string[],
+    currentPickerKey: ''
   },
   onLoad() {
     this.fetchData();
@@ -122,16 +130,33 @@ Page({
       isEditMode: false,
       editFields: [
         { key: 'name', label: '名称', value: '', placeholder: '例如：工资' },
-        { key: 'type', label: '类型', value: 'income', placeholder: 'income/expense' },
+        { 
+          key: 'type', 
+          label: '类型', 
+          value: 'expense', 
+          inputType: 'radio', 
+          options: [
+            { label: '收入', value: 'income' },
+            { label: '支出', value: 'expense' }
+          ]
+        },
         { key: 'amount', label: '金额', value: '', placeholder: '请输入金额' },
-        { key: 'date', label: '日期', value: '', placeholder: '例如：每月 10 日' },
-        { key: 'account', label: '账户', value: '', placeholder: '请输入账户' }
+        { key: 'dateValue', label: '每月几号', value: '', placeholder: '1-31', inputType: 'number' },
+        { key: 'account', label: '账户', value: '', placeholder: '请选择账户', inputType: 'account-picker' }
       ],
-      tempEditData: {}
+      tempEditData: { type: 'expense', frequency: 'monthly' }
     });
   },
   editFixedItem(e: any) {
     const item = e.currentTarget.dataset.item;
+    
+    // Parse existing date format like "每月 10 日"
+    let dateValue = '';
+    if (item.date) {
+      const match = item.date.match(/(\d+)\s*日/);
+      if (match) dateValue = match[1];
+    }
+    
     this.setData({
       showEditPopup: true,
       editTitle: '编辑固定收支',
@@ -139,12 +164,21 @@ Page({
       isEditMode: true,
       editFields: [
         { key: 'name', label: '名称', value: item.name, placeholder: '例如：工资' },
-        { key: 'type', label: '类型', value: item.type, placeholder: 'income/expense' },
+        { 
+          key: 'type', 
+          label: '类型', 
+          value: item.type, 
+          inputType: 'radio', 
+          options: [
+            { label: '收入', value: 'income' },
+            { label: '支出', value: 'expense' }
+          ]
+        },
         { key: 'amount', label: '金额', value: item.amount, placeholder: '请输入金额' },
-        { key: 'date', label: '日期', value: item.date, placeholder: '例如：每月 10 日' },
-        { key: 'account', label: '账户', value: item.account, placeholder: '请输入账户' }
+        { key: 'dateValue', label: '每月几号', value: dateValue, placeholder: '1-31', inputType: 'number' },
+        { key: 'account', label: '账户', value: item.account, placeholder: '请选择账户', inputType: 'account-picker' }
       ],
-      tempEditData: { ...item }
+      tempEditData: { ...item, frequency: 'monthly', dateValue: dateValue }
     });
   },
 
@@ -167,6 +201,7 @@ Page({
         },
         { key: 'text', label: '标题', value: '', placeholder: '例如：年终奖' },
         { key: 'amount', label: '金额', value: '', placeholder: '请输入金额' },
+        { key: 'date', label: '日期', value: '', placeholder: '请选择日期', inputType: 'calendar' },
         { key: 'desc', label: '描述', value: '', placeholder: '例如：2025-12-25 · 预计入账' }
       ],
       tempEditData: { type: 'cash' }
@@ -200,7 +235,10 @@ Page({
         { key: 'amount', label: '金额', value: item.amount, placeholder: '请输入金额' }
       );
     }
-    fields.push({ key: 'desc', label: '描述', value: item.desc, placeholder: '例如：2025-12-25 · 预计入账' });
+    fields.push(
+      { key: 'date', label: '日期', value: item.date || '', placeholder: '请选择日期', inputType: 'calendar' },
+      { key: 'desc', label: '描述', value: item.desc, placeholder: '例如：2025-12-25 · 预计入账' }
+    );
 
     this.setData({
       showEditPopup: true,
@@ -224,10 +262,17 @@ Page({
         { key: 'principal', label: '剩余本金', value: '', placeholder: '请输入金额' },
         { key: 'periods', label: '剩余期数', value: '', placeholder: '请输入期数' },
         { key: 'rate', label: '年利率(%)', value: '', placeholder: '例如：3.25' },
-        { key: 'method', label: '还款方式', value: 'equal_principal_interest', placeholder: 'equal_principal_interest / equal_principal' },
-        { key: 'repaymentDate', label: '还款日', value: '', placeholder: '例如：每月 20 日' }
+        { 
+          key: 'method', 
+          label: '还款方式', 
+          value: 'equal_principal_interest', 
+          inputType: 'picker',
+          options: ['等额本息', '等额本金'],
+          range: ['equal_principal_interest', 'equal_principal']
+        },
+        { key: 'repaymentDate', label: '每月还款日', value: '', placeholder: '1-28', inputType: 'number' }
       ],
-      tempEditData: {}
+      tempEditData: { method: 'equal_principal_interest' }
     });
   },
   editLoan(e: any) {
@@ -242,8 +287,15 @@ Page({
         { key: 'principal', label: '剩余本金', value: item.principal, placeholder: '请输入金额' },
         { key: 'periods', label: '剩余期数', value: item.periods, placeholder: '请输入期数' },
         { key: 'rate', label: '年利率(%)', value: item.rate, placeholder: '例如：3.25' },
-        { key: 'method', label: '还款方式', value: item.method, placeholder: 'equal_principal_interest / equal_principal' },
-        { key: 'repaymentDate', label: '还款日', value: item.repaymentDate, placeholder: '例如：每月 20 日' }
+        { 
+          key: 'method', 
+          label: '还款方式', 
+          value: item.method, 
+          inputType: 'picker',
+          options: ['等额本息', '等额本金'],
+          range: ['equal_principal_interest', 'equal_principal']
+        },
+        { key: 'repaymentDate', label: '每月还款日', value: item.repaymentDate, placeholder: '1-28', inputType: 'number' }
       ],
       tempEditData: { ...item }
     });
@@ -256,6 +308,19 @@ Page({
     const key = event.currentTarget.dataset.key;
     const value = event.detail;
     this.data.tempEditData[key] = value;
+
+    // Handle frequency change for fixed items
+    if (key === 'frequency' && this.data.currentEditType === 'fixed') {
+      // Update the date field based on new frequency
+      const editFields = this.data.editFields.map(field => {
+        if (field.key === 'dateValue') {
+          return { ...field, frequency: value, value: '' };
+        }
+        return field;
+      });
+      this.setData({ editFields });
+      this.data.tempEditData.dateValue = '';
+    }
 
     // Dynamic field update for Asset and Future Income
     if (key === 'type') {
@@ -315,14 +380,36 @@ Page({
             { key: 'amount', label: '金额', value: this.data.tempEditData.amount || '', placeholder: '请输入金额' }
           );
         }
-        fields.push({ key: 'desc', label: '描述', value: this.data.tempEditData.desc || '', placeholder: '例如：2025-12-25 · 预计入账' });
+        fields.push(
+          { key: 'date', label: '日期', value: this.data.tempEditData.date || '', placeholder: '请选择日期', inputType: 'calendar' },
+          { key: 'desc', label: '描述', value: this.data.tempEditData.desc || '', placeholder: '例如：2025-12-25 · 预计入账' }
+        );
         this.setData({ editFields: fields });
       }
     }
   },
   submitEdit() {
-    wx.showLoading({ title: '保存中' });
     const { currentEditType, tempEditData, isEditMode } = this.data;
+    
+    // Validation for Fixed Income/Expense
+    if (currentEditType === 'fixed') {
+      if (!tempEditData.name || !tempEditData.amount || !tempEditData.dateValue || !tempEditData.account) {
+        wx.showToast({ title: '请填写完整', icon: 'none' });
+        return;
+      }
+      // Format date for fixed items before saving
+      tempEditData.date = `每月 ${tempEditData.dateValue} 日`;
+    }
+
+    // Validation for Loan
+    if (currentEditType === 'loan') {
+      if (!tempEditData.name || !tempEditData.principal || !tempEditData.periods || !tempEditData.rate || !tempEditData.method || !tempEditData.repaymentDate) {
+        wx.showToast({ title: '请填写完整', icon: 'none' });
+        return;
+      }
+    }
+
+    wx.showLoading({ title: '保存中' });
     
     let promise;
     if (currentEditType === 'asset') {
@@ -343,6 +430,177 @@ Page({
       this.setData({ showEditPopup: false });
       this.fetchData(); // Reload data
     });
+  },
+  formatFixedItemDate(frequency: string, dateValue: string): string {
+    if (frequency === 'weekly') {
+      return `每周周${dateValue}`;
+    } else if (frequency === 'monthly') {
+      return `每月 ${dateValue} 日`;
+    } else if (frequency === 'yearly') {
+      const parts = dateValue.split('-');
+      return `每年 ${parts[0]}月${parts[1]}日`;
+    }
+    return dateValue;
+  },
+  onFrequencyPickerShow(e: any) {
+    this.setData({ showFrequencyPicker: true });
+  },
+  onFrequencyPickerConfirm(e: any) {
+    const { value, index } = e.detail;
+    const frequencyValues = ['weekly', 'monthly', 'yearly'];
+    this.data.tempEditData.frequency = frequencyValues[index];
+    
+    // Update editFields
+    const editFields = this.data.editFields.map(field => {
+      if (field.key === 'frequency') {
+        return { ...field, value: frequencyValues[index] };
+      }
+      if (field.key === 'dateValue') {
+        return { ...field, frequency: frequencyValues[index], value: '' };
+      }
+      return field;
+    });
+    
+    this.setData({ 
+      showFrequencyPicker: false,
+      editFields,
+      tempEditData: { ...this.data.tempEditData, dateValue: '' }
+    });
+  },
+  onFrequencyPickerCancel() {
+    this.setData({ showFrequencyPicker: false });
+  },
+  onDatePickerShow(e: any) {
+    const frequency = e.currentTarget.dataset.frequency || 'monthly';
+    let columns = [];
+    
+    if (frequency === 'weekly') {
+      columns = ['一', '二', '三', '四', '五', '六', '日'];
+    } else if (frequency === 'monthly') {
+      columns = Array.from({ length: 31 }, (_, i) => `${i + 1}`);
+    } else if (frequency === 'yearly') {
+      // For yearly, we'll use a simple text input instead
+      this.setData({ showDatePicker: false });
+      return;
+    }
+    
+    this.setData({ 
+      showDatePicker: true,
+      dateColumns: columns
+    });
+  },
+  onDatePickerConfirm(e: any) {
+    const { value, index } = e.detail;
+    const frequency = this.data.tempEditData.frequency || 'monthly';
+    
+    this.data.tempEditData.dateValue = value;
+    
+    const editFields = this.data.editFields.map(field => {
+      if (field.key === 'dateValue') {
+        return { ...field, value: value };
+      }
+      return field;
+    });
+    
+    this.setData({ 
+      showDatePicker: false,
+      editFields
+    });
+  },
+  onDatePickerCancel() {
+    this.setData({ showDatePicker: false });
+  },
+  onAccountPickerShow() {
+    const cashAssets = this.data.assets.filter((a: any) => a.type === 'cash').map((a: any) => a.name);
+    this.setData({ 
+      showAccountPicker: true,
+      accountColumns: cashAssets
+    });
+  },
+  onAccountPickerConfirm(e: any) {
+    const { value } = e.detail;
+    this.data.tempEditData.account = value;
+    
+    const editFields = this.data.editFields.map(field => {
+      if (field.key === 'account') {
+        return { ...field, value: value };
+      }
+      return field;
+    });
+    
+    this.setData({ 
+      showAccountPicker: false,
+      editFields
+    });
+  },
+  onAccountPickerCancel() {
+    this.setData({ showAccountPicker: false });
+  },
+  
+  // Generic Picker for other fields (like Loan Method)
+  onPickerShow(e: any) {
+    const key = e.currentTarget.dataset.key;
+    const field = this.data.editFields.find(f => f.key === key);
+    if (field && field.options) {
+      this.setData({
+        showFrequencyPicker: true, // Reuse frequency picker popup for simplicity or create a new generic one
+        frequencyColumns: field.options,
+        currentPickerKey: key
+      });
+    }
+  },
+  onPickerConfirm(e: any) {
+    const { value, index } = e.detail;
+    const key = this.data.currentPickerKey;
+    
+    if (key === 'method') {
+       const field = this.data.editFields.find(f => f.key === key);
+       const realValue = field.range[index];
+       this.data.tempEditData[key] = realValue;
+       
+       const editFields = this.data.editFields.map(f => {
+         if (f.key === key) {
+           return { ...f, value: realValue };
+         }
+         return f;
+       });
+       this.setData({ editFields });
+    } else {
+       // Fallback for frequency if still used
+       this.onFrequencyPickerConfirm(e);
+       return;
+    }
+    
+    this.setData({ showFrequencyPicker: false });
+  },
+  onCalendarShow() {
+    this.setData({ showCalendar: true });
+  },
+  onCalendarClose() {
+    this.setData({ showCalendar: false });
+  },
+  onCalendarConfirm(e: any) {
+    const date = e.detail;
+    // Format date to YYYY-MM-DD
+    const dateStr = this.formatDate(date);
+    
+    this.data.tempEditData.date = dateStr;
+    
+    const editFields = this.data.editFields.map(field => {
+      if (field.key === 'date') {
+        return { ...field, value: dateStr };
+      }
+      return field;
+    });
+    
+    this.setData({ 
+      showCalendar: false,
+      editFields
+    });
+  },
+  formatDate(date: Date) {
+    date = new Date(date);
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   },
   deleteItem() {
     const { currentEditType, tempEditData } = this.data;

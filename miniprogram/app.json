@@ -26,20 +26,20 @@
       {
         "pagePath": "pages/dashboard/index",
         "text": "总览",
-        "iconPath": "pages/assets/ic_board.png",
-        "selectedIconPath": "pages/assets/ic_board_active.png"
-      },
-      {
-        "pagePath": "pages/transactions/index",
-        "text": "明细",
-        "iconPath": "pages/assets/ic_mall.png",
-        "selectedIconPath": "pages/assets/ic_mall_active.png"
+        "iconPath": "pages/assets/mutemic.png",
+        "selectedIconPath": "pages/assets/redmic.png"
       },
       {
         "pagePath": "pages/planning/index",
         "text": "资产",
         "iconPath": "pages/assets/calendar_muted.png",
         "selectedIconPath": "pages/assets/calendar_active.png"
+      },
+      {
+        "pagePath": "pages/transactions/index",
+        "text": "明细",
+        "iconPath": "pages/assets/report.png",
+        "selectedIconPath": "pages/assets/ic_mall_active.png"
       },
       {
         "pagePath": "pages/profile/index",

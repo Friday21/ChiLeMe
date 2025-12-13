@@ -1,4 +1,4 @@
-import { getTransactions, recordTransaction, deleteTransaction } from '../../utils/service';
+import { getTransactions, recordTransaction, deleteTransaction, getPlanningData } from '../../utils/service';
 
 Page({
   data: {
@@ -12,6 +12,8 @@ Page({
     showRecordForm: false,
     isEditMode: false,
     showRecordDate: false,
+    showAccountPicker: false,
+    accountColumns: [] as string[],
     currentRecordDate: new Date().getTime(),
     recordForm: {
       id: '',
@@ -19,11 +21,13 @@ Page({
       amount: '',
       category: '',
       note: '',
-      date: ''
+      date: '',
+      account: ''
     }
   },
   onLoad() {
     this.fetchTransactions();
+    this.fetchAccounts();
     const date = new Date();
     const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     this.setData({
@@ -34,6 +38,12 @@ Page({
   fetchTransactions() {
     getTransactions().then(data => {
       this.setData({ transactions: data });
+    });
+  },
+  fetchAccounts() {
+    getPlanningData().then(data => {
+      const cashAssets = data.assets.filter((a: any) => a.type === 'cash').map((a: any) => a.name);
+      this.setData({ accountColumns: cashAssets });
     });
   },
   onSearch(e: any) {
@@ -52,7 +62,8 @@ Page({
           amount: item.amount.replace(/,/g, ''), // Remove commas for input
           category: item.category,
           note: item.note || '',
-          date: item.date
+          date: item.date,
+          account: item.account || ''
         }
       });
     }
@@ -64,7 +75,7 @@ Page({
     this.setData({ 
       showRecordForm: true,
       isEditMode: false,
-      recordForm: { id: '', type: 'expense', amount: '', category: '', note: '', date: formattedDate }
+      recordForm: { id: '', type: 'expense', amount: '', category: '', note: '', date: formattedDate, account: '' }
     });
   },
 
@@ -118,10 +129,24 @@ Page({
       showRecordDate: false
     });
   },
+  
+  openAccountPicker() {
+    this.setData({ showAccountPicker: true });
+  },
+  closeAccountPicker() {
+    this.setData({ showAccountPicker: false });
+  },
+  onConfirmAccount(event: any) {
+    const { value } = event.detail;
+    this.setData({
+      'recordForm.account': value,
+      showAccountPicker: false
+    });
+  },
 
   submitRecord() {
-    const { type, amount, category, date } = this.data.recordForm;
-    if (!amount || !category || !date) {
+    const { type, amount, category, date, account } = this.data.recordForm;
+    if (!amount || !date || !account) {
       wx.showToast({ title: '请填写完整', icon: 'none' });
       return;
     }
@@ -132,7 +157,7 @@ Page({
       wx.showToast({ title: '已保存', icon: 'success' });
       this.setData({ 
         showRecordForm: false,
-        recordForm: { id: '', type: 'expense', amount: '', category: '', note: '', date: '' }
+        recordForm: { id: '', type: 'expense', amount: '', category: '', note: '', date: '', account: '' }
       });
       this.fetchTransactions();
     });

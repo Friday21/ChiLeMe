@@ -15,6 +15,8 @@
     "van-radio-group": "@vant/weapp/radio-group/index",
     "van-radio": "@vant/weapp/radio/index",
     "van-icon": "@vant/weapp/icon/index",
-    "van-tag": "@vant/weapp/tag/index"
+    "van-tag": "@vant/weapp/tag/index",
+    "van-picker": "@vant/weapp/picker/index",
+    "van-calendar": "@vant/weapp/calendar/index"
   }
 }

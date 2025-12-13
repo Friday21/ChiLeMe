@@ -2,12 +2,9 @@ import { getDashboardData } from '../../utils/service';
 
 Page({
   data: {
-    todayDate: '',
     netWorth: '',
     netWorthChange: '',
-    cashAmount: '',
-    stockAmount: '',
-    mortgageAmount: '',
+    assetItems: [] as any[],
     monthlyBalance: '',
     monthlyIncome: '',
     monthlyExpense: '',
@@ -36,66 +33,60 @@ Page({
       }
     },
     trendData: {},
-    ringOpts: {
-      animation: true,
-      legend: { show: false },
-      dataLabel: false,
-      title: {
-        name: "70%",
-        fontSize: 15,
-        color: "#1890ff"
-      },
-      subtitle: {
-        name: "净资产",
-        fontSize: 10,
-        color: "#666666"
-      },
-      extra: {
-        ring: {
-          ringWidth: 15,
-          activeOpacity: 0.5,
-          activeRadius: 10,
-          offsetAngle: 0,
-          labelWidth: 15,
-          border: false,
-          borderWidth: 3,
-          borderColor: "#FFFFFF"
-        }
-      }
-    },
-    ringData: {},
   },
   onLoad() {
-    const date = new Date();
-    const formattedDate = `${date.getMonth() + 1}月${date.getDate()}日`;
-    this.setData({
-      todayDate: formattedDate
-    });
+    // Dashboard initialization
   },
   onShow() {
     this.fetchData();
   },
   fetchData() {
     getDashboardData().then(data => {
-      const finalNetWorth = parseFloat(data.netWorth.replace(/,/g, ''));
+      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? false;
+      
+      const cash = parseFloat(data.cashAmount.replace(/,/g, ''));
+      const stock = parseFloat(data.stockAmount.replace(/,/g, ''));
+      const house = parseFloat((data.houseAmount || '5,320,000').replace(/,/g, ''));
+      const mortgage = parseFloat(data.mortgageAmount.replace(/,/g, ''));
+      
+      let netWorthVal = cash + stock - mortgage;
+      if (includeRealEstate) {
+        netWorthVal += house;
+      }
+      
+      const finalNetWorth = netWorthVal;
+
+      // Use asset items from API
+      let assetItems = data.assetItems || [];
+
+      if (!includeRealEstate) {
+        assetItems = assetItems.filter((item: any) => item.name !== '固定资产');
+      }
 
       this.setData({
         netWorthChange: data.netWorthChange,
-        cashAmount: data.cashAmount,
-        stockAmount: data.stockAmount,
-        mortgageAmount: data.mortgageAmount,
+        assetItems: assetItems,
         monthlyBalance: data.monthlyBalance,
         monthlyIncome: data.monthlyIncome,
         monthlyExpense: data.monthlyExpense,
         monthlyStockProfit: data.monthlyStockProfit,
         incomePercent: data.incomePercent,
         expensePercent: data.expensePercent,
-        trendData: data.trendData,
-        ringData: data.ringData
+        trendData: data.trendData
       });
 
       this.animateNum(finalNetWorth);
     });
+  },
+  toggleExpand(e: any) {
+    const { id } = e.currentTarget.dataset;
+    const assetItems = this.data.assetItems.map((item: any) => {
+      if (item.id === id) {
+        return { ...item, expanded: !item.expanded };
+      }
+      return item;
+    });
+    this.setData({ assetItems });
   },
   animateNum(finalVal: number) {
     const duration = 1000;

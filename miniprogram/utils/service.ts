@@ -184,100 +184,73 @@ export {
 // Note: These functions are currently mocks. 
 // Backend developers should implement the corresponding API endpoints and update these functions to use callContainer.
 
-const recordTransaction = (data: any): Promise<any> => {
-  // Backend API: POST /api/transactions/
-  // If data.id exists, it's an update (PUT /api/transactions/:id/)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('Recorded transaction:', data);
-      resolve({ success: true, ...data });
-    }, 500);
-  });
-};
-
-const deleteTransaction = (id: string): Promise<any> => {
-  // Backend API: DELETE /api/transactions/:id/
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('Deleted transaction:', id);
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-const updatePlanningData = (type: string, data: any): Promise<any> => {
-  // Backend API: POST/PUT /api/planning/:type/
-  // Used for future items or generic planning updates
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Updated ${type} planning data:`, data);
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-const manageAsset = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
-  // Backend API: 
-  // add -> POST /api/assets/
-  // update -> PUT /api/assets/:id/
-  // delete -> DELETE /api/assets/:id/
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Asset ${action}:`, data);
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-const manageFixedItem = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
-  // Backend API: 
-  // add -> POST /api/fixed-items/
-  // update -> PUT /api/fixed-items/:id/
-  // delete -> DELETE /api/fixed-items/:id/
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Fixed Item ${action}:`, data);
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-const manageLoan = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
-  // Backend API: 
-  // add -> POST /api/loans/
-  // update -> PUT /api/loans/:id/
-  // delete -> DELETE /api/loans/:id/
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Loan ${action}:`, data);
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
-const manageFutureItem = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
-  // Backend API: 
-  // add -> POST /api/future-items/
-  // update -> PUT /api/future-items/:id/
-  // delete -> DELETE /api/future-items/:id/
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Future Item ${action}:`, data);
-      resolve({ success: true });
-    }, 500);
-  });
-};
-
+/**
+ * Dashboard API
+ * GET /api/dashboard/summary/
+ * Returns: Dashboard overview with net worth, assets breakdown, monthly summary, and chart data
+ */
 const getDashboardData = (): Promise<any> => {
-  // Backend API: GET /api/dashboard/summary/
+  // TODO: Replace with: return callContainer('/api/dashboard/summary/', 'GET');
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        netWorth: '1,234,567',
+        netWorth: '5,196,800',
         netWorthChange: '8,230',
-        cashAmount: '52,300',
-        stockAmount: '198,500',
-        mortgageAmount: '1,698,000',
+        cashAmount: '81,000',
+        stockAmount: '35,800',
+        mortgageAmount: '240,000',
+        houseAmount: '5,320,000',
+        assetItems: [
+          {
+            id: 1,
+            name: '流动资金',
+            subtitle: '微信钱包、招商银行',
+            amount: '81,000',
+            updateDate: '12月3日 更新',
+            isNegative: false,
+            expanded: false,
+            children: [
+              { name: '微信钱包', subtitle: '零钱', amount: '1,000.00', date: '12月3日' },
+              { name: '招商银行', subtitle: '储蓄卡', amount: '80,000.00', date: '12月3日' }
+            ]
+          },
+          {
+            id: 2,
+            name: '投资',
+            subtitle: '股票',
+            amount: '35,800',
+            updateDate: '12月3日 更新',
+            isNegative: false,
+            expanded: false,
+            children: [
+               { name: '腾讯控股', subtitle: '港股', amount: '35,800.00', date: '12月3日' }
+            ]
+          },
+          {
+            id: 3,
+            name: '固定资产',
+            subtitle: '云居之江',
+            amount: '5,320,000',
+            updateDate: '12月3日 更新',
+            isNegative: false,
+            expanded: false,
+            children: [
+               { name: '云居之江', subtitle: '自住', amount: '5,320,000', date: '12月3日' }
+            ]
+          },
+          {
+            id: 4,
+            name: '负债',
+            subtitle: '欠债',
+            amount: '240,000',
+            updateDate: '12月3日 更新',
+            isNegative: true,
+            expanded: false,
+            children: [
+               { name: '公积金贷款', subtitle: '房贷', amount: '240,000', date: '12月3日' }
+            ]
+          }
+        ],
         monthlyBalance: '5,001',
         monthlyIncome: '20,000',
         monthlyExpense: '14,999',
@@ -303,9 +276,14 @@ const getDashboardData = (): Promise<any> => {
   });
 };
 
+/**
+ * Transactions API - List
+ * GET /api/transactions/
+ * Query params: ?month=2025-11&type=income&category=工资
+ * Returns: Array of transaction records
+ */
 const getTransactions = (filter?: any): Promise<any> => {
-  // Backend API: GET /api/transactions/
-  // Support query params: ?month=2025-11&type=income
+  // TODO: Replace with: return callContainer('/api/transactions/', 'GET', filter);
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve([
@@ -318,15 +296,56 @@ const getTransactions = (filter?: any): Promise<any> => {
   });
 };
 
+/**
+ * Transactions API - Create/Update
+ * POST /api/transactions/ (create)
+ * PUT /api/transactions/:id/ (update)
+ * Body: { type, category, amount, date, account, note, icon }
+ * Returns: Created/updated transaction record
+ */
+const recordTransaction = (data: any): Promise<any> => {
+  // TODO: Replace with:
+  // if (data.id) {
+  //   return callContainer(`/api/transactions/${data.id}/`, 'PUT', data);
+  // } else {
+  //   return callContainer('/api/transactions/', 'POST', data);
+  // }
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('Recorded transaction:', data);
+      resolve({ success: true, ...data });
+    }, 500);
+  });
+};
+
+/**
+ * Transactions API - Delete
+ * DELETE /api/transactions/:id/
+ * Returns: Success status
+ */
+const deleteTransaction = (id: string): Promise<any> => {
+  // TODO: Replace with: return callContainer(`/api/transactions/${id}/`, 'DELETE');
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('Deleted transaction:', id);
+      resolve({ success: true });
+    }, 500);
+  });
+};
+
+/**
+ * Planning API - Get All Planning Data
+ * GET /api/planning/summary/
+ * Returns: Aggregated data for Assets, Fixed Items, Future Income, Loans
+ */
 const getPlanningData = (): Promise<any> => {
-  // Backend API: GET /api/planning/summary/
-  // Should return aggregated data for Assets, Fixed Items, Future Steps, Loans
+  // TODO: Replace with: return callContainer('/api/planning/summary/', 'GET');
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         assets: [
           { id: 1, name: '招商银行', type: 'cash', value: '20,000', desc: '尾号 8888' },
-          { id: 2, name: '腾讯股票', type: 'stock', value: '198,500', desc: '港股账户' },
+          { id: 2, name: '腾讯股票', type: 'stock', value: '198,500', desc: '港股账户', stockCode: '00700', shares: '100' },
           { id: 3, name: '自住房', type: 'house', value: '3,500,000', desc: '估值' }
         ],
         fixed: [
@@ -335,20 +354,26 @@ const getPlanningData = (): Promise<any> => {
         ],
         futureSteps: [
           {
+            id: 1,
             type: 'cash',
             text: '年终奖 +20,000',
+            amount: '20,000',
             desc: '2025-12-25 · 预计入账',
             inactiveIcon: 'circle',
             activeIcon: 'checked'
           },
           {
+            id: 2,
             type: 'stock',
             text: 'RSU 10 股归属',
+            stockCode: '00700',
+            shares: '10',
             desc: '2026-01-15 · 约 +8,000',
             inactiveIcon: 'circle',
             activeIcon: 'checked'
           },
           {
+            id: 3,
             type: 'cash',
             text: '季度奖金',
             desc: '2026-03-31 · 待定',
@@ -381,8 +406,129 @@ const getPlanningData = (): Promise<any> => {
   });
 };
 
+/**
+ * Assets API - Manage (Create/Update/Delete)
+ * POST /api/assets/ (create)
+ * PUT /api/assets/:id/ (update)
+ * DELETE /api/assets/:id/ (delete)
+ * Body: { name, type, value, desc, stockCode?, shares? }
+ * Returns: Success status and updated record
+ */
+const manageAsset = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
+  // TODO: Replace with:
+  // if (action === 'add') {
+  //   return callContainer('/api/assets/', 'POST', data);
+  // } else if (action === 'update') {
+  //   return callContainer(`/api/assets/${data.id}/`, 'PUT', data);
+  // } else if (action === 'delete') {
+  //   return callContainer(`/api/assets/${data.id}/`, 'DELETE');
+  // }
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Asset ${action}:`, data);
+      resolve({ success: true, data });
+    }, 500);
+  });
+};
+
+/**
+ * Fixed Items API - Manage (Create/Update/Delete)
+ * POST /api/fixed-items/ (create)
+ * PUT /api/fixed-items/:id/ (update)
+ * DELETE /api/fixed-items/:id/ (delete)
+ * Body: { name, type, amount, frequency, dateValue, date, account, enabled }
+ * Returns: Success status and updated record
+ */
+const manageFixedItem = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
+  // TODO: Replace with:
+  // if (action === 'add') {
+  //   return callContainer('/api/fixed-items/', 'POST', data);
+  // } else if (action === 'update') {
+  //   return callContainer(`/api/fixed-items/${data.id}/`, 'PUT', data);
+  // } else if (action === 'delete') {
+  //   return callContainer(`/api/fixed-items/${data.id}/`, 'DELETE');
+  // }
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Fixed Item ${action}:`, data);
+      resolve({ success: true, data });
+    }, 500);
+  });
+};
+
+/**
+ * Future Items API - Manage (Create/Update/Delete)
+ * POST /api/future-items/ (create)
+ * PUT /api/future-items/:id/ (update)
+ * DELETE /api/future-items/:id/ (delete)
+ * Body: { type, text, amount?, stockCode?, shares?, desc }
+ * Returns: Success status and updated record
+ */
+const manageFutureItem = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
+  // TODO: Replace with:
+  // if (action === 'add') {
+  //   return callContainer('/api/future-items/', 'POST', data);
+  // } else if (action === 'update') {
+  //   return callContainer(`/api/future-items/${data.id}/`, 'PUT', data);
+  // } else if (action === 'delete') {
+  //   return callContainer(`/api/future-items/${data.id}/`, 'DELETE');
+  // }
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Future Item ${action}:`, data);
+      resolve({ success: true, data });
+    }, 500);
+  });
+};
+
+/**
+ * Loans API - Manage (Create/Update/Delete)
+ * POST /api/loans/ (create)
+ * PUT /api/loans/:id/ (update)
+ * DELETE /api/loans/:id/ (delete)
+ * Body: { name, principal, periods, rate, method, repaymentDate }
+ * Returns: Success status and updated record
+ */
+const manageLoan = (action: 'add'|'update'|'delete', data: any): Promise<any> => {
+  // TODO: Replace with:
+  // if (action === 'add') {
+  //   return callContainer('/api/loans/', 'POST', data);
+  // } else if (action === 'update') {
+  //   return callContainer(`/api/loans/${data.id}/`, 'PUT', data);
+  // } else if (action === 'delete') {
+  //   return callContainer(`/api/loans/${data.id}/`, 'DELETE');
+  // }
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Loan ${action}:`, data);
+      resolve({ success: true, data });
+    }, 500);
+  });
+};
+
+/**
+ * Planning Data API - Generic Update (Legacy)
+ * POST /api/planning/:type/
+ * Body: Planning data for specific type
+ * Returns: Success status
+ */
+const updatePlanningData = (type: string, data: any): Promise<any> => {
+  // TODO: Replace with: return callContainer(`/api/planning/${type}/`, 'POST', data);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Updated ${type} planning data:`, data);
+      resolve({ success: true });
+    }, 500);
+  });
+};
+
+/**
+ * Profile API - Get User Profile
+ * GET /api/profile/
+ * Returns: User info, accounts list, and settings
+ */
 const getProfileData = (): Promise<any> => {
-  // Backend API: GET /api/profile/
+  // TODO: Replace with: return callContainer('/api/profile/', 'GET');
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
@@ -405,8 +551,13 @@ const getProfileData = (): Promise<any> => {
   });
 };
 
+/**
+ * Asset Correction API - Get Current Values
+ * GET /api/assets/correction/
+ * Returns: System calculated values for cash and stocks
+ */
 const getAssetCorrectionData = (): Promise<any> => {
-  // Backend API: GET /api/assets/correction/
+  // TODO: Replace with: return callContainer('/api/assets/correction/', 'GET');
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
@@ -417,8 +568,14 @@ const getAssetCorrectionData = (): Promise<any> => {
   });
 };
 
+/**
+ * Asset Correction API - Save Corrected Values
+ * POST /api/assets/correction/
+ * Body: { cashActual, stockActual, note }
+ * Returns: Success status
+ */
 const saveAssetCorrection = (data: any): Promise<any> => {
-  // Backend API: POST /api/assets/correction/
+  // TODO: Replace with: return callContainer('/api/assets/correction/', 'POST', data);
   return new Promise((resolve) => {
     setTimeout(() => {
       console.log('Saved correction:', data);
