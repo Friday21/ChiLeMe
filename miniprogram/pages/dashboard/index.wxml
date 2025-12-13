@@ -73,4 +73,29 @@ module.exports.getColor = getColor;
       </view>
     </block>
   </view>
+
+  <!-- Monthly Summary -->
+  <view class="monthly-summary">
+    <view class="summary-header">
+      <text class="summary-title">本月收支</text>
+      <text class="summary-balance">结余 {{monthlyBalance}}</text>
+    </view>
+    
+    <view class="progress-container">
+      <view class="progress-bg">
+        <view class="progress-fill" style="width: {{expenseProgress}}%; background-color: {{expenseProgress > 100 ? '#EE6666' : '#5BC27E'}};"></view>
+      </view>
+    </view>
+    
+    <view class="summary-details">
+      <view class="detail-item">
+        <text class="detail-label">本月支出</text>
+        <text class="detail-amount">{{monthlyExpense}}</text>
+      </view>
+      <view class="detail-item" style="align-items: flex-end;">
+        <text class="detail-label">本月收入</text>
+        <text class="detail-amount">{{monthlyIncome}}</text>
+      </view>
+    </view>
+  </view>
 </view>

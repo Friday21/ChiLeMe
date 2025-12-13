@@ -59,6 +59,14 @@ Page({
       // Use asset items from API
       let assetItems = data.assetItems || [];
 
+      // Calculate expense progress
+      const monthlyIncomeVal = parseFloat(data.monthlyIncome.replace(/,/g, ''));
+      const monthlyExpenseVal = parseFloat(data.monthlyExpense.replace(/,/g, ''));
+      let expenseProgress = 0;
+      if (monthlyIncomeVal > 0) {
+        expenseProgress = (monthlyExpenseVal / monthlyIncomeVal) * 100;
+      }
+
       this.setData({
         netWorthChange: data.netWorthChange,
         assetItems: assetItems,
@@ -68,6 +76,7 @@ Page({
         monthlyStockProfit: data.monthlyStockProfit,
         incomePercent: data.incomePercent,
         expensePercent: data.expensePercent,
+        expenseProgress: expenseProgress,
         trendData: data.trendData
       });
 
