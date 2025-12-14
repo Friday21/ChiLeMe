@@ -2,7 +2,7 @@
   "pages": [
     "pages/dashboard/index",
     "pages/transactions/index",
-    "pages/planning/index",
+    "pages/assetsManage/index",
     "pages/profile/index",
     "pages/index/index",
     "pages/users/users",
@@ -30,7 +30,7 @@
         "selectedIconPath": "pages/assets/money_active.png"
       },
       {
-        "pagePath": "pages/planning/index",
+        "pagePath": "pages/assetsManage/index",
         "text": "管理",
         "iconPath": "pages/assets/calendar_muted.png",
         "selectedIconPath": "pages/assets/calendar_active.png"

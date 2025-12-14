@@ -23,11 +23,20 @@ Page({
       note: '',
       date: '',
       account: ''
-    }
+    },
+    openId: ''
   },
   onLoad() {
-    this.fetchTransactions();
-    this.fetchAccounts();
+    const app = getApp<IAppOption>();
+    const openId = app.globalData.openId || wx.getStorageSync('openId');
+    if (openId) {
+      this.setData({ openId });
+      this.fetchTransactions();
+      this.fetchAccounts();
+    } else {
+      console.error('OpenID not found');
+    }
+
     const date = new Date();
     const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     this.setData({
@@ -36,12 +45,14 @@ Page({
     });
   },
   fetchTransactions() {
-    getTransactions().then(data => {
+    if (!this.data.openId) return;
+    getTransactions(this.data.openId).then(data => {
       this.setData({ transactions: data });
     });
   },
   fetchAccounts() {
-    getPlanningData().then(data => {
+    if (!this.data.openId) return;
+    getPlanningData(this.data.openId).then(data => {
       const cashAssets = data.assets.filter((a: any) => a.type === 'cash').map((a: any) => a.name);
       this.setData({ accountColumns: cashAssets });
     });
@@ -152,7 +163,8 @@ Page({
     }
     
     wx.showLoading({ title: '保存中' });
-    recordTransaction(this.data.recordForm).then(res => {
+    if (!this.data.openId) return;
+    recordTransaction(this.data.openId, this.data.recordForm).then(res => {
       wx.hideLoading();
       wx.showToast({ title: '已保存', icon: 'success' });
       this.setData({ 
@@ -164,7 +176,7 @@ Page({
   },
   deleteRecord() {
     const { id } = this.data.recordForm;
-    if (!id) return;
+    if (!id || !this.data.openId) return;
 
     wx.showModal({
       title: '确认删除',
@@ -172,7 +184,7 @@ Page({
       success: (res) => {
         if (res.confirm) {
           wx.showLoading({ title: '删除中' });
-          deleteTransaction(id).then(() => {
+          deleteTransaction(this.data.openId, id).then(() => {
             wx.hideLoading();
             wx.showToast({ title: '已删除', icon: 'success' });
             this.setData({ showRecordForm: false });

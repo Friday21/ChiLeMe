@@ -7,7 +7,14 @@
     }
     return '请选择';
   }
+  function formatFixedDate(date) {
+    if (typeof date === 'number') {
+      return '每月 ' + date + ' 日';
+    }
+    return date;
+  }
   module.exports.getPickerDisplay = getPickerDisplay;
+  module.exports.formatFixedDate = formatFixedDate;
 </wxs>
 <view class="bg-gray-50 min-h-screen w-full">
   <van-tabs active="{{ activeTab }}" bind:change="onChangeTab" sticky>
@@ -22,7 +29,7 @@
               </view>
               <view>
                 <view class="font-bold text-gray-800">{{ item.name }}</view>
-                <view class="text-xs text-gray-500 mt-1">{{ item.desc }}</view>
+                <view class="text-xs text-gray-500 mt-1" wx:if="{{ item.desc }}">{{ item.desc }}</view>
               </view>
             </view>
             <view class="font-bold text-lg">{{ item.value }}</view>
@@ -46,7 +53,7 @@
               </view>
               <view class="flex justify-between mb-2">
                 <view class="text-gray-500">日期</view>
-                <view>{{ item.date }}</view>
+                <view>{{ utils.formatFixedDate(item.date_value) }}</view>
               </view>
               <view class="flex justify-between">
                 <view class="text-gray-500">账户</view>
@@ -68,8 +75,8 @@
                 {{ item.type === 'stock' ? '📈' : '💰' }}
               </view>
               <view>
-                <view class="font-bold text-gray-800">{{ item.text }}</view>
-                <view class="text-xs text-gray-500 mt-1">{{ item.desc }}</view>
+                <view class="font-bold text-gray-800">{{ item.name }}</view>
+                <view class="text-xs text-gray-500 mt-1" wx:if="{{ item.desc }}">{{ item.desc }}</view>
               </view>
             </view>
             <view class="font-bold text-lg text-purple-600">{{ item.amount || '待定' }}</view>
@@ -102,7 +109,7 @@
               </view>
               <view>
                 <view class="text-xs text-gray-500">还款日</view>
-                <view class="font-bold">{{ item.repaymentDate }}</view>
+                <view class="font-bold">{{ item.repayment_date }}</view>
               </view>
             </view>
           </view>

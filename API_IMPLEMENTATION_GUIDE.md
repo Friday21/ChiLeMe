@@ -104,7 +104,7 @@ GET /api/planning/summary/
       "type": "cash|stock|house",
       "value": "20,000",
       "desc": "尾号 8888",
-      "stockCode": "00700",
+      "stock_code": "00700",
       "shares": "100"
     }
   ],
@@ -116,7 +116,7 @@ GET /api/planning/summary/
       "amount": "20,000",
       "date": "每月 10 日",
       "frequency": "weekly|monthly|yearly",
-      "dateValue": "10",
+      "date_value": "10",
       "account": "招行工资卡",
       "enabled": true
     }
@@ -127,7 +127,7 @@ GET /api/planning/summary/
       "type": "cash|stock",
       "text": "年终奖 +20,000",
       "amount": "20,000",
-      "stockCode": "00700",
+      "stock_code": "00700",
       "shares": "10",
       "desc": "2025-12-25 · 预计入账"
     }
@@ -158,7 +158,7 @@ Body: {
   "type": "cash|stock|house",
   "value": "20000",
   "desc": "尾号 8888",
-  "stockCode": "00700",  // Optional, for stocks
+  "stock_code": "00700",  // Optional, for stocks
   "shares": "100"        // Optional, for stocks
 }
 ```
@@ -186,7 +186,7 @@ Body: {
   "type": "income|expense",
   "amount": "20000",
   "frequency": "weekly|monthly|yearly",
-  "dateValue": "10",        // Day for monthly, weekday for weekly, "M-D" for yearly
+  "date_value": "10",        // Day for monthly, weekday for weekly, "M-D" for yearly
   "date": "每月 10 日",      // Formatted string
   "account": "招行工资卡",
   "enabled": true
@@ -194,9 +194,9 @@ Body: {
 ```
 
 **Date Format Examples:**
-- Weekly: `dateValue: "一"` → `date: "每周周一"`
-- Monthly: `dateValue: "15"` → `date: "每月 15 日"`
-- Yearly: `dateValue: "1-1"` → `date: "每年 1月1日"`
+- Weekly: `date_value: "一"` → `date: "每周周一"`
+- Monthly: `date_value: "15"` → `date: "每月 15 日"`
+- Yearly: `date_value: "1-1"` → `date: "每年 1月1日"`
 
 #### Update Fixed Item
 ```
@@ -218,9 +218,9 @@ DELETE /api/fixed-items/:id/
 POST /api/future-items/
 Body: {
   "type": "cash|stock",
-  "text": "年终奖 +20,000",
+  "name": "年终奖 +20,000",
   "amount": "20000",      // For cash
-  "stockCode": "00700",   // For stock
+  "stock_code": "00700",   // For stock
   "shares": "10",         // For stock
   "desc": "2025-12-25 · 预计入账"
 }
@@ -250,7 +250,7 @@ Body: {
   "periods": 240,
   "rate": "3.1",
   "method": "equal_principal_interest|equal_principal",
-  "repaymentDate": "每月 20 日"
+  "repayment_date": 20
 }
 ```
 
@@ -359,7 +359,7 @@ The frontend handles three frequency types:
 - **Yearly**: User inputs "M-D" format, stored as "每年 X月X日"
 
 Backend should:
-1. Accept both `frequency` + `dateValue` fields for editing
+1. Accept both `frequency` + `date_value` fields for editing
 2. Store the formatted `date` string for display
 3. Parse `date` string to calculate next occurrence dates
 

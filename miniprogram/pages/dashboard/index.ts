@@ -41,7 +41,13 @@ Page({
     this.fetchData();
   },
   fetchData() {
-    getDashboardData().then(data => {
+    const app = getApp<IAppOption>();
+    const openId = app.globalData.openId || wx.getStorageSync('openId');
+    if (!openId) {
+      console.error('OpenID not found');
+      return;
+    }
+    getDashboardData(openId).then(data => {
       const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? true;
       
       const cash = parseFloat(data.cashAmount.replace(/,/g, ''));

@@ -21,13 +21,22 @@ Page({
     frequencyColumns: ['每周', '每月', '每年'],
     dateColumns: [] as any[],
     accountColumns: [] as string[],
-    currentPickerKey: ''
+    currentPickerKey: '',
+    openId: ''
   },
   onLoad() {
-    this.fetchData();
+    const app = getApp<IAppOption>();
+    const openId = app.globalData.openId || wx.getStorageSync('openId');
+    if (openId) {
+      this.setData({ openId });
+      this.fetchData();
+    } else {
+      console.error('OpenID not found');
+    }
   },
   fetchData() {
-    getPlanningData().then(data => {
+    if (!this.data.openId) return;
+    getPlanningData(this.data.openId).then(data => {
       this.setData({
         assets: data.assets,
         fixed: data.fixed,
@@ -100,7 +109,7 @@ Page({
 
     if (isStock) {
       fields.push(
-        { key: 'stockCode', label: '股票代码', value: item.stockCode || '', placeholder: '例如：00700' },
+        { key: 'stock_code', label: '股票代码', value: item.stock_code || '', placeholder: '例如：00700' },
         { key: 'shares', label: '持仓份额', value: item.shares || '', placeholder: '例如：100' }
       );
     } else {
@@ -141,7 +150,7 @@ Page({
           ]
         },
         { key: 'amount', label: '金额', value: '', placeholder: '请输入金额' },
-        { key: 'dateValue', label: '每月几号', value: '', placeholder: '1-31', inputType: 'number' },
+        { key: 'date_value', label: '每月几号', value: '', placeholder: '1-28', inputType: 'number' },
         { key: 'account', label: '账户', value: '', placeholder: '请选择账户', inputType: 'account-picker' }
       ],
       tempEditData: { type: 'expense', frequency: 'monthly' }
@@ -150,12 +159,8 @@ Page({
   editFixedItem(e: any) {
     const item = e.currentTarget.dataset.item;
     
-    // Parse existing date format like "每月 10 日"
-    let dateValue = '';
-    if (item.date) {
-      const match = item.date.match(/(\d+)\s*日/);
-      if (match) dateValue = match[1];
-    }
+    // Use date_value directly
+    let dateVal = item.date_value;
     
     this.setData({
       showEditPopup: true,
@@ -175,10 +180,10 @@ Page({
           ]
         },
         { key: 'amount', label: '金额', value: item.amount, placeholder: '请输入金额' },
-        { key: 'dateValue', label: '每月几号', value: dateValue, placeholder: '1-31', inputType: 'number' },
+        { key: 'date_value', label: '每月几号', value: dateVal, placeholder: '1-28', inputType: 'number' },
         { key: 'account', label: '账户', value: item.account, placeholder: '请选择账户', inputType: 'account-picker' }
       ],
-      tempEditData: { ...item, frequency: 'monthly', dateValue: dateValue }
+      tempEditData: { ...item, frequency: 'monthly', date_value: dateVal }
     });
   },
 
@@ -199,8 +204,8 @@ Page({
             { label: '股票', value: 'stock' }
           ]
         },
-        { key: 'text', label: '标题', value: '', placeholder: '例如：年终奖' },
         { key: 'amount', label: '金额', value: '', placeholder: '请输入金额' },
+        { key: 'name', label: '标题', value: '', placeholder: '例如：年终奖' },
         { key: 'date', label: '日期', value: '', placeholder: '请选择日期', inputType: 'calendar' },
         { key: 'desc', label: '描述', value: '', placeholder: '例如：2025-12-25 · 预计入账' }
       ],
@@ -221,18 +226,19 @@ Page({
           { label: '现金', value: 'cash' },
           { label: '股票', value: 'stock' }
         ]
-      },
-      { key: 'text', label: '标题', value: item.text, placeholder: '例如：年终奖' }
+      }
     ];
 
     if (isStock) {
       fields.push(
-        { key: 'stockCode', label: '股票代码', value: item.stockCode || '', placeholder: '例如：00700' },
-        { key: 'shares', label: '股票份数', value: item.shares || '', placeholder: '例如：100' }
+        { key: 'stock_code', label: '股票代码', value: item.stock_code || '', placeholder: '例如：00700' },
+        { key: 'shares', label: '股票份数', value: item.shares || '', placeholder: '例如：100' },
+        { key: 'name', label: '标题', value: item.name, placeholder: '例如：年终奖' }
       );
     } else {
       fields.push(
-        { key: 'amount', label: '金额', value: item.amount, placeholder: '请输入金额' }
+        { key: 'amount', label: '金额', value: item.amount, placeholder: '请输入金额' },
+        { key: 'name', label: '标题', value: item.name, placeholder: '例如：年终奖' }
       );
     }
     fields.push(
@@ -270,7 +276,7 @@ Page({
           options: ['等额本息', '等额本金'],
           range: ['equal_principal_interest', 'equal_principal']
         },
-        { key: 'repaymentDate', label: '每月还款日', value: '', placeholder: '1-28', inputType: 'number' }
+        { key: 'repayment_date', label: '每月还款日', value: '', placeholder: '1-28', inputType: 'number' }
       ],
       tempEditData: { method: 'equal_principal_interest' }
     });
@@ -295,7 +301,7 @@ Page({
           options: ['等额本息', '等额本金'],
           range: ['equal_principal_interest', 'equal_principal']
         },
-        { key: 'repaymentDate', label: '每月还款日', value: item.repaymentDate, placeholder: '1-28', inputType: 'number' }
+        { key: 'repayment_date', label: '每月还款日', value: item.repayment_date, placeholder: '1-28', inputType: 'number' }
       ],
       tempEditData: { ...item }
     });
@@ -313,13 +319,13 @@ Page({
     if (key === 'frequency' && this.data.currentEditType === 'fixed') {
       // Update the date field based on new frequency
       const editFields = this.data.editFields.map(field => {
-        if (field.key === 'dateValue') {
+        if (field.key === 'date_value') {
           return { ...field, frequency: value, value: '' };
         }
         return field;
       });
       this.setData({ editFields });
-      this.data.tempEditData.dateValue = '';
+      this.data.tempEditData.date_value = '';
     }
 
     // Dynamic field update for Asset and Future Income
@@ -344,7 +350,7 @@ Page({
 
         if (isStock) {
           fields.push(
-            { key: 'stockCode', label: '股票代码', value: this.data.tempEditData.stockCode || '', placeholder: '例如：00700' },
+            { key: 'stock_code', label: '股票代码', value: this.data.tempEditData.stock_code || '', placeholder: '例如：00700' },
             { key: 'shares', label: '持仓份额', value: this.data.tempEditData.shares || '', placeholder: '例如：100' }
           );
         } else {
@@ -366,18 +372,19 @@ Page({
               { label: '现金', value: 'cash' },
               { label: '股票', value: 'stock' }
             ]
-          },
-          { key: 'text', label: '标题', value: this.data.tempEditData.text || '', placeholder: '例如：年终奖' }
+          }
         ];
 
         if (isStock) {
           fields.push(
-            { key: 'stockCode', label: '股票代码', value: this.data.tempEditData.stockCode || '', placeholder: '例如：00700' },
-            { key: 'shares', label: '股票份数', value: this.data.tempEditData.shares || '', placeholder: '例如：100' }
+            { key: 'stock_code', label: '股票代码', value: this.data.tempEditData.stock_code || '', placeholder: '例如：00700' },
+            { key: 'shares', label: '股票份数', value: this.data.tempEditData.shares || '', placeholder: '例如：100' },
+            { key: 'name', label: '标题', value: this.data.tempEditData.name || '', placeholder: '例如：年终奖' }
           );
         } else {
           fields.push(
-            { key: 'amount', label: '金额', value: this.data.tempEditData.amount || '', placeholder: '请输入金额' }
+            { key: 'amount', label: '金额', value: this.data.tempEditData.amount || '', placeholder: '请输入金额' },
+            { key: 'name', label: '标题', value: this.data.tempEditData.name || '', placeholder: '例如：年终奖' }
           );
         }
         fields.push(
@@ -393,35 +400,58 @@ Page({
     
     // Validation for Fixed Income/Expense
     if (currentEditType === 'fixed') {
-      if (!tempEditData.name || !tempEditData.amount || !tempEditData.dateValue || !tempEditData.account) {
+      if (!tempEditData.name || !tempEditData.amount || !tempEditData.date_value || !tempEditData.account) {
         wx.showToast({ title: '请填写完整', icon: 'none' });
         return;
       }
-      // Format date for fixed items before saving
-      tempEditData.date = `每月 ${tempEditData.dateValue} 日`;
+
+      // Validate date range 1-28 and convert to int
+      const dateVal = parseInt(tempEditData.date_value);
+      if (isNaN(dateVal) || dateVal < 1 || dateVal > 28) {
+        wx.showToast({ title: '日期必须是 1-28', icon: 'none' });
+        return;
+      }
+      tempEditData.date_value = dateVal;
+      delete tempEditData.date;
+    }
+
+    // Validation for Future Income
+    if (currentEditType === 'future') {
+      if (tempEditData.amount) {
+        tempEditData.amount = parseInt(tempEditData.amount);
+      }
     }
 
     // Validation for Loan
     if (currentEditType === 'loan') {
-      if (!tempEditData.name || !tempEditData.principal || !tempEditData.periods || !tempEditData.rate || !tempEditData.method || !tempEditData.repaymentDate) {
+      if (!tempEditData.name || !tempEditData.principal || !tempEditData.periods || !tempEditData.rate || !tempEditData.method || !tempEditData.repayment_date) {
         wx.showToast({ title: '请填写完整', icon: 'none' });
         return;
       }
+      // Ensure repayment_date is an integer
+      const repaymentDateVal = parseInt(tempEditData.repayment_date);
+      if (isNaN(repaymentDateVal) || repaymentDateVal < 1 || repaymentDateVal > 28) {
+        wx.showToast({ title: '还款日必须是 1-28', icon: 'none' });
+        return;
+      }
+      tempEditData.repayment_date = repaymentDateVal;
     }
 
     wx.showLoading({ title: '保存中' });
     
+    if (!this.data.openId) return;
+
     let promise;
     if (currentEditType === 'asset') {
-      promise = manageAsset(isEditMode ? 'update' : 'add', tempEditData);
+      promise = manageAsset(this.data.openId, isEditMode ? 'update' : 'add', tempEditData);
     } else if (currentEditType === 'fixed') {
-      promise = manageFixedItem(isEditMode ? 'update' : 'add', tempEditData);
+      promise = manageFixedItem(this.data.openId, isEditMode ? 'update' : 'add', tempEditData);
     } else if (currentEditType === 'loan') {
-      promise = manageLoan(isEditMode ? 'update' : 'add', tempEditData);
+      promise = manageLoan(this.data.openId, isEditMode ? 'update' : 'add', tempEditData);
     } else if (currentEditType === 'future') {
-      promise = manageFutureItem(isEditMode ? 'update' : 'add', tempEditData);
+      promise = manageFutureItem(this.data.openId, isEditMode ? 'update' : 'add', tempEditData);
     } else {
-      promise = updatePlanningData(currentEditType, tempEditData);
+      promise = updatePlanningData(this.data.openId, currentEditType, tempEditData);
     }
 
     promise.then(res => {
@@ -455,8 +485,12 @@ Page({
       if (field.key === 'frequency') {
         return { ...field, value: frequencyValues[index] };
       }
-      if (field.key === 'dateValue') {
+      if (field.key === 'date_value') {
         return { ...field, frequency: frequencyValues[index], value: '' };
+      }
+      // Sync other fields from tempEditData
+      if (this.data.tempEditData[field.key] !== undefined) {
+        return { ...field, value: this.data.tempEditData[field.key] };
       }
       return field;
     });
@@ -464,7 +498,7 @@ Page({
     this.setData({ 
       showFrequencyPicker: false,
       editFields,
-      tempEditData: { ...this.data.tempEditData, dateValue: '' }
+      tempEditData: { ...this.data.tempEditData, date_value: '' }
     });
   },
   onFrequencyPickerCancel() {
@@ -493,11 +527,15 @@ Page({
     const { value, index } = e.detail;
     const frequency = this.data.tempEditData.frequency || 'monthly';
     
-    this.data.tempEditData.dateValue = value;
+    this.data.tempEditData.date_value = value;
     
     const editFields = this.data.editFields.map(field => {
-      if (field.key === 'dateValue') {
+      if (field.key === 'date_value') {
         return { ...field, value: value };
+      }
+      // Sync other fields from tempEditData
+      if (this.data.tempEditData[field.key] !== undefined) {
+        return { ...field, value: this.data.tempEditData[field.key] };
       }
       return field;
     });
@@ -524,6 +562,10 @@ Page({
     const editFields = this.data.editFields.map(field => {
       if (field.key === 'account') {
         return { ...field, value: value };
+      }
+      // Sync other fields from tempEditData
+      if (this.data.tempEditData[field.key] !== undefined) {
+        return { ...field, value: this.data.tempEditData[field.key] };
       }
       return field;
     });
@@ -562,6 +604,10 @@ Page({
          if (f.key === key) {
            return { ...f, value: realValue };
          }
+         // Sync other fields from tempEditData
+         if (this.data.tempEditData[f.key] !== undefined) {
+           return { ...f, value: this.data.tempEditData[f.key] };
+         }
          return f;
        });
        this.setData({ editFields });
@@ -590,6 +636,10 @@ Page({
       if (field.key === 'date') {
         return { ...field, value: dateStr };
       }
+      // Sync other fields from tempEditData
+      if (this.data.tempEditData[field.key] !== undefined) {
+        return { ...field, value: this.data.tempEditData[field.key] };
+      }
       return field;
     });
     
@@ -604,6 +654,8 @@ Page({
   },
   deleteItem() {
     const { currentEditType, tempEditData } = this.data;
+    if (!this.data.openId) return;
+
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这项记录吗？',
@@ -612,13 +664,13 @@ Page({
           wx.showLoading({ title: '删除中' });
           let promise;
           if (currentEditType === 'asset') {
-            promise = manageAsset('delete', tempEditData);
+            promise = manageAsset(this.data.openId, 'delete', tempEditData);
           } else if (currentEditType === 'fixed') {
-            promise = manageFixedItem('delete', tempEditData);
+            promise = manageFixedItem(this.data.openId, 'delete', tempEditData);
           } else if (currentEditType === 'loan') {
-            promise = manageLoan('delete', tempEditData);
+            promise = manageLoan(this.data.openId, 'delete', tempEditData);
           } else if (currentEditType === 'future') {
-            promise = manageFutureItem('delete', tempEditData);
+            promise = manageFutureItem(this.data.openId, 'delete', tempEditData);
           } else {
             // Future items or others if needed
             promise = Promise.resolve();

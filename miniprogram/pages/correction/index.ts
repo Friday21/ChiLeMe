@@ -7,13 +7,22 @@ Page({
     cashDiff: 0,
     stockSystem: 0,
     stockReal: '',
-    stockDiff: 0
+    stockDiff: 0,
+    openId: ''
   },
   onLoad() {
-    this.fetchData();
+    const app = getApp<IAppOption>();
+    const openId = app.globalData.openId || wx.getStorageSync('openId');
+    if (openId) {
+      this.setData({ openId });
+      this.fetchData();
+    } else {
+      console.error('OpenID not found');
+    }
   },
   fetchData() {
-    getAssetCorrectionData().then(data => {
+    if (!this.data.openId) return;
+    getAssetCorrectionData(this.data.openId).then(data => {
       this.setData({
         cashSystem: data.cashSystem,
         stockSystem: data.stockSystem
@@ -35,11 +44,12 @@ Page({
     });
   },
   saveCorrection() {
+    if (!this.data.openId) return;
     const data = {
       cashReal: this.data.cashReal,
       stockReal: this.data.stockReal
     };
-    saveAssetCorrection(data).then(() => {
+    saveAssetCorrection(this.data.openId, data).then(() => {
       wx.showToast({ title: '校正成功', icon: 'success' });
       setTimeout(() => {
         wx.navigateBack();

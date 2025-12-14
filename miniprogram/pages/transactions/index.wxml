@@ -15,7 +15,7 @@
       <view class="bg-white p-4 rounded-lg mb-3 shadow-sm flex justify-between items-center" bindtap="goToDetail" data-id="{{item.id}}">
         <view class="flex items-center">
           <view class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-xl">
-            {{item.icon}}
+            {{(item.icon && item.icon !== 'null') ? item.icon : '💰'}}
           </view>
           <view>
             <view class="font-bold text-base">{{item.category}}</view>
@@ -71,6 +71,13 @@
           type="digit"
           placeholder="请输入金额"
           bind:change="onRecordAmountChange"
+        />
+
+        <van-field
+          value="{{ recordForm.category }}"
+          label="分类"
+          placeholder="例如：餐饮"
+          bind:change="onRecordCategoryChange"
         />
         
         <van-field

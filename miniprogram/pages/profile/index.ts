@@ -18,7 +18,13 @@ Page({
     this.fetchData();
   },
   fetchData() {
-    getProfileData().then(data => {
+    const app = getApp<IAppOption>();
+    const openId = app.globalData.openId || wx.getStorageSync('openId');
+    if (!openId) {
+      console.error('OpenID not found');
+      return;
+    }
+    getProfileData(openId).then(data => {
       const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? true;
       this.setData({
         userInfo: data.userInfo,
