@@ -13,8 +13,18 @@
     }
     return date;
   }
+  function calculateUnitPrice(value, shares) {
+    if (!value || !shares) return '';
+    var valStr = value.toString();
+    var val = parseFloat(valStr.replace(getRegExp(',', 'g'), ''));
+    var shr = parseFloat(shares);
+    if (shr === 0) return '';
+    var price = val / shr;
+    return price.toFixed(2);
+  }
   module.exports.getPickerDisplay = getPickerDisplay;
   module.exports.formatFixedDate = formatFixedDate;
+  module.exports.calculateUnitPrice = calculateUnitPrice;
 </wxs>
 <view class="bg-gray-50 min-h-screen w-full">
   <van-tabs active="{{ activeTab }}" bind:change="onChangeTab" sticky>
@@ -32,7 +42,10 @@
                 <view class="text-xs text-gray-500 mt-1" wx:if="{{ item.desc }}">{{ item.desc }}</view>
               </view>
             </view>
-            <view class="font-bold text-lg">{{ item.value }}</view>
+            <view class="text-right">
+              <view class="font-bold text-lg">{{ item.value }}</view>
+              <view wx:if="{{ item.type === 'stock' }}" class="text-xs text-gray-500 mt-1">单价: {{ utils.calculateUnitPrice(item.value, item.shares) }}</view>
+            </view>
           </view>
         </block>
       </view>

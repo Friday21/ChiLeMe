@@ -65,6 +65,15 @@ Page({
       // Use asset items from API
       let assetItems = data.assetItems || [];
 
+      if (!includeRealEstate) {
+        assetItems = assetItems.map((item: any) => {
+          if (item.name === '固定资产' || item.name === '负债') {
+            return { ...item, notIncluded: true };
+          }
+          return item;
+        });
+      }
+
       // Calculate expense progress
       const monthlyIncomeVal = parseFloat(data.monthlyIncome.replace(/,/g, ''));
       const monthlyExpenseVal = parseFloat(data.monthlyExpense.replace(/,/g, ''));

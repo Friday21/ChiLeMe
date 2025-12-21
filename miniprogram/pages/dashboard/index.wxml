@@ -42,9 +42,10 @@ module.exports.getColor = getColor;
                 <view wx:if="{{item.isNegative}}" class="negative-icon">
                   <view class="minus-line"></view>
                 </view>
-                <text class="card-amount">{{item.amount}}</text>
+                <text class="card-amount {{item.notIncluded ? 'text-gray-400' : ''}}">{{item.amount}}</text>
               </view>
-              <view class="update-date" wx:if="{{!item.expanded}}">{{item.updateDate}}</view>
+              <view class="text-xs text-gray-400 mt-1 text-right" wx:if="{{item.notIncluded}}">不计入</view>
+              <view class="update-date" wx:elif="{{!item.expanded}}">{{item.updateDate}}</view>
             </view>
           </view>
         </view>
