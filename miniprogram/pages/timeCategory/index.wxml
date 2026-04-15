@@ -1,0 +1,96 @@
+<view class="page-wrap">
+  <!-- 日期选择 -->
+  <date-picker date="{{selectedDate}}" bind:dateChange="onDateChange" />
+
+  <!-- 分类 Tab -->
+  <view class="cat-tabs">
+    <view
+      class="cat-tab {{activeTab === item.key ? 'cat-tab-active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      bindtap="onTabTap"
+      data-key="{{item.key}}"
+      style="{{activeTab === item.key ? 'color:#fff;background:' + item.color : ''}}"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 加载 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="shine-grey" style="height:280rpx;margin:24rpx;border-radius:24rpx;display:block;"></view>
+    <view class="shine-grey" style="height:80rpx;margin:0 24rpx 16rpx;border-radius:16rpx;display:block;"></view>
+    <view class="shine-grey" style="height:80rpx;margin:0 24rpx 16rpx;border-radius:16rpx;display:block;"></view>
+  </view>
+
+  <!-- 无数据 -->
+  <view class="empty-wrap" wx:elif="{{!loading && !hasData}}">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">当日暂无数据</view>
+  </view>
+
+  <!-- 有数据 -->
+  <scroll-view scroll-y wx:elif="{{!loading && hasData}}" class="scroll-area" refresher-enabled bind:refresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+
+    <!-- 环形图 + 图例 -->
+    <view class="donut-section">
+      <!-- SVG 环形图 -->
+      <view class="donut-wrap">
+        <canvas canvas-id="donutCanvas" id="donutCanvas" class="donut-canvas"></canvas>
+        <view class="donut-center">
+          <view class="donut-total">{{totalLabel}}</view>
+          <view class="donut-sub">{{activeTabLabel}}时长</view>
+        </view>
+      </view>
+
+      <!-- 图例 -->
+      <view class="legend-list">
+        <view class="legend-item" wx:for="{{displayCategories}}" wx:key="name" bindtap="onLegendTap" data-key="{{item.key}}">
+          <view class="legend-dot" style="background:{{item.color}}"></view>
+          <view class="legend-body">
+            <view class="legend-name">{{item.name}}</view>
+            <view class="legend-bar-bg">
+              <view class="legend-bar-fill" style="width:{{item.percent}}%;background:{{item.color}}"></view>
+            </view>
+          </view>
+          <view class="legend-right">
+            <view class="legend-dur">{{item.durationLabel}}</view>
+            <view class="legend-pct">{{item.percent}}%</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 网站列表标题 -->
+    <view class="section-header">
+      <text class="section-title">{{activeTabLabel === '所有' ? '全部网站' : activeTabLabel + ' 网站'}}</text>
+      <view class="sort-btn" bindtap="toggleSort">
+        <text class="sort-label">{{sortByTime ? '按时长' : '按次数'}}</text>
+        <text class="sort-icon">⇅</text>
+      </view>
+    </view>
+
+    <!-- 网站列表 -->
+    <view class="site-list">
+      <view class="site-card" wx:for="{{sites}}" wx:key="domain" bindtap="goSiteDetail" data-domain="{{item.domain}}">
+        <view class="site-favicon">
+          <text class="site-emoji">{{item.emoji}}</text>
+        </view>
+        <view class="site-info">
+          <view class="site-name-row">
+            <text class="site-name">{{item.name}}</text>
+            <view class="site-cat-tag" style="background:{{item.catBgLight}};color:{{item.catColor}}">{{item.category}}</view>
+          </view>
+          <view class="site-domain">{{item.domain}}</view>
+          <view class="site-bar-bg">
+            <view class="site-bar-fill" style="width:{{item.barWidth}}%;background:{{item.catColor}}"></view>
+          </view>
+        </view>
+        <view class="site-right">
+          <view class="site-dur">{{item.durationLabel}}</view>
+          <view class="site-visits">{{item.visits}}次</view>
+        </view>
+      </view>
+    </view>
+
+    <view style="height:40rpx"></view>
+  </scroll-view>
+</view>

@@ -1,0 +1,19 @@
+<!-- 日期选择条 component -->
+<view class="date-strip">
+  <view class="date-left" bindtap="onPrev">
+    <view class="arrow-btn">‹</view>
+  </view>
+
+  <picker mode="date" value="{{dateStr}}" start="2020-01-01" bindchange="onPickerChange">
+    <view class="date-center">
+      <text class="date-label">{{displayLabel}}</text>
+      <text class="date-caret">∨</text>
+    </view>
+  </picker>
+
+  <view class="date-right">
+    <view class="arrow-btn {{isToday ? 'arrow-disabled' : ''}}" bindtap="onNext">›</view>
+  </view>
+
+  <view class="today-badge" wx:if="{{isToday}}">今天</view>
+</view>

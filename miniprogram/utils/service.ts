@@ -1,3 +1,18 @@
+// utils/service.ts
+
+import {
+  mockGetTimeOverview,
+  mockGetTimeWeekTrend,
+  mockGetTimeSites,
+} from './mockData';
+
+/**
+ * ⚠️ 本地调试开关
+ * 改为 true → 所有时间追踪接口使用 Mock 数据，无需连接服务器
+ * 上线前改回 false
+ */
+const USE_MOCK = true;
+
 // utils/api.ts
 const callContainer = (path: string, method: "GET" | "POST" | "PUT" | "DELETE" = "GET", data: any = {}): Promise<any> => {
   return new Promise((resolve, reject) => {
@@ -177,7 +192,53 @@ export {
   manageAsset,
   manageFixedItem,
   manageLoan,
-  manageFutureItem
+  manageFutureItem,
+  getTimeOverview,
+  getTimeWeekTrend,
+  getTimeSites,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Time Tracker APIs
+// 数据由定时任务分析浏览器历史后上传，小程序拉取展示
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * 时间总览
+ * GET /api/time/overview/<openId>/?date=YYYY-MM-DD
+ * Returns:
+ *   totalMinutes, siteCount, pageCount, avgMinutes,
+ *   diffMinutes (vs yesterday),
+ *   categories: [{name, minutes}],
+ *   hourly: {hour: [{catName, minutes}]},
+ *   insight: string
+ */
+const getTimeOverview = (openId: string, date: string): Promise<any> => {
+  if (USE_MOCK) return mockGetTimeOverview(openId, date);
+  return callContainer(`/api/time/overview/${openId}/`, 'GET', { date });
+};
+
+/**
+ * 本周趋势
+ * GET /api/time/week/<openId>/?date=YYYY-MM-DD
+ * Returns: [{date, totalMinutes}] (本周一到本周日，7条)
+ */
+const getTimeWeekTrend = (openId: string, date: string): Promise<any> => {
+  if (USE_MOCK) return mockGetTimeWeekTrend(openId, date);
+  return callContainer(`/api/time/week/${openId}/`, 'GET', { date });
+};
+
+/**
+ * 网站明细
+ * GET /api/time/sites/<openId>/?date=YYYY-MM-DD
+ * Returns:
+ *   totalMinutes,
+ *   categories: [{name, minutes}],
+ *   sites: [{name, domain, category, minutes, visits, hourly:[{hour,minutes}]}]
+ */
+const getTimeSites = (openId: string, date: string): Promise<any> => {
+  if (USE_MOCK) return mockGetTimeSites(openId, date);
+  return callContainer(`/api/time/sites/${openId}/`, 'GET', { date });
 };
 
 // --- Financial Features APIs ---

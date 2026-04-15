@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "时间去哪了",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "date-picker": "/component/datePicker/index"
+  }
+}

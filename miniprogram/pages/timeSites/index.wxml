@@ -1,0 +1,156 @@
+<view class="page-wrap">
+  <!-- 日期选择 -->
+  <date-picker date="{{selectedDate}}" bind:dateChange="onDateChange" />
+
+  <!-- 加载 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="shine-grey" style="height:80rpx;margin:24rpx 24rpx 0;border-radius:16rpx;display:block;"></view>
+    <view class="shine-grey" style="height:80rpx;margin:16rpx 24rpx 0;border-radius:16rpx;display:block;"></view>
+    <view class="shine-grey" style="height:80rpx;margin:16rpx 24rpx 0;border-radius:16rpx;display:block;"></view>
+  </view>
+
+  <!-- 无数据 -->
+  <view class="empty-wrap" wx:elif="{{!loading && !hasData}}">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">当日暂无浏览记录</view>
+  </view>
+
+  <!-- 有数据 -->
+  <block wx:elif="{{!loading && hasData}}">
+    <!-- 搜索 + 排序工具栏 -->
+    <view class="toolbar">
+      <view class="search-wrap">
+        <text class="search-icon">🔍</text>
+        <input
+          class="search-input"
+          placeholder="搜索网站"
+          value="{{searchText}}"
+          bindinput="onSearch"
+          placeholder-style="color:#ccc"
+        />
+        <text class="search-clear" wx:if="{{searchText}}" bindtap="clearSearch">✕</text>
+      </view>
+      <view class="sort-btn" bindtap="toggleSort">
+        <text class="sort-label">{{sortByTime ? '时长' : '次数'}}</text>
+        <text class="sort-icon">⇅</text>
+      </view>
+    </view>
+
+    <!-- 汇总数 -->
+    <view class="summary-bar">
+      <text class="summary-text">共 {{filteredSites.length}} 个网站 · 总计 {{totalLabel}}</text>
+    </view>
+
+    <!-- 网站列表 -->
+    <scroll-view scroll-y class="scroll-area" refresher-enabled bind:refresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+      <view class="site-list">
+        <!-- Grouped by category when not searching -->
+        <block wx:for="{{groups}}" wx:key="category" wx:if="{{!searchText}}">
+          <!-- Category header -->
+          <view class="group-header">
+            <view class="group-color-dot" style="background:{{item.color}}"></view>
+            <text class="group-name">{{item.category}}</text>
+            <text class="group-dur">{{item.totalLabel}}</text>
+          </view>
+
+          <!-- Sites in group -->
+          <view class="site-card" wx:for="{{item.sites}}" wx:key="domain" wx:for-item="site" bindtap="onSiteTap" data-site="{{site}}">
+            <view class="site-rank">{{site.rank}}</view>
+            <view class="site-favicon" style="background:{{site.catBgLight}}">
+              <text class="site-emoji">{{site.emoji}}</text>
+            </view>
+            <view class="site-info">
+              <view class="site-name">{{site.name}}</view>
+              <view class="site-domain">{{site.domain}}</view>
+              <view class="site-bar-bg">
+                <view class="site-bar-fill" style="width:{{site.barWidth}}%;background:{{site.catColor}}"></view>
+              </view>
+            </view>
+            <view class="site-meta">
+              <view class="site-dur">{{site.durationLabel}}</view>
+              <view class="site-visits">{{site.visits}}次访问</view>
+            </view>
+          </view>
+        </block>
+
+        <!-- Flat list when searching -->
+        <block wx:if="{{searchText}}">
+          <view class="site-card" wx:for="{{filteredSites}}" wx:key="domain" bindtap="onSiteTap" data-site="{{item}}">
+            <view class="site-rank">{{item.rank}}</view>
+            <view class="site-favicon" style="background:{{item.catBgLight}}">
+              <text class="site-emoji">{{item.emoji}}</text>
+            </view>
+            <view class="site-info">
+              <view class="site-name">{{item.name}}</view>
+              <view class="site-domain">{{item.domain}}</view>
+              <view class="site-bar-bg">
+                <view class="site-bar-fill" style="width:{{item.barWidth}}%;background:{{item.catColor}}"></view>
+              </view>
+            </view>
+            <view class="site-meta">
+              <view class="site-dur">{{item.durationLabel}}</view>
+              <view class="site-visits">{{item.visits}}次访问</view>
+            </view>
+          </view>
+          <view class="empty-search" wx:if="{{!filteredSites.length}}">
+            <text>未找到 "{{searchText}}"</text>
+          </view>
+        </block>
+      </view>
+
+      <view style="height:40rpx"></view>
+    </scroll-view>
+  </block>
+</view>
+
+<!-- 网站详情弹窗 -->
+<view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal">
+  <view class="modal-card" catchtap="">
+    <view class="modal-header">
+      <view class="modal-favicon" style="background:{{activeSite.catBgLight}}">
+        <text class="modal-emoji">{{activeSite.emoji}}</text>
+      </view>
+      <view class="modal-title-wrap">
+        <view class="modal-name">{{activeSite.name}}</view>
+        <view class="modal-domain">{{activeSite.domain}}</view>
+      </view>
+    </view>
+
+    <view class="modal-stats">
+      <view class="modal-stat">
+        <view class="ms-val">{{activeSite.durationLabel}}</view>
+        <view class="ms-key">总时长</view>
+      </view>
+      <view class="modal-divider"></view>
+      <view class="modal-stat">
+        <view class="ms-val">{{activeSite.visits}}</view>
+        <view class="ms-key">访问次数</view>
+      </view>
+      <view class="modal-divider"></view>
+      <view class="modal-stat">
+        <view class="ms-val">{{activeSite.avgLabel}}</view>
+        <view class="ms-key">平均停留</view>
+      </view>
+    </view>
+
+    <view class="modal-cat">
+      <view class="modal-cat-dot" style="background:{{activeSite.catColor}}"></view>
+      <text class="modal-cat-name">{{activeSite.category}}</text>
+    </view>
+
+    <!-- Hour breakdown -->
+    <view class="modal-hourly" wx:if="{{activeSite.hourly && activeSite.hourly.length}}">
+      <view class="mh-title">今日访问时段</view>
+      <view class="mh-bars">
+        <view class="mh-bar-col" wx:for="{{activeSite.hourly}}" wx:key="hour">
+          <view class="mh-bar-bg">
+            <view class="mh-bar-fill" style="height:{{item.pct}}%;background:{{activeSite.catColor}}"></view>
+          </view>
+          <view class="mh-hour">{{item.hour}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="modal-close" bindtap="closeModal">关闭</view>
+  </view>
+</view>

@@ -1,0 +1,137 @@
+<view class="page-wrap">
+  <!-- 日期选择 -->
+  <date-picker date="{{selectedDate}}" bind:dateChange="onDateChange" />
+
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-card shine-grey" style="height:220rpx;margin:24rpx 24rpx 0;border-radius:24rpx;"></view>
+    <view class="loading-card shine-grey" style="height:60rpx;margin:16rpx 24rpx 0;border-radius:14rpx;"></view>
+    <view class="loading-card shine-grey" style="height:60rpx;margin:16rpx 24rpx 0;border-radius:14rpx;"></view>
+    <view class="loading-card shine-grey" style="height:60rpx;margin:16rpx 24rpx 0;border-radius:14rpx;"></view>
+  </view>
+
+  <!-- 无数据 -->
+  <view class="empty-wrap" wx:elif="{{!loading && !hasData}}">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">{{selectedDate === todayStr ? '今日暂无数据\n定时任务还未上传' : '当日暂无浏览记录'}}</view>
+  </view>
+
+  <!-- 有数据 -->
+  <scroll-view scroll-y wx:elif="{{!loading && hasData}}" class="scroll-area" refresher-enabled bind:refresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+
+    <!-- 英雄卡片 -->
+    <view class="hero-card">
+      <view class="hero-top">
+        <view class="hero-label">今日上网时长</view>
+        <view class="hero-time">
+          <text class="hero-h">{{summary.hours}}</text><text class="hero-unit">h </text>
+          <text class="hero-h">{{summary.minutes}}</text><text class="hero-unit">m</text>
+        </view>
+        <view class="hero-compare {{summary.diffPositive ? 'positive' : 'negative'}}" wx:if="{{summary.diffText}}">
+          {{summary.diffText}}
+        </view>
+      </view>
+      <view class="hero-stats">
+        <view class="hero-stat">
+          <view class="stat-val">{{summary.siteCount}}</view>
+          <view class="stat-key">访问网站</view>
+        </view>
+        <view class="hero-divider"></view>
+        <view class="hero-stat">
+          <view class="stat-val">{{summary.pageCount}}</view>
+          <view class="stat-key">页面次数</view>
+        </view>
+        <view class="hero-divider"></view>
+        <view class="hero-stat">
+          <view class="stat-val">{{summary.avgMinutes}}<text style="font-size:22rpx">m</text></view>
+          <view class="stat-key">平均停留</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- AI 洞察 -->
+    <view class="insight-card" wx:if="{{insight}}">
+      <view class="insight-icon">💡</view>
+      <view class="insight-body">
+        <view class="insight-title">今日洞察</view>
+        <view class="insight-text">{{insight}}</view>
+      </view>
+    </view>
+
+    <!-- 分类时长 -->
+    <view class="section-header">
+      <text class="section-title">时间分类</text>
+      <view class="section-link" bindtap="goCategory">查看详情 ›</view>
+    </view>
+
+    <view class="cat-list">
+      <view class="cat-row" wx:for="{{categories}}" wx:key="name">
+        <view class="cat-icon-wrap" style="background:{{item.bgLight}}">
+          <text class="cat-emoji">{{item.emoji}}</text>
+        </view>
+        <view class="cat-body">
+          <view class="cat-top">
+            <text class="cat-name">{{item.name}}</text>
+            <text class="cat-duration">{{item.durationLabel}}</text>
+          </view>
+          <view class="cat-bar-bg">
+            <view class="cat-bar-fill" style="width:{{item.percent}}%;background:{{item.color}}"></view>
+          </view>
+        </view>
+        <view class="cat-pct">{{item.percent}}%</view>
+      </view>
+    </view>
+
+    <!-- 时段分布热力图 -->
+    <view class="section-header" style="margin-top:16rpx">
+      <text class="section-title">时段分布</text>
+    </view>
+    <view class="timeline-card">
+      <view class="tl-axis">
+        <text wx:for="{{timeAxis}}" wx:key="index" class="tl-axis-label">{{item}}</text>
+      </view>
+      <view class="tl-bars">
+        <view
+          wx:for="{{timeline}}"
+          wx:key="hour"
+          class="tl-col"
+        >
+          <view
+            class="tl-block"
+            style="background:{{item.color}};opacity:{{item.opacity}};"
+          ></view>
+          <view class="tl-hour-dot" wx:if="{{item.isNow}}"></view>
+        </view>
+      </view>
+      <!-- 图例 -->
+      <view class="tl-legend">
+        <view class="tl-legend-item" wx:for="{{categories}}" wx:key="name">
+          <view class="tl-dot" style="background:{{item.color}}"></view>
+          <text class="tl-label">{{item.name}}</text>
+        </view>
+        <view class="tl-legend-item">
+          <view class="tl-dot" style="background:#e8e8e8"></view>
+          <text class="tl-label">空闲</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 本周趋势 -->
+    <view class="section-header" style="margin-top:16rpx">
+      <text class="section-title">本周趋势</text>
+    </view>
+    <view class="week-card">
+      <view class="week-bars">
+        <view class="week-col {{item.isSelected ? 'week-selected' : ''}}" wx:for="{{weekTrend}}" wx:key="dateStr" bindtap="onWeekTap" data-date="{{item.dateStr}}">
+          <view class="week-bar-bg">
+            <view class="week-bar-fill" style="height:{{item.heightPct}}%;background:{{item.isSelected ? 'linear-gradient(to top,#4B7BF5,#818cf8)' : (item.hasData ? '#d1d9fb' : '#f0f0f0')}}"></view>
+          </view>
+          <view class="week-day {{item.isToday ? 'week-today-label' : ''}}">{{item.dayLabel}}</view>
+          <view class="week-dur" wx:if="{{item.hasData}}">{{item.durationShort}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view style="height:40rpx"></view>
+  </scroll-view>
+</view>

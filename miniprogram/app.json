@@ -1,9 +1,12 @@
 {
   "pages": [
+    "pages/timeOverview/index",
+    "pages/timeCategory/index",
+    "pages/timeSites/index",
+    "pages/profile/index",
     "pages/dashboard/index",
     "pages/transactions/index",
     "pages/assetsManage/index",
-    "pages/profile/index",
     "pages/index/index",
     "pages/users/users",
     "pages/users/contributions/contributions",
@@ -24,20 +27,20 @@
     "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/dashboard/index",
-        "text": "资产",
+        "pagePath": "pages/timeOverview/index",
+        "text": "时间",
+        "iconPath": "pages/assets/ic_board.png",
+        "selectedIconPath": "pages/assets/ic_board_active.png"
+      },
+      {
+        "pagePath": "pages/timeCategory/index",
+        "text": "分类",
         "iconPath": "pages/assets/money.png",
         "selectedIconPath": "pages/assets/money_active.png"
       },
       {
-        "pagePath": "pages/assetsManage/index",
-        "text": "管理",
-        "iconPath": "pages/assets/calendar_muted.png",
-        "selectedIconPath": "pages/assets/calendar_active.png"
-      },
-      {
-        "pagePath": "pages/transactions/index",
-        "text": "明细",
+        "pagePath": "pages/timeSites/index",
+        "text": "记录",
         "iconPath": "pages/assets/report.png",
         "selectedIconPath": "pages/assets/report_active.png"
       },
