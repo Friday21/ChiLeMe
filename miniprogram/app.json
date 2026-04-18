@@ -29,14 +29,14 @@
       {
         "pagePath": "pages/timeOverview/index",
         "text": "时间",
-        "iconPath": "pages/assets/ic_board.png",
-        "selectedIconPath": "pages/assets/ic_board_active.png"
+        "iconPath": "pages/assets/money.png",
+        "selectedIconPath": "pages/assets/money_active.png"
       },
       {
         "pagePath": "pages/timeCategory/index",
         "text": "分类",
-        "iconPath": "pages/assets/money.png",
-        "selectedIconPath": "pages/assets/money_active.png"
+        "iconPath": "pages/assets/ic_board.png",
+        "selectedIconPath": "pages/assets/ic_board_active.png"
       },
       {
         "pagePath": "pages/timeSites/index",

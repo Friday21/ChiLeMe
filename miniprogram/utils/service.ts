@@ -11,7 +11,9 @@ import {
  * 改为 true → 所有时间追踪接口使用 Mock 数据，无需连接服务器
  * 上线前改回 false
  */
-const USE_MOCK = true;
+const MY_OPEN_ID = 'orjoY7et_lrDdpT85J0BwKufgEsk';
+// 我的账号有真实数据，使用真实接口；其他账号暂无数据，使用 mock
+const useMock = (openId: string) => openId !== MY_OPEN_ID;
 
 // utils/api.ts
 const callContainer = (path: string, method: "GET" | "POST" | "PUT" | "DELETE" = "GET", data: any = {}): Promise<any> => {
@@ -214,7 +216,7 @@ export {
  *   insight: string
  */
 const getTimeOverview = (openId: string, date: string): Promise<any> => {
-  if (USE_MOCK) return mockGetTimeOverview(openId, date);
+  if (useMock(openId)) return mockGetTimeOverview(openId, date);
   return callContainer(`/api/time/overview/${openId}/`, 'GET', { date });
 };
 
@@ -224,7 +226,7 @@ const getTimeOverview = (openId: string, date: string): Promise<any> => {
  * Returns: [{date, totalMinutes}] (本周一到本周日，7条)
  */
 const getTimeWeekTrend = (openId: string, date: string): Promise<any> => {
-  if (USE_MOCK) return mockGetTimeWeekTrend(openId, date);
+  if (useMock(openId)) return mockGetTimeWeekTrend(openId, date);
   return callContainer(`/api/time/week/${openId}/`, 'GET', { date });
 };
 
@@ -237,7 +239,7 @@ const getTimeWeekTrend = (openId: string, date: string): Promise<any> => {
  *   sites: [{name, domain, category, minutes, visits, hourly:[{hour,minutes}]}]
  */
 const getTimeSites = (openId: string, date: string): Promise<any> => {
-  if (USE_MOCK) return mockGetTimeSites(openId, date);
+  if (useMock(openId)) return mockGetTimeSites(openId, date);
   return callContainer(`/api/time/sites/${openId}/`, 'GET', { date });
 };
 

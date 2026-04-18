@@ -1,22 +1,33 @@
 import { getTimeSites } from '../../utils/service';
 
+// 分类配色 —— 同时支持"单词"与"复合词"两套分类名（兼容新旧上报数据）
 const CAT_CONFIG: Record<string, { color: string; bgLight: string; emoji: string }> = {
+  // 单词版
+  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
+  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', emoji: '📚' },
+  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
+  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
+  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
+  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', emoji: '🛠️' },
+  '购物':     { color: '#34D399', bgLight: '#EDFBF4', emoji: '🛍️' },
+  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', emoji: '🌐' },
+  // 复合词版（旧 mock / 兼容）
   '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
   '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
   '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
   '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
-  '购物':      { color: '#34D399', bgLight: '#EDFBF4', emoji: '🛍️' },
-  '其他':      { color: '#94A3B8', bgLight: '#F1F5F9', emoji: '🌐' },
 };
 
-const ALL_TABS = [
-  { key: 'all',    label: '所有',    color: '#4B7BF5' },
-  { key: '工作/学习', label: '工作',  color: '#4B7BF5' },
-  { key: '社交媒体',  label: '社交',  color: '#FF6B6B' },
-  { key: '资讯/新闻', label: '资讯',  color: '#FFA94D' },
-  { key: '视频/娱乐', label: '娱乐',  color: '#A78BFA' },
-  { key: '购物',      label: '购物',  color: '#34D399' },
+// 基础 Tab（始终显示"所有"）；其余根据后端真实分类动态生成
+const BASE_TABS = [
+  { key: 'all', label: '所有', color: '#4B7BF5' },
 ];
+
+function catLabel(name: string): string {
+  // 复合分类名 → 首词作为 Tab 标签；单词直接返回
+  if (name.includes('/')) return name.split('/')[0];
+  return name;
+}
 
 const SITE_EMOJIS: Record<string, string> = {
   'claude.ai': '🤖', 'github.com': '🐙', 'youtube.com': '🔴',
@@ -51,7 +62,7 @@ Page({
     loading: true,
     refreshing: false,
     hasData: false,
-    tabs: ALL_TABS,
+    tabs: BASE_TABS,
     activeTab: 'all',
     activeTabLabel: '所有',
     sortByTime: true,
@@ -71,12 +82,18 @@ Page({
   },
 
   onShow() {
-    // Tab 切回时刷新（selectedDate 已有值则直接用，否则用今天）
-    const date = this.data.selectedDate || todayStr();
-    if (!this.data.selectedDate) {
-      this.setData({ selectedDate: date });
+    // 优先读 overview 页通过全局变量传来的日期，否则沿用当前日期或今天
+    const app = getApp<any>();
+    const jumpDate = app.globalData?.timeCategoryDate;
+    if (jumpDate) {
+      app.globalData.timeCategoryDate = null; // 消费后清除，避免下次误用
+      this.setData({ selectedDate: jumpDate });
+      this.fetchData(jumpDate);
+    } else {
+      const date = this.data.selectedDate || todayStr();
+      if (!this.data.selectedDate) this.setData({ selectedDate: date });
+      this.fetchData(date);
     }
-    this.fetchData(date);
   },
 
   onDateChange(e: any) {
@@ -92,7 +109,7 @@ Page({
 
   onTabTap(e: any) {
     const key = e.currentTarget.dataset.key;
-    const tab = ALL_TABS.find(t => t.key === key);
+    const tab = (this.data.tabs as any[]).find((t: any) => t.key === key);
     this.setData({ activeTab: key, activeTabLabel: tab?.label || '所有' });
     this._buildDisplay();
   },
@@ -128,7 +145,26 @@ Page({
       const cats: Array<{ name: string; minutes: number }> = data.categories || [];
       const total = data.totalMinutes || 0;
 
+      // 根据真实数据动态构建 Tab：剔除 0 分钟分类、保持后端排序（时长倒序）
+      const dynamicTabs = [
+        ...BASE_TABS,
+        ...cats
+          .filter(c => c.minutes > 0)
+          .map(c => {
+            const cfg = CAT_CONFIG[c.name] || CAT_CONFIG['其他'];
+            return { key: c.name, label: catLabel(c.name), color: cfg.color };
+          }),
+      ];
+
+      // 若当前选中 Tab 不在新列表中，回退到"所有"
+      const activeStillValid = dynamicTabs.some((t: any) => t.key === this.data.activeTab);
+      const nextActive = activeStillValid ? this.data.activeTab : 'all';
+      const nextLabel  = activeStillValid ? this.data.activeTabLabel : '所有';
+
       this.setData({
+        tabs: dynamicTabs,
+        activeTab: nextActive,
+        activeTabLabel: nextLabel,
         _allSites: data.sites,
         _categories: cats,
         _totalMinutes: total,
@@ -194,21 +230,63 @@ Page({
 
   _drawDonut(cats: Array<{ name: string; minutes: number }>, total: number) {
     if (!total) return;
-    const ctx = wx.createCanvasContext('donutCanvas', this);
-    const cx = 100, cy = 100, r = 75, lineW = 22;
-    let startAngle = -Math.PI / 2;
+    // 用 selectorQuery 拿到 canvas 的实际 CSS 像素大小，避免在不同机型上偏心
+    const doDraw = (w: number, h: number) => {
+      const ctx = wx.createCanvasContext('donutCanvas', this);
+      const cx = w / 2, cy = h / 2;
+      // 线宽 + 圆角端点所占高度
+      const lineW = Math.round(Math.min(w, h) * 0.13); // 约 13% 宽度
+      const R = Math.min(w, h) / 2 - lineW / 2 - 2;    // 外沿留 2px 安全间距
+      const gapRad = 0.035;
 
-    cats.forEach(cat => {
-      const cfg = CAT_CONFIG[cat.name] || CAT_CONFIG['其他'];
-      const sweep = (cat.minutes / total) * 2 * Math.PI;
+      // 1) 底轨
       ctx.beginPath();
-      ctx.arc(cx, cy, r, startAngle, startAngle + sweep);
-      ctx.setStrokeStyle(cfg.color);
+      ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+      ctx.setStrokeStyle('#F1F3F7');
       ctx.setLineWidth(lineW);
       ctx.stroke();
-      startAngle += sweep;
-    });
 
-    ctx.draw();
+      const visible = cats.filter(c => c.minutes > 0);
+      if (!visible.length) { ctx.draw(); return; }
+
+      const needGap = visible.length > 1;
+      let startAngle = -Math.PI / 2;
+
+      visible.forEach(cat => {
+        const cfg = CAT_CONFIG[cat.name] || CAT_CONFIG['其他'];
+        const rawSweep = (cat.minutes / total) * 2 * Math.PI;
+        const gap = needGap ? gapRad : 0;
+        const sweep = Math.max(rawSweep - gap, 0.01);
+        const segStart = startAngle + (needGap ? gap / 2 : 0);
+        const segEnd   = segStart + sweep;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, segStart, segEnd);
+        ctx.setStrokeStyle(cfg.color);
+        ctx.setLineWidth(lineW);
+        ctx.setLineCap('round');
+        ctx.stroke();
+
+        startAngle += rawSweep;
+      });
+
+      ctx.draw();
+    };
+
+    // 等 canvas 渲染出现后再查询尺寸
+    setTimeout(() => {
+      wx.createSelectorQuery()
+        .in(this as any)
+        .select('#donutCanvas')
+        .boundingClientRect((rect: any) => {
+          if (rect && rect.width && rect.height) {
+            doDraw(rect.width, rect.height);
+          } else {
+            // 降级：按常见 iPhone 基准 200rpx = 100px 估算（会略偏但不至于离谱）
+            doDraw(120, 120);
+          }
+        })
+        .exec();
+    }, 50);
   },
 });

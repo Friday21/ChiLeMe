@@ -84,7 +84,11 @@ Page({
   },
 
   goCategory() {
-    wx.navigateTo({ url: `/pages/timeCategory/index?date=${this.data.selectedDate}` });
+    // tabBar 页面不能用 navigateTo，改用 switchTab；日期通过全局变量传递
+    const app = getApp<any>();
+    app.globalData = app.globalData || {};
+    app.globalData.timeCategoryDate = this.data.selectedDate;
+    wx.switchTab({ url: '/pages/timeCategory/index' });
   },
 
   fetchAll(date: string) {

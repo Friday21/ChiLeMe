@@ -46,20 +46,30 @@
 .donut-section {
   margin: 24rpx;
   background: #fff;
-  border-radius: 24rpx;
-  padding: 32rpx 24rpx;
+  border-radius: 28rpx;
+  padding: 36rpx 28rpx;
   display: flex;
-  gap: 24rpx;
+  gap: 28rpx;
   align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(30, 41, 59, 0.04);
 }
 
 .donut-wrap {
   position: relative;
+  width: 240rpx;
+  height: 240rpx;
   flex-shrink: 0;
+  border-radius: 50%;
+  /* 轻微的背景光晕：让圆环"浮"在卡片上 */
+  background: radial-gradient(circle at center,
+    rgba(75, 123, 245, 0.05) 0%,
+    rgba(75, 123, 245, 0.02) 60%,
+    transparent 100%);
 }
 .donut-canvas {
-  width: 200rpx;
-  height: 200rpx;
+  width: 240rpx;
+  height: 240rpx;
+  display: block;
 }
 .donut-center {
   position: absolute;
@@ -67,9 +77,24 @@
   transform: translate(-50%, -50%);
   text-align: center;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rpx;
 }
-.donut-total { font-size: 26rpx; font-weight: 700; color: #1a1a1a; }
-.donut-sub { font-size: 20rpx; color: #aaa; margin-top: 4rpx; }
+.donut-total {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.5rpx;
+  line-height: 1.1;
+}
+.donut-sub {
+  font-size: 20rpx;
+  color: #9aa3b2;
+  margin-top: 4rpx;
+  letter-spacing: 0.5rpx;
+}
 
 /* ── Legend ── */
 .legend-list { flex: 1; display: flex; flex-direction: column; gap: 16rpx; }

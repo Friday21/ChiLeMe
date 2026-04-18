@@ -1,13 +1,34 @@
 import { getTimeSites } from '../../utils/service';
 
+// 同时支持"单词版"与旧"复合词"分类名，未知分类统一走 其他
 const CAT_CONFIG: Record<string, { color: string; bgLight: string; emoji: string }> = {
+  // 单词版（后端当前上报格式）
+  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
+  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', emoji: '📚' },
+  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
+  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
+  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
+  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', emoji: '🛠️' },
+  '购物':     { color: '#34D399', bgLight: '#EDFBF4', emoji: '🛍️' },
+  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', emoji: '🌐' },
+  // 旧 mock 复合词版兼容
   '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
   '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
   '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
   '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
-  '购物':      { color: '#34D399', bgLight: '#EDFBF4', emoji: '🛍️' },
-  '其他':      { color: '#94A3B8', bgLight: '#F1F5F9', emoji: '🌐' },
 };
+
+// 分类展示优先级（总时长相同时按此顺序），未在列表中的追加到末尾
+const CAT_PRIORITY = [
+  '工作', '工作/学习',
+  '学习',
+  '社交', '社交媒体',
+  '资讯', '资讯/新闻',
+  '娱乐', '视频/娱乐',
+  '工具',
+  '购物',
+  '其他',
+];
 
 const SITE_EMOJIS: Record<string, string> = {
   'claude.ai': '🤖', 'github.com': '🐙', 'youtube.com': '🔴',
@@ -165,8 +186,7 @@ Page({
       };
     });
 
-    // Group by category
-    const catOrder = ['工作/学习', '社交媒体', '资讯/新闻', '视频/娱乐', '购物', '其他'];
+    // Group by category —— 根据真实数据动态建组，避免漏掉后端新分类
     const groupMap: Record<string, any[]> = {};
     enriched.forEach(s => {
       const cat = s.category || '其他';
@@ -174,18 +194,28 @@ Page({
       groupMap[cat].push(s);
     });
 
-    const groups = catOrder
-      .filter(c => groupMap[c] && groupMap[c].length)
+    // 按 CAT_PRIORITY 排序，未在列表的分类按总时长降序追加到末尾
+    const presentCats = Object.keys(groupMap);
+    const ranked = presentCats
       .map(c => {
-        const cfg = CAT_CONFIG[c] || CAT_CONFIG['其他'];
-        const totalMins = (groupMap[c] || []).reduce((acc: number, s: any) => acc + (s.minutes || 0), 0);
-        return {
-          category: c,
-          color: cfg.color,
-          totalLabel: minutesToLabel(totalMins),
-          sites: groupMap[c] || [],
-        };
+        const idx = CAT_PRIORITY.indexOf(c);
+        const totalMins = groupMap[c].reduce((acc: number, s: any) => acc + (s.minutes || 0), 0);
+        return { cat: c, idx: idx === -1 ? 9999 : idx, totalMins };
+      })
+      .sort((a, b) => {
+        if (a.idx !== b.idx) return a.idx - b.idx;
+        return b.totalMins - a.totalMins;
       });
+
+    const groups = ranked.map(({ cat, totalMins }) => {
+      const cfg = CAT_CONFIG[cat] || CAT_CONFIG['其他'];
+      return {
+        category: cat,
+        color: cfg.color,
+        totalLabel: minutesToLabel(totalMins),
+        sites: groupMap[cat],
+      };
+    });
 
     this.setData({ groups, filteredSites: enriched });
   },
