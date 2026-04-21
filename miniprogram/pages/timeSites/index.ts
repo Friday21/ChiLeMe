@@ -1,21 +1,22 @@
 import { getTimeSites } from '../../utils/service';
 
 // 同时支持"单词版"与旧"复合词"分类名，未知分类统一走 其他
-const CAT_CONFIG: Record<string, { color: string; bgLight: string; emoji: string }> = {
+type CatCfg = { color: string; bgLight: string; icon: string; emoji: string };
+const CAT_CONFIG: Record<string, CatCfg> = {
   // 单词版（后端当前上报格式）
-  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
-  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', emoji: '📚' },
-  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
-  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
-  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
-  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', emoji: '🛠️' },
-  '购物':     { color: '#34D399', bgLight: '#EDFBF4', emoji: '🛍️' },
-  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', emoji: '🌐' },
+  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
+  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', icon: '/pages/assets/categories/study.svg',         emoji: '📚' },
+  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', icon: '/pages/assets/categories/social.svg',        emoji: '📱' },
+  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', icon: '/pages/assets/categories/news.svg',          emoji: '📰' },
+  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
+  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', icon: '/pages/assets/categories/tools.svg',         emoji: '🛠️' },
+  '购物':     { color: '#34D399', bgLight: '#EDFBF4', icon: '/pages/assets/categories/shopping.svg',      emoji: '🛍️' },
+  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', icon: '/pages/assets/categories/other.svg',         emoji: '🌐' },
   // 旧 mock 复合词版兼容
-  '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
-  '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
-  '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
-  '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
+  '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
+  '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', icon: '/pages/assets/categories/social.svg',        emoji: '📱' },
+  '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', icon: '/pages/assets/categories/news.svg',          emoji: '📰' },
+  '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
 };
 
 // 分类展示优先级（总时长相同时按此顺序），未在列表中的追加到末尾
@@ -93,8 +94,7 @@ Page({
     this.fetchData(date);
   },
 
-  onRefresh() {
-    this.setData({ refreshing: true });
+  onPullDownRefresh() {
     this.fetchData(this.data.selectedDate);
   },
 
@@ -157,9 +157,11 @@ Page({
         _allSites: data.sites,
       });
       this._buildAll(data.sites);
+      wx.stopPullDownRefresh();
     }).catch(err => {
       console.error('[timeSites] fetch error', err);
       this.setData({ loading: false, refreshing: false, hasData: false });
+      wx.stopPullDownRefresh();
     });
   },
 
@@ -181,6 +183,7 @@ Page({
         emoji: getSiteEmoji(s.domain),
         catColor: cfg.color,
         catBgLight: cfg.bgLight,
+        catIcon: cfg.icon,
         durationLabel: minutesToLabel(s.minutes),
         barWidth: Math.round(s.minutes / maxMins * 100),
       };
@@ -212,6 +215,8 @@ Page({
       return {
         category: cat,
         color: cfg.color,
+        bgLight: cfg.bgLight,
+        icon: cfg.icon,
         totalLabel: minutesToLabel(totalMins),
         sites: groupMap[cat],
       };
@@ -245,6 +250,7 @@ Page({
         emoji: getSiteEmoji(s.domain),
         catColor: cfg.color,
         catBgLight: cfg.bgLight,
+        catIcon: cfg.icon,
         durationLabel: minutesToLabel(s.minutes),
         barWidth: Math.round(s.minutes / maxMins * 100),
       };

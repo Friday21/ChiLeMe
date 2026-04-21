@@ -3,11 +3,6 @@ import { getProfileData } from '../../utils/service';
 Page({
   data: {
     userInfo: {},
-    settings: {
-      currency: '',
-      startDate: '',
-      includeRealEstate: true
-    },
     showEditPopup: false,
     tempUserInfo: {
       avatar: '',
@@ -25,13 +20,8 @@ Page({
       return;
     }
     getProfileData(openId).then(data => {
-      const includeRealEstate = wx.getStorageSync('includeRealEstate') ?? true;
       this.setData({
         userInfo: data.userInfo,
-        settings: {
-          ...data.settings,
-          includeRealEstate: includeRealEstate
-        }
       });
     });
   },
@@ -75,19 +65,8 @@ Page({
     }, 500);
   },
 
-  // Settings
-  onToggleRealEstate(e: any) {
-    const value = e.detail;
-    this.setData({
-      'settings.includeRealEstate': value
-    });
-    wx.setStorageSync('includeRealEstate', value);
-  },
+  // Navigate to about page
   goToAbout() {
-    wx.showModal({
-      title: '关于 ChiLeMe',
-      content: '这是一个帮助你管理个人财务的小程序。\n版本: 1.0.0',
-      showCancel: false
-    });
+    wx.navigateTo({ url: '/pages/users/about/about' });
   }
 })

@@ -1,53 +1,73 @@
 <!--pages/users/about/about.wxml-->
-<view class="about-container">
-  <view class="header">
-    <text class="title">关于一日虚度</text>
-    <text class="subtitle">记录每一天的心情轨迹</text>
+<view class="about-page">
+  <!-- Hero -->
+  <view class="hero">
+    <view class="logo-circle">
+      <text class="logo-emoji">⏱</text>
+    </view>
+    <view class="app-name">一日虚度</view>
+    <view class="app-tagline">时间，值得被看见</view>
+    <view class="version-pill">v1.0.0</view>
   </view>
 
-  <view class="content">
-    <view class="section">
-      <text class="section-title">项目简介</text>
-      <text class="section-content">一日虚度是一款关注个人情绪记录的小程序。在这个快节奏的时代，我们希望通过简单的心情记录，帮助用户更好地了解自己，留住生活中的每一个瞬间。</text>
+  <!-- Intro -->
+  <view class="card">
+    <view class="card-title">这是什么</view>
+    <view class="card-body">
+      一款记录并可视化你每天上网时间的小工具。把浏览记录按分类聚合成清晰的图表，让你真正看清"一天的时间都花在哪儿"。
     </view>
+  </view>
 
-    <view class="section">
-      <text class="section-title">主要功能</text>
-      <view class="feature-list">
-        <view class="feature-item">
-          <text class="feature-icon">📝</text>
-          <text class="feature-text">心情记录：随时记录当下的情绪状态</text>
+  <!-- Features -->
+  <view class="card">
+    <view class="card-title">主要功能</view>
+    <view class="feature-list">
+      <view class="feature-row">
+        <view class="f-icon" style="background:#EBF0FF">
+          <image src="/pages/assets/categories/work.svg" class="f-icon-img" mode="aspectFit"/>
         </view>
-        <view class="feature-item">
-          <text class="feature-icon">📊</text>
-          <text class="feature-text">情绪追踪：查看历史心情变化趋势</text>
+        <view class="f-text">
+          <view class="f-name">时间总览</view>
+          <view class="f-desc">每日时长、趋势、AI 洞察一眼看完</view>
         </view>
-        <view class="feature-item">
-          <text class="feature-icon">📅</text>
-          <text class="feature-text">每日回顾：重温过往的心情记录</text>
+      </view>
+      <view class="feature-row">
+        <view class="f-icon" style="background:#FFF4DB">
+          <image src="/pages/assets/categories/tools.svg" class="f-icon-img" mode="aspectFit"/>
         </view>
-        <view class="feature-item">
-          <text class="feature-icon">🔒</text>
-          <text class="feature-text">隐私保护：心情日记不会明文存储， 语音信息分析完之后立即删除</text>
+        <view class="f-text">
+          <view class="f-name">分类视图</view>
+          <view class="f-desc">环形图展示工作/学习/娱乐等分类占比</view>
+        </view>
+      </view>
+      <view class="feature-row">
+        <view class="f-icon" style="background:#FFF8EB">
+          <image src="/pages/assets/categories/news.svg" class="f-icon-img" mode="aspectFit"/>
+        </view>
+        <view class="f-text">
+          <view class="f-name">网站明细</view>
+          <view class="f-desc">按分类分组，逐站看停留与访问次数</view>
+        </view>
+      </view>
+      <view class="feature-row">
+        <view class="f-icon" style="background:#F1F5F9">
+          <image src="/pages/assets/categories/other.svg" class="f-icon-img" mode="aspectFit"/>
+        </view>
+        <view class="f-text">
+          <view class="f-name">本地优先</view>
+          <view class="f-desc">由本机定时任务汇总后再上报，无需插件常驻</view>
         </view>
       </view>
     </view>
+  </view>
 
-    <view class="section">
-      <view class="rules-content">
-        <text class="rules-text">💡 虚度规则：</text>
-        <text class="rules-text">记录每天的心情与事件，回顾自己的生活点滴。</text>
-        <text class="rules-text highlight">只要一天中至少有一件积极的事情，这一天就不算虚度！</text>
-        <text class="rules-text">✨ 让每一天都有意义，不教一日虚度！</text>
-      </view>
-    </view>
-
-    <view class="section quote-section">
-      <text class="quote">" 记录当下，珍惜当下 "</text>
-    </view>
+  <!-- Quote -->
+  <view class="card quote-card">
+    <view class="quote-mark">"</view>
+    <view class="quote-text">你在哪里花时间，你就会成为什么样的人</view>
   </view>
 
   <view class="footer">
-    <text class="copyright">© 2025 一日虚度</text>
+    <text>© 2026 一日虚度 · Made with ♥</text>
   </view>
 </view>

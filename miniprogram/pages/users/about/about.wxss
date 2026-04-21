@@ -1,120 +1,130 @@
-.about-container {
-  padding: 10rpx;
+/* pages/users/about/about.wxss */
+.about-page {
   min-height: 100vh;
-  background-color: #fafafa;
+  padding: 32rpx 24rpx 48rpx;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(75, 123, 245, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(167, 139, 250, 0.08), transparent 40%),
+    #f6f7fb;
 }
 
-.header {
+/* ── Hero ── */
+.hero {
   text-align: center;
-  padding: 60rpx 0;
+  padding: 56rpx 0 40rpx;
+}
+.logo-circle {
+  width: 140rpx; height: 140rpx;
+  margin: 0 auto 28rpx;
+  border-radius: 42rpx;
+  background: linear-gradient(135deg, #4B7BF5 0%, #818cf8 100%);
+  box-shadow: 0 14rpx 40rpx rgba(75, 123, 245, 0.28);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-emoji {
+  font-size: 68rpx;
+  color: #fff;
+}
+.app-name {
+  font-size: 46rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1rpx;
+}
+.app-tagline {
+  font-size: 26rpx;
+  color: #6b7280;
+  margin-top: 12rpx;
+}
+.version-pill {
+  display: inline-block;
+  margin-top: 18rpx;
+  padding: 6rpx 20rpx;
+  font-size: 22rpx;
+  color: #4B7BF5;
+  background: rgba(75, 123, 245, 0.1);
+  border-radius: 40rpx;
+  letter-spacing: 0.5rpx;
 }
 
-.title {
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  color: #666;
-  display: block;
-}
-
-.content {
-  background-color: #fff;
-  border-radius: 24rpx;
-  padding: 40rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
-}
-
-.section {
-  margin-bottom: 50rpx;
-}
-
-.section:last-child {
-  margin-bottom: 0;
-}
-
-.section-title {
-  font-size: 34rpx;
-  font-weight: bold;
-  color: #333;
+/* ── Cards ── */
+.card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 32rpx 32rpx;
   margin-bottom: 24rpx;
-  display: block;
+  box-shadow: 0 4rpx 20rpx rgba(30, 41, 59, 0.04);
 }
-
-.section-content {
+.card-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 18rpx;
+}
+.card-body {
   font-size: 28rpx;
-  color: #666;
-  line-height: 1.8;
-  display: block;
+  color: #4b5563;
+  line-height: 1.7;
 }
 
+/* ── Features ── */
 .feature-list {
-  margin-top: 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+  margin-top: 6rpx;
 }
-
-.feature-item {
+.feature-row {
   display: flex;
   align-items: center;
-  margin-bottom: 24rpx;
+  gap: 20rpx;
 }
-
-.feature-icon {
-  font-size: 36rpx;
-  margin-right: 20rpx;
+.f-icon {
+  width: 72rpx; height: 72rpx;
+  border-radius: 20rpx;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
-
-.feature-text {
+.f-icon-img { width: 44rpx; height: 44rpx; }
+.f-text { flex: 1; min-width: 0; }
+.f-name {
   font-size: 28rpx;
-  color: #666;
-  flex: 1;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4rpx;
+}
+.f-desc {
+  font-size: 24rpx;
+  color: #8b93a3;
+  line-height: 1.4;
 }
 
-.quote-section {
+/* ── Quote ── */
+.quote-card {
   text-align: center;
-  padding: 40rpx 0;
+  padding: 40rpx 32rpx;
+  background: linear-gradient(135deg, rgba(75, 123, 245, 0.06), rgba(167, 139, 250, 0.06));
+  box-shadow: none;
 }
-
-.quote {
-  font-size: 32rpx;
-  color: #444;
+.quote-mark {
+  font-size: 64rpx;
+  font-family: Georgia, serif;
+  color: #4B7BF5;
+  line-height: 0.6;
+  margin-bottom: 12rpx;
+}
+.quote-text {
+  font-size: 28rpx;
+  color: #334155;
   font-style: italic;
+  line-height: 1.6;
 }
 
+/* ── Footer ── */
 .footer {
   text-align: center;
-  padding: 50rpx 0 30rpx;
+  padding: 40rpx 0 20rpx;
+  font-size: 22rpx;
+  color: #aab1bd;
+  letter-spacing: 0.5rpx;
 }
-
-.copyright {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.rules-content {
-  background-color: #f8f8ff;
-  padding: 30rpx;
-  border-radius: 16rpx;
-  margin: 20rpx 0;
-}
-
-.rules-text {
-  font-size: 28rpx;
-  color: #555;
-  line-height: 1.8;
-  display: block;
-  margin-bottom: 16rpx;
-}
-
-.rules-text:last-child {
-  margin-bottom: 0;
-}
-
-.rules-text.highlight {
-  color: #4a90e2;
-  font-weight: 500;
-} 

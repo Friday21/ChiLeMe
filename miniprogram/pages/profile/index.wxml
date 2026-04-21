@@ -7,16 +7,12 @@
         {{ userInfo.name }}
         <van-icon name="edit" class="ml-2 text-gray-400 text-base" />
       </view>
-      <view class="text-gray-500 text-sm mt-1">记账 {{ userInfo.days }} 天</view>
     </view>
     <van-icon name="arrow" class="text-gray-300" />
   </view>
 
   <!-- Settings -->
-  <van-cell-group title="设置">
-    <van-cell title="净资产包含房产">
-      <van-switch checked="{{ settings.includeRealEstate }}" size="24px" bind:change="onToggleRealEstate" />
-    </van-cell>
+  <van-cell-group title="更多">
     <van-cell title="关于" is-link bind:click="goToAbout" />
   </van-cell-group>
 

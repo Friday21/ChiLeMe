@@ -28,7 +28,7 @@
   </view>
 
   <!-- 有数据 -->
-  <scroll-view scroll-y wx:elif="{{!loading && hasData}}" class="scroll-area" refresher-enabled bind:refresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+  <view wx:elif="{{!loading && hasData}}" class="data-area">
 
     <!-- 环形图 + 图例 -->
     <view class="donut-section">
@@ -71,8 +71,9 @@
     <!-- 网站列表 -->
     <view class="site-list">
       <view class="site-card" wx:for="{{sites}}" wx:key="domain" bindtap="goSiteDetail" data-domain="{{item.domain}}">
-        <view class="site-favicon">
-          <text class="site-emoji">{{item.emoji}}</text>
+        <view class="site-favicon" style="background:{{item.catBgLight}}">
+          <image class="site-icon-img" src="{{item.catIcon}}" mode="aspectFit" wx:if="{{item.catIcon}}"></image>
+          <text class="site-emoji" wx:else>{{item.emoji}}</text>
         </view>
         <view class="site-info">
           <view class="site-name-row">
@@ -92,5 +93,5 @@
     </view>
 
     <view style="height:40rpx"></view>
-  </scroll-view>
+  </view>
 </view>

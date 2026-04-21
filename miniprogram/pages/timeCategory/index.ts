@@ -1,21 +1,22 @@
 import { getTimeSites } from '../../utils/service';
 
 // 分类配色 —— 同时支持"单词"与"复合词"两套分类名（兼容新旧上报数据）
-const CAT_CONFIG: Record<string, { color: string; bgLight: string; emoji: string }> = {
+type CatCfg = { color: string; bgLight: string; icon: string; emoji: string };
+const CAT_CONFIG: Record<string, CatCfg> = {
   // 单词版
-  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
-  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', emoji: '📚' },
-  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
-  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
-  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
-  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', emoji: '🛠️' },
-  '购物':     { color: '#34D399', bgLight: '#EDFBF4', emoji: '🛍️' },
-  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', emoji: '🌐' },
+  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
+  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', icon: '/pages/assets/categories/study.svg',         emoji: '📚' },
+  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', icon: '/pages/assets/categories/social.svg',        emoji: '📱' },
+  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', icon: '/pages/assets/categories/news.svg',          emoji: '📰' },
+  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
+  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', icon: '/pages/assets/categories/tools.svg',         emoji: '🛠️' },
+  '购物':     { color: '#34D399', bgLight: '#EDFBF4', icon: '/pages/assets/categories/shopping.svg',      emoji: '🛍️' },
+  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', icon: '/pages/assets/categories/other.svg',         emoji: '🌐' },
   // 复合词版（旧 mock / 兼容）
-  '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', emoji: '💼' },
-  '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', emoji: '📱' },
-  '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', emoji: '📰' },
-  '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', emoji: '🎬' },
+  '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
+  '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', icon: '/pages/assets/categories/social.svg',        emoji: '📱' },
+  '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', icon: '/pages/assets/categories/news.svg',          emoji: '📰' },
+  '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
 };
 
 // 基础 Tab（始终显示"所有"）；其余根据后端真实分类动态生成
@@ -82,18 +83,23 @@ Page({
   },
 
   onShow() {
-    // 优先读 overview 页通过全局变量传来的日期，否则沿用当前日期或今天
+    // 优先读 overview 页通过全局变量传来的日期 / 指定 tab，消费后清除
     const app = getApp<any>();
     const jumpDate = app.globalData?.timeCategoryDate;
-    if (jumpDate) {
-      app.globalData.timeCategoryDate = null; // 消费后清除，避免下次误用
-      this.setData({ selectedDate: jumpDate });
-      this.fetchData(jumpDate);
-    } else {
-      const date = this.data.selectedDate || todayStr();
-      if (!this.data.selectedDate) this.setData({ selectedDate: date });
-      this.fetchData(date);
+    const jumpTab  = app.globalData?.timeCategoryTab;
+    if (jumpDate) app.globalData.timeCategoryDate = null;
+    if (jumpTab)  app.globalData.timeCategoryTab  = null;
+
+    const date = jumpDate || this.data.selectedDate || todayStr();
+    const updates: any = { selectedDate: date };
+    if (jumpTab) {
+      // 预先把 activeTab 设为目标分类；fetchData 完成后若该 tab 有效会被保留，
+      // 失效则回退到"所有"
+      updates.activeTab = jumpTab;
+      updates.activeTabLabel = catLabel(jumpTab);
     }
+    this.setData(updates);
+    this.fetchData(date);
   },
 
   onDateChange(e: any) {
@@ -102,8 +108,7 @@ Page({
     this.fetchData(date);
   },
 
-  onRefresh() {
-    this.setData({ refreshing: true });
+  onPullDownRefresh() {
     this.fetchData(this.data.selectedDate);
   },
 
@@ -157,9 +162,9 @@ Page({
       ];
 
       // 若当前选中 Tab 不在新列表中，回退到"所有"
-      const activeStillValid = dynamicTabs.some((t: any) => t.key === this.data.activeTab);
-      const nextActive = activeStillValid ? this.data.activeTab : 'all';
-      const nextLabel  = activeStillValid ? this.data.activeTabLabel : '所有';
+      const activeTabObj = dynamicTabs.find((t: any) => t.key === this.data.activeTab);
+      const nextActive = activeTabObj ? activeTabObj.key : 'all';
+      const nextLabel  = activeTabObj ? activeTabObj.label : '所有';
 
       this.setData({
         tabs: dynamicTabs,
@@ -176,9 +181,11 @@ Page({
 
       this._buildDisplay();
       this._drawDonut(cats, total);
+      wx.stopPullDownRefresh();
     }).catch(err => {
       console.error('[timeCategory] fetch error', err);
       this.setData({ loading: false, refreshing: false, hasData: false });
+      wx.stopPullDownRefresh();
     });
   },
 
@@ -207,6 +214,7 @@ Page({
         category: s.category,
         catColor: cfg.color,
         catBgLight: cfg.bgLight,
+        catIcon: cfg.icon,
         durationLabel: minutesToLabel(s.minutes),
         visits: s.visits,
         barWidth: Math.round(s.minutes / maxMins * 100),

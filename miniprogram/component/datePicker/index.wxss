@@ -1,60 +1,112 @@
 .date-strip {
   background: #ffffff;
-  padding: 20rpx 32rpx 18rpx;
+  padding: 18rpx 24rpx;
   display: flex;
   align-items: center;
-  border-bottom: 1rpx solid #f0f0f0;
+  gap: 16rpx;
+  border-bottom: 1rpx solid #eef0f5;
 }
 
-.date-center {
+/* ── Nav arrows ── */
+.nav-btn {
+  width: 64rpx;
+  height: 64rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(75, 123, 245, 0.08);
   display: flex;
   align-items: center;
-  gap: 8rpx;
-  flex: 1;
   justify-content: center;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.nav-btn-hover {
+  background: rgba(75, 123, 245, 0.2);
+  transform: scale(0.93);
+}
+.nav-btn-disabled {
+  background: transparent;
+}
+.nav-btn-disabled .nav-arrow {
+  color: #d0d4dc;
+}
+.nav-arrow {
+  font-size: 40rpx;
+  color: #4B7BF5;
+  font-weight: 500;
+  line-height: 1;
+  margin-top: -4rpx;
 }
 
-.date-label {
+/* ── Center pill ── */
+.date-center-picker {
+  flex: 1;
+  min-width: 0;
+}
+.date-pill {
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  padding: 0 20rpx;
+  background: linear-gradient(135deg, rgba(75, 123, 245, 0.08), rgba(167, 139, 250, 0.08));
+  border-radius: 34rpx;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.date-pill-hover {
+  opacity: 0.75;
+  transform: scale(0.98);
+}
+.date-label-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+  min-width: 0;
+  overflow: hidden;
+}
+.date-title {
   font-size: 30rpx;
   font-weight: 700;
   color: #1a1a1a;
+  letter-spacing: 0.5rpx;
+  line-height: 1.2;
+  white-space: nowrap;
 }
-
+.date-sub {
+  font-size: 22rpx;
+  color: #8a94a6;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
 .date-caret {
   font-size: 22rpx;
-  color: #999;
+  color: #8a94a6;
+  line-height: 1;
   margin-top: 4rpx;
+  flex-shrink: 0;
 }
 
-.arrow-btn {
-  width: 56rpx;
+/* ── 今天 return button ── */
+.today-return {
+  flex-shrink: 0;
   height: 56rpx;
+  padding: 0 22rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36rpx;
-  color: #4B7BF5;
-  font-weight: 300;
-  border-radius: 50%;
-  background: rgba(75, 123, 245, 0.08);
+  background: linear-gradient(135deg, #4B7BF5, #6c5cf5);
+  border-radius: 28rpx;
+  box-shadow: 0 6rpx 16rpx rgba(75, 123, 245, 0.28);
+  transition: transform 0.12s ease, opacity 0.12s ease;
 }
-
-.arrow-disabled {
-  color: #ccc;
-  background: transparent;
+.today-return-hover {
+  opacity: 0.88;
+  transform: scale(0.95);
 }
-
-.date-left, .date-right {
-  flex-shrink: 0;
-}
-
-.today-badge {
-  margin-left: 12rpx;
-  background: rgba(75, 123, 245, 0.1);
-  color: #4B7BF5;
-  border-radius: 40rpx;
-  padding: 4rpx 16rpx;
-  font-size: 22rpx;
+.today-return-text {
+  font-size: 24rpx;
   font-weight: 600;
-  flex-shrink: 0;
+  color: #fff;
+  letter-spacing: 1rpx;
 }

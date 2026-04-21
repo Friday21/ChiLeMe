@@ -1,17 +1,14 @@
 .page-wrap {
   min-height: 100vh;
   background: #f5f5f8;
-  display: flex;
-  flex-direction: column;
 }
 
 /* ── Loading ── */
-.loading-wrap { flex: 1; }
 .loading-card { display: block; }
 
 /* ── Empty ── */
 .empty-wrap {
-  flex: 1;
+  min-height: 60vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,8 +19,8 @@
 .empty-icon { font-size: 100rpx; }
 .empty-text { font-size: 28rpx; color: #bbb; text-align: center; line-height: 1.8; white-space: pre-wrap; }
 
-/* ── Scroll area ── */
-.scroll-area { flex: 1; }
+/* ── Data area (scrolls at page level) ── */
+.data-area { padding-bottom: 20rpx; }
 
 /* ── Hero card ── */
 .hero-card {
@@ -56,23 +53,72 @@
 .hero-compare.positive { color: #a7f3d0; }
 .hero-compare.negative { color: #fca5a5; }
 
-.hero-stats {
+/* ── Hero 三分类 ── */
+.hero-cats {
   display: flex;
-  border-top: 1rpx solid rgba(255,255,255,0.2);
-  margin-top: 8rpx;
+  gap: 14rpx;
+  border-top: 1rpx solid rgba(255,255,255,0.18);
+  margin-top: 6rpx;
+  padding: 28rpx 0 32rpx;
 }
-.hero-stat {
+.hero-cat {
   flex: 1;
-  padding: 24rpx 0;
-  text-align: center;
+  min-width: 0;
+  padding: 20rpx 12rpx 18rpx;
+  border-radius: 20rpx;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  transition: transform 0.12s ease, background 0.12s ease;
 }
-.hero-divider {
-  width: 1rpx;
-  background: rgba(255,255,255,0.18);
-  margin: 20rpx 0;
+.hero-cat-hover {
+  background: rgba(255,255,255,0.22);
+  transform: scale(0.96);
 }
-.stat-val { font-size: 40rpx; font-weight: 700; color: #fff; }
-.stat-key { font-size: 22rpx; color: rgba(255,255,255,0.6); margin-top: 4rpx; }
+.hc-icon-wrap {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.08);
+}
+.hc-icon-img {
+  width: 42rpx;
+  height: 42rpx;
+}
+.hc-emoji {
+  font-size: 36rpx;
+  line-height: 1;
+}
+.hc-name {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+.hc-val {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5rpx;
+  line-height: 1.2;
+}
+.hc-diff {
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 2rpx 10rpx;
+  border-radius: 20rpx;
+  letter-spacing: 0.5rpx;
+  background: rgba(255,255,255,0.14);
+}
+.hc-diff-positive { color: #fde68a; }
+.hc-diff-negative { color: #a7f3d0; }
+.hc-diff-neutral  { color: rgba(255,255,255,0.65); }
 
 /* ── Insight card ── */
 .insight-card {
@@ -108,6 +154,11 @@
   display: flex;
   align-items: center;
   gap: 20rpx;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.cat-row-hover {
+  background: #f7f8fc;
+  transform: scale(0.985);
 }
 .cat-icon-wrap {
   width: 72rpx; height: 72rpx;
@@ -116,6 +167,7 @@
   flex-shrink: 0;
 }
 .cat-emoji { font-size: 38rpx; }
+.cat-icon-img { width: 48rpx; height: 48rpx; }
 .cat-body { flex: 1; min-width: 0; }
 .cat-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10rpx; }
 .cat-name { font-size: 28rpx; font-weight: 600; color: #1a1a1a; }

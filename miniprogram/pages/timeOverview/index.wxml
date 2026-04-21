@@ -17,12 +17,12 @@
   </view>
 
   <!-- 有数据 -->
-  <scroll-view scroll-y wx:elif="{{!loading && hasData}}" class="scroll-area" refresher-enabled bind:refresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+  <view wx:elif="{{!loading && hasData}}" class="data-area">
 
     <!-- 英雄卡片 -->
     <view class="hero-card">
       <view class="hero-top">
-        <view class="hero-label">今日上网时长</view>
+        <view class="hero-label">今日追踪时长</view>
         <view class="hero-time">
           <text class="hero-h">{{summary.hours}}</text><text class="hero-unit">h </text>
           <text class="hero-h">{{summary.minutes}}</text><text class="hero-unit">m</text>
@@ -31,20 +31,15 @@
           {{summary.diffText}}
         </view>
       </view>
-      <view class="hero-stats">
-        <view class="hero-stat">
-          <view class="stat-val">{{summary.siteCount}}</view>
-          <view class="stat-key">访问网站</view>
-        </view>
-        <view class="hero-divider"></view>
-        <view class="hero-stat">
-          <view class="stat-val">{{summary.pageCount}}</view>
-          <view class="stat-key">页面次数</view>
-        </view>
-        <view class="hero-divider"></view>
-        <view class="hero-stat">
-          <view class="stat-val">{{summary.avgMinutes}}<text style="font-size:22rpx">m</text></view>
-          <view class="stat-key">平均停留</view>
+      <view class="hero-cats">
+        <view class="hero-cat" wx:for="{{featuredCats}}" wx:key="key" bindtap="onCategoryTap" data-name="{{item.name}}" hover-class="hero-cat-hover" hover-stay-time="80">
+          <view class="hc-icon-wrap" style="background:{{item.bgLight}}">
+            <image class="hc-icon-img" src="{{item.icon}}" mode="aspectFit" wx:if="{{item.icon}}"></image>
+            <text class="hc-emoji" wx:else>{{item.emoji}}</text>
+          </view>
+          <view class="hc-name">{{item.name}}</view>
+          <view class="hc-val">{{item.durationLabel}}</view>
+          <view class="hc-diff hc-diff-{{item.diffClass}}" wx:if="{{item.diffText}}">{{item.diffText}}</view>
         </view>
       </view>
     </view>
@@ -65,9 +60,10 @@
     </view>
 
     <view class="cat-list">
-      <view class="cat-row" wx:for="{{categories}}" wx:key="name">
+      <view class="cat-row" wx:for="{{categories}}" wx:key="name" bindtap="onCategoryTap" data-name="{{item.name}}" hover-class="cat-row-hover" hover-stay-time="80">
         <view class="cat-icon-wrap" style="background:{{item.bgLight}}">
-          <text class="cat-emoji">{{item.emoji}}</text>
+          <image class="cat-icon-img" src="{{item.icon}}" mode="aspectFit" wx:if="{{item.icon}}"></image>
+          <text class="cat-emoji" wx:else>{{item.emoji}}</text>
         </view>
         <view class="cat-body">
           <view class="cat-top">
@@ -133,5 +129,5 @@
     </view>
 
     <view style="height:40rpx"></view>
-  </scroll-view>
+  </view>
 </view>

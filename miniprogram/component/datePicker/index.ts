@@ -5,7 +5,6 @@
  */
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-const MONTHS   = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 
 function todayStr(): string {
   const d = new Date();
@@ -15,20 +14,31 @@ function todayStr(): string {
   return `${y}-${m}-${day}`;
 }
 
-function formatLabel(dateStr: string): string {
+function yesterdayStr(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function buildLabels(dateStr: string): { titleLabel: string; subLabel: string } {
   const [y, m, d] = dateStr.split('-').map(Number);
   const dateObj = new Date(y, m - 1, d);
   const weekday = WEEKDAYS[dateObj.getDay()];
   const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
 
-  if (dateStr === todayStr()) return `${m}月${d}日 ${weekday}`;
-  if (y === today.getFullYear() && m === (today.getMonth() + 1) && d === (today.getDate() - 1)) {
-    return `${m}月${d}日 昨天`;
+  if (dateStr === todayStr()) {
+    return { titleLabel: '今天', subLabel: `${m}月${d}日 · ${weekday}` };
   }
-  if (y === today.getFullYear()) return `${m}月${d}日 ${weekday}`;
-  return `${y}年${m}月${d}日`;
+  if (dateStr === yesterdayStr()) {
+    return { titleLabel: '昨天', subLabel: `${m}月${d}日 · ${weekday}` };
+  }
+  if (y === today.getFullYear()) {
+    return { titleLabel: `${m}月${d}日`, subLabel: weekday };
+  }
+  return { titleLabel: `${y}年${m}月${d}日`, subLabel: weekday };
 }
 
 function addDays(dateStr: string, delta: number): string {
@@ -50,13 +60,16 @@ Component({
 
   data: {
     dateStr: '',
-    displayLabel: '',
+    titleLabel: '',
+    subLabel: '',
     isToday: true,
+    todayStr: '',
   },
 
   lifetimes: {
     attached() {
       const initial = this.properties.date || todayStr();
+      this.setData({ todayStr: todayStr() });
       this._setDate(initial);
     },
   },
@@ -70,10 +83,13 @@ Component({
   methods: {
     _setDate(dateStr: string) {
       const today = todayStr();
+      const { titleLabel, subLabel } = buildLabels(dateStr);
       this.setData({
         dateStr,
-        displayLabel: formatLabel(dateStr),
+        titleLabel,
+        subLabel,
         isToday: dateStr === today,
+        todayStr: today,
       });
     },
 
@@ -86,7 +102,6 @@ Component({
     onNext() {
       if (this.data.isToday) return;
       const next = addDays(this.data.dateStr, 1);
-      // Don't go into the future
       if (next > todayStr()) return;
       this._setDate(next);
       this.triggerEvent('dateChange', { date: next });
@@ -97,6 +112,13 @@ Component({
       if (picked > todayStr()) return;
       this._setDate(picked);
       this.triggerEvent('dateChange', { date: picked });
+    },
+
+    onGoToday() {
+      const today = todayStr();
+      if (this.data.dateStr === today) return;
+      this._setDate(today);
+      this.triggerEvent('dateChange', { date: today });
     },
   },
 });

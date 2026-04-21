@@ -1,19 +1,24 @@
 <!-- 日期选择条 component -->
 <view class="date-strip">
-  <view class="date-left" bindtap="onPrev">
-    <view class="arrow-btn">‹</view>
+  <view class="nav-btn" bindtap="onPrev" hover-class="nav-btn-hover" hover-stay-time="80">
+    <text class="nav-arrow">‹</text>
   </view>
 
-  <picker mode="date" value="{{dateStr}}" start="2020-01-01" bindchange="onPickerChange">
-    <view class="date-center">
-      <text class="date-label">{{displayLabel}}</text>
-      <text class="date-caret">∨</text>
+  <picker class="date-center-picker" mode="date" value="{{dateStr}}" start="2020-01-01" end="{{todayStr}}" bindchange="onPickerChange">
+    <view class="date-pill" hover-class="date-pill-hover" hover-stay-time="80">
+      <view class="date-label-wrap">
+        <text class="date-title">{{titleLabel}}</text>
+        <text class="date-sub" wx:if="{{subLabel}}">{{subLabel}}</text>
+      </view>
+      <text class="date-caret">⌵</text>
     </view>
   </picker>
 
-  <view class="date-right">
-    <view class="arrow-btn {{isToday ? 'arrow-disabled' : ''}}" bindtap="onNext">›</view>
+  <view class="nav-btn {{isToday ? 'nav-btn-disabled' : ''}}" bindtap="onNext" hover-class="{{isToday ? '' : 'nav-btn-hover'}}" hover-stay-time="80">
+    <text class="nav-arrow">›</text>
   </view>
 
-  <view class="today-badge" wx:if="{{isToday}}">今天</view>
+  <view class="today-return" wx:if="{{!isToday}}" bindtap="onGoToday" hover-class="today-return-hover" hover-stay-time="80">
+    <text class="today-return-text">今天</text>
+  </view>
 </view>

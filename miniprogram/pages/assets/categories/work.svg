@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- 桌面 -->
+  <path d="M6 50h52" stroke="#4B7BF5" stroke-width="3" stroke-linecap="round"/>
+  <!-- 显示器 -->
+  <rect x="30" y="14" width="26" height="18" rx="3" fill="#4B7BF5" fill-opacity="0.16" stroke="#4B7BF5" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 屏幕里的两行内容 -->
+  <path d="M35 21h10M35 26h14" stroke="#4B7BF5" stroke-width="2" stroke-linecap="round"/>
+  <!-- 显示器支架 -->
+  <path d="M43 32v8" stroke="#4B7BF5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M37 40h12" stroke="#4B7BF5" stroke-width="3" stroke-linecap="round"/>
+  <!-- 人物头部 -->
+  <circle cx="17" cy="20" r="5.5" fill="#4B7BF5" fill-opacity="0.16" stroke="#4B7BF5" stroke-width="3"/>
+  <!-- 人物身体（坐姿）：从肩到桌 -->
+  <path d="M7 50c0-7 4.5-12 10-12s10 5 10 12" fill="#4B7BF5" fill-opacity="0.16" stroke="#4B7BF5" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 伸向键盘的手臂 -->
+  <path d="M23 43l8 3" stroke="#4B7BF5" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

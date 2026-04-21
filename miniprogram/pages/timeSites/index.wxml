@@ -42,13 +42,16 @@
     </view>
 
     <!-- 网站列表 -->
-    <scroll-view scroll-y class="scroll-area" refresher-enabled bind:refresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+    <view class="data-area">
       <view class="site-list">
         <!-- Grouped by category when not searching -->
         <block wx:for="{{groups}}" wx:key="category" wx:if="{{!searchText}}">
           <!-- Category header -->
           <view class="group-header">
-            <view class="group-color-dot" style="background:{{item.color}}"></view>
+            <view class="group-icon-wrap" style="background:{{item.bgLight}}">
+              <image class="group-icon-img" src="{{item.icon}}" mode="aspectFit" wx:if="{{item.icon}}"></image>
+              <view class="group-color-dot" style="background:{{item.color}}" wx:else></view>
+            </view>
             <text class="group-name">{{item.category}}</text>
             <text class="group-dur">{{item.totalLabel}}</text>
           </view>
@@ -57,7 +60,8 @@
           <view class="site-card" wx:for="{{item.sites}}" wx:key="domain" wx:for-item="site" bindtap="onSiteTap" data-site="{{site}}">
             <view class="site-rank">{{site.rank}}</view>
             <view class="site-favicon" style="background:{{site.catBgLight}}">
-              <text class="site-emoji">{{site.emoji}}</text>
+              <image class="site-icon-img" src="{{site.catIcon}}" mode="aspectFit" wx:if="{{site.catIcon}}"></image>
+              <text class="site-emoji" wx:else>{{site.emoji}}</text>
             </view>
             <view class="site-info">
               <view class="site-name">{{site.name}}</view>
@@ -78,7 +82,8 @@
           <view class="site-card" wx:for="{{filteredSites}}" wx:key="domain" bindtap="onSiteTap" data-site="{{item}}">
             <view class="site-rank">{{item.rank}}</view>
             <view class="site-favicon" style="background:{{item.catBgLight}}">
-              <text class="site-emoji">{{item.emoji}}</text>
+              <image class="site-icon-img" src="{{item.catIcon}}" mode="aspectFit" wx:if="{{item.catIcon}}"></image>
+              <text class="site-emoji" wx:else>{{item.emoji}}</text>
             </view>
             <view class="site-info">
               <view class="site-name">{{item.name}}</view>
@@ -99,7 +104,7 @@
       </view>
 
       <view style="height:40rpx"></view>
-    </scroll-view>
+    </view>
   </block>
 </view>
 
@@ -108,7 +113,8 @@
   <view class="modal-card" catchtap="">
     <view class="modal-header">
       <view class="modal-favicon" style="background:{{activeSite.catBgLight}}">
-        <text class="modal-emoji">{{activeSite.emoji}}</text>
+        <image class="modal-icon-img" src="{{activeSite.catIcon}}" mode="aspectFit" wx:if="{{activeSite.catIcon}}"></image>
+        <text class="modal-emoji" wx:else>{{activeSite.emoji}}</text>
       </view>
       <view class="modal-title-wrap">
         <view class="modal-name">{{activeSite.name}}</view>
