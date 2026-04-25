@@ -61,6 +61,15 @@
     </view>
   </view>
 
+  <!-- Learn more -->
+  <view class="card learn-more-card" bindtap="goToBlog">
+    <view class="lm-left">
+      <view class="lm-title">了解更多</view>
+      <view class="lm-desc">完整介绍这个项目的设计思路与实现细节</view>
+    </view>
+    <view class="lm-arrow">›</view>
+  </view>
+
   <!-- Quote -->
   <view class="card quote-card">
     <view class="quote-mark">"</view>

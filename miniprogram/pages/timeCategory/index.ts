@@ -1,4 +1,5 @@
 import { getTimeSites } from '../../utils/service';
+import { makeShareToFriend, makeShareToTimeline } from '../../utils/share';
 
 // 分类配色 —— 同时支持"单词"与"复合词"两套分类名（兼容新旧上报数据）
 type CatCfg = { color: string; bgLight: string; icon: string; emoji: string };
@@ -11,6 +12,7 @@ const CAT_CONFIG: Record<string, CatCfg> = {
   '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
   '工具':     { color: '#F59F00', bgLight: '#FFF4DB', icon: '/pages/assets/categories/tools.svg',         emoji: '🛠️' },
   '购物':     { color: '#34D399', bgLight: '#EDFBF4', icon: '/pages/assets/categories/shopping.svg',      emoji: '🛍️' },
+  '睡眠':     { color: '#6366F1', bgLight: '#EEF2FF', icon: '/pages/assets/categories/sleep.svg',         emoji: '😴' },
   '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', icon: '/pages/assets/categories/other.svg',         emoji: '🌐' },
   // 复合词版（旧 mock / 兼容）
   '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
@@ -38,6 +40,26 @@ const SITE_EMOJIS: Record<string, string> = {
   'v2ex.com': '💻', 'producthunt.com': '🚀',
 };
 
+// 主流站点/App 品牌图标：按 detail 关键字匹配（domain 或 package name）
+const SITE_ICONS: Array<{ match: RegExp; icon: string }> = [
+  { match: /youtube\.com/i,                                    icon: '/pages/assets/sites/youtube.svg' },
+  { match: /bilibili\.com|tv\.danmaku\.bili/i,                 icon: '/pages/assets/sites/bilibili.svg' },
+  { match: /douyin\.com|aweme|tiktok/i,                        icon: '/pages/assets/sites/douyin.svg' },
+  { match: /weixin|com\.tencent\.mm|com\.tencent\.xin/i,       icon: '/pages/assets/sites/wechat.svg' },
+  { match: /music\.163\.com|com\.netease\.cloudmusic/i,        icon: '/pages/assets/sites/netease-music.svg' },
+  { match: /y\.qq\.com|com\.tencent\.qqmusic/i,                icon: '/pages/assets/sites/qq-music.svg' },
+  { match: /v\.qq\.com|com\.tencent\.qqlive/i,                 icon: '/pages/assets/sites/tencent-video.svg' },
+  { match: /iqiyi\.com|com\.qiyi\.video/i,                     icon: '/pages/assets/sites/iqiyi.svg' },
+];
+
+function getSiteIcon(detail: string | undefined | null, domain: string): string {
+  const key = (detail || domain || '');
+  for (const { match, icon } of SITE_ICONS) {
+    if (match.test(key)) return icon;
+  }
+  return '';
+}
+
 function todayStr(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -55,6 +77,21 @@ function getSiteEmoji(domain: string): string {
     if (domain.includes(key)) return SITE_EMOJIS[key];
   }
   return '🌐';
+}
+
+// 从后端的 ISO 字符串（naive UTC+8）里抽取 HH:MM
+function isoToHHMM(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const t = iso.split('T')[1] || '';
+  return t.slice(0, 5);
+}
+
+// 睡眠类目用到的"入睡 · 起床"文案
+function formatSleepRange(startIso?: string | null, endIso?: string | null): string {
+  const s = isoToHHMM(startIso);
+  const e = isoToHHMM(endIso);
+  if (!s || !e) return '';
+  return `入睡 ${s} · 起床 ${e}`;
 }
 
 Page({
@@ -198,6 +235,13 @@ Page({
       sites = sites.filter((s: any) => s.category === activeTab);
     }
 
+    // 中心数字：选中分类时显示该分类的时长，未选时显示全天总计
+    let displayMinutes = _totalMinutes;
+    if (activeTab !== 'all') {
+      const cat = (_categories as any[]).find((c: any) => c.name === activeTab);
+      displayMinutes = cat ? cat.minutes : 0;
+    }
+
     // Sort
     sites = [...sites].sort((a: any, b: any) =>
       sortByTime ? b.minutes - a.minutes : b.visits - a.visits
@@ -207,6 +251,7 @@ Page({
 
     const siteItems = sites.map((s: any) => {
       const cfg = CAT_CONFIG[s.category] || CAT_CONFIG['其他'];
+      const siteIcon = getSiteIcon(s.detail, s.domain);
       return {
         name: s.name,
         domain: s.domain,
@@ -215,9 +260,17 @@ Page({
         catColor: cfg.color,
         catBgLight: cfg.bgLight,
         catIcon: cfg.icon,
+        // 站点专属图标：若命中则优先用作展示
+        siteIcon,
+        // 有站点图标时用白底，让品牌色自己说话
+        favBg: siteIcon ? '#fff' : cfg.bgLight,
         durationLabel: minutesToLabel(s.minutes),
         visits: s.visits,
         barWidth: Math.round(s.minutes / maxMins * 100),
+        // 仅睡眠类目显示"入睡/起床"时间点
+        timeRangeLabel: s.category === '睡眠'
+          ? formatSleepRange(s.startTime, s.endTime)
+          : '',
       };
     });
 
@@ -233,7 +286,11 @@ Page({
       };
     });
 
-    this.setData({ sites: siteItems, displayCategories });
+    this.setData({
+      sites: siteItems,
+      displayCategories,
+      totalLabel: minutesToLabel(displayMinutes),
+    });
   },
 
   _drawDonut(cats: Array<{ name: string; minutes: number }>, total: number) {
@@ -296,5 +353,20 @@ Page({
         })
         .exec();
     }, 50);
+  },
+
+  onShareAppMessage() {
+    const label = this.data.activeTabLabel && this.data.activeTabLabel !== '所有'
+      ? this.data.activeTabLabel : '分类';
+    return makeShareToFriend({
+      title: `我的${label}时长分布 · 一日虚度`,
+      path:  '/pages/timeCategory/index',
+    });
+  },
+
+  onShareTimeline() {
+    return makeShareToTimeline({
+      title: '一日虚度 · 时间花在哪儿了',
+    });
   },
 });

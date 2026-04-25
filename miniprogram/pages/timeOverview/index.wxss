@@ -53,24 +53,24 @@
 .hero-compare.positive { color: #a7f3d0; }
 .hero-compare.negative { color: #fca5a5; }
 
-/* ── Hero 三分类 ── */
+/* ── Hero 分类格子（支持 3~4 项） ── */
 .hero-cats {
   display: flex;
-  gap: 14rpx;
+  gap: 10rpx;
   border-top: 1rpx solid rgba(255,255,255,0.18);
   margin-top: 6rpx;
-  padding: 28rpx 0 32rpx;
+  padding: 24rpx 0 28rpx;
 }
 .hero-cat {
   flex: 1;
   min-width: 0;
-  padding: 20rpx 12rpx 18rpx;
-  border-radius: 20rpx;
+  padding: 16rpx 6rpx 14rpx;
+  border-radius: 18rpx;
   background: rgba(255,255,255,0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
+  gap: 6rpx;
   transition: transform 0.12s ease, background 0.12s ease;
 }
 .hero-cat-hover {
@@ -78,43 +78,44 @@
   transform: scale(0.96);
 }
 .hc-icon-wrap {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 16rpx;
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 14rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4rpx;
+  margin-bottom: 2rpx;
   box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.08);
 }
 .hc-icon-img {
-  width: 42rpx;
-  height: 42rpx;
+  width: 36rpx;
+  height: 36rpx;
 }
 .hc-emoji {
-  font-size: 36rpx;
+  font-size: 30rpx;
   line-height: 1;
 }
 .hc-name {
-  font-size: 22rpx;
+  font-size: 20rpx;
   color: rgba(255,255,255,0.75);
   font-weight: 500;
   letter-spacing: 0.5rpx;
 }
 .hc-val {
-  font-size: 32rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.5rpx;
   line-height: 1.2;
 }
 .hc-diff {
-  font-size: 20rpx;
+  font-size: 18rpx;
   font-weight: 500;
-  padding: 2rpx 10rpx;
+  padding: 2rpx 8rpx;
   border-radius: 20rpx;
   letter-spacing: 0.5rpx;
   background: rgba(255,255,255,0.14);
+  white-space: nowrap;
 }
 .hc-diff-positive { color: #fde68a; }
 .hc-diff-negative { color: #a7f3d0; }

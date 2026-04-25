@@ -10,7 +10,9 @@
     "pages/index/index",
     "pages/users/users",
     "pages/users/contributions/contributions",
-    "pages/users/about/about"
+    "pages/users/about/about",
+    "pages/users/howToUpload/howToUpload",
+    "pages/users/blog/blog"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -40,7 +42,7 @@
       },
       {
         "pagePath": "pages/timeSites/index",
-        "text": "记录",
+        "text": "趋势",
         "iconPath": "pages/assets/report.png",
         "selectedIconPath": "pages/assets/report_active.png"
       },

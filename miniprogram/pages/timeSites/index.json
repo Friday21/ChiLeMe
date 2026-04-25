@@ -1,9 +1,7 @@
 {
-  "navigationBarTitleText": "网站明细",
+  "navigationBarTitleText": "趋势",
   "navigationBarBackgroundColor": "#ffffff",
   "navigationBarTextStyle": "black",
   "enablePullDownRefresh": true,
-  "usingComponents": {
-    "date-picker": "/component/datePicker/index"
-  }
+  "usingComponents": {}
 }

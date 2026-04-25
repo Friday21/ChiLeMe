@@ -13,6 +13,10 @@
 
   <!-- Settings -->
   <van-cell-group title="更多">
+    <van-cell title="使用 Mock 数据" label="{{ useMock ? '当前展示模拟数据' : '当前从服务器拉取' }}" center>
+      <switch slot="right-icon" checked="{{ useMock }}" bindchange="onToggleMock" color="#4B7BF5" style="transform: scale(0.8);"/>
+    </van-cell>
+    <van-cell title="如何上传数据" is-link bind:click="goToHowToUpload" />
     <van-cell title="关于" is-link bind:click="goToAbout" />
   </van-cell-group>
 

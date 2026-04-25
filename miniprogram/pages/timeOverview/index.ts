@@ -1,4 +1,5 @@
 import { getTimeOverview, getTimeWeekTrend } from '../../utils/service';
+import { makeShareToFriend, makeShareToTimeline } from '../../utils/share';
 
 // 分类配置（颜色、图标、背景）—— 单词版 + 旧复合词版兼容
 type CatCfg = { color: string; bgLight: string; icon: string; emoji: string };
@@ -11,6 +12,7 @@ const CAT_CONFIG: Record<string, CatCfg> = {
   '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
   '工具':     { color: '#F59F00', bgLight: '#FFF4DB', icon: '/pages/assets/categories/tools.svg',         emoji: '🛠️' },
   '购物':     { color: '#34D399', bgLight: '#EDFBF4', icon: '/pages/assets/categories/shopping.svg',      emoji: '🛍️' },
+  '睡眠':     { color: '#6366F1', bgLight: '#EEF2FF', icon: '/pages/assets/categories/sleep.svg',         emoji: '😴' },
   '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', icon: '/pages/assets/categories/other.svg',         emoji: '🌐' },
   // 旧复合词版（兼容 mock 数据）
   '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
@@ -27,6 +29,7 @@ const FEATURED_CATS = [
   { key: '工作', emoji: '💼' },
   { key: '学习', emoji: '📚' },
   { key: '娱乐', emoji: '🤳' },
+  { key: '睡眠', emoji: '😴' },
 ];
 
 function todayStr(): string {
@@ -271,5 +274,19 @@ Page({
       };
     });
     this.setData({ weekTrend });
+  },
+
+  onShareAppMessage() {
+    const total = (this.data as any).totalLabel || '';
+    return makeShareToFriend({
+      title: total ? `我今天花了 ${total} · 一日虚度` : '看看你的一天都花在哪了 · 一日虚度',
+      path:  '/pages/timeOverview/index',
+    });
+  },
+
+  onShareTimeline() {
+    return makeShareToTimeline({
+      title: '一日虚度 · 时间去哪儿了',
+    });
   },
 });

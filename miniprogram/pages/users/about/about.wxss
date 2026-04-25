@@ -99,6 +99,41 @@
   line-height: 1.4;
 }
 
+/* ── Learn more ── */
+.learn-more-card {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: linear-gradient(135deg, #4B7BF5 0%, #818cf8 100%);
+  box-shadow: 0 10rpx 32rpx rgba(75, 123, 245, 0.22);
+}
+.learn-more-card:active {
+  opacity: 0.9;
+}
+.lm-left {
+  flex: 1;
+  min-width: 0;
+}
+.lm-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6rpx;
+  letter-spacing: 0.5rpx;
+}
+.lm-desc {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.5;
+}
+.lm-arrow {
+  font-size: 44rpx;
+  color: #fff;
+  font-weight: 300;
+  line-height: 1;
+  padding-left: 8rpx;
+}
+
 /* ── Quote ── */
 .quote-card {
   text-align: center;

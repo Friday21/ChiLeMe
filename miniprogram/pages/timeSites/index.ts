@@ -1,43 +1,15 @@
-import { getTimeSites } from '../../utils/service';
+import { getTimeWeekTrend } from '../../utils/service';
+import { makeShareToFriend, makeShareToTimeline } from '../../utils/share';
 
-// 同时支持"单词版"与旧"复合词"分类名，未知分类统一走 其他
+// 四大分类：配色 + 图标
 type CatCfg = { color: string; bgLight: string; icon: string; emoji: string };
 const CAT_CONFIG: Record<string, CatCfg> = {
-  // 单词版（后端当前上报格式）
-  '工作':     { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
-  '学习':     { color: '#22B8CF', bgLight: '#E3FAFC', icon: '/pages/assets/categories/study.svg',         emoji: '📚' },
-  '社交':     { color: '#FF6B6B', bgLight: '#FFF0F0', icon: '/pages/assets/categories/social.svg',        emoji: '📱' },
-  '资讯':     { color: '#FFA94D', bgLight: '#FFF8EB', icon: '/pages/assets/categories/news.svg',          emoji: '📰' },
-  '娱乐':     { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
-  '工具':     { color: '#F59F00', bgLight: '#FFF4DB', icon: '/pages/assets/categories/tools.svg',         emoji: '🛠️' },
-  '购物':     { color: '#34D399', bgLight: '#EDFBF4', icon: '/pages/assets/categories/shopping.svg',      emoji: '🛍️' },
-  '其他':     { color: '#94A3B8', bgLight: '#F1F5F9', icon: '/pages/assets/categories/other.svg',         emoji: '🌐' },
-  // 旧 mock 复合词版兼容
-  '工作/学习': { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',          emoji: '💼' },
-  '社交媒体':  { color: '#FF6B6B', bgLight: '#FFF0F0', icon: '/pages/assets/categories/social.svg',        emoji: '📱' },
-  '资讯/新闻': { color: '#FFA94D', bgLight: '#FFF8EB', icon: '/pages/assets/categories/news.svg',          emoji: '📰' },
-  '视频/娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
+  '工作': { color: '#4B7BF5', bgLight: '#EBF0FF', icon: '/pages/assets/categories/work.svg',  emoji: '💼' },
+  '学习': { color: '#22B8CF', bgLight: '#E3FAFC', icon: '/pages/assets/categories/study.svg', emoji: '📚' },
+  '娱乐': { color: '#A78BFA', bgLight: '#F5F0FF', icon: '', emoji: '🤳' },
+  '睡眠': { color: '#6366F1', bgLight: '#EEF2FF', icon: '/pages/assets/categories/sleep.svg', emoji: '😴' },
 };
-
-// 分类展示优先级（总时长相同时按此顺序），未在列表中的追加到末尾
-const CAT_PRIORITY = [
-  '工作', '工作/学习',
-  '学习',
-  '社交', '社交媒体',
-  '资讯', '资讯/新闻',
-  '娱乐', '视频/娱乐',
-  '工具',
-  '购物',
-  '其他',
-];
-
-const SITE_EMOJIS: Record<string, string> = {
-  'claude.ai': '🤖', 'github.com': '🐙', 'youtube.com': '🔴',
-  'weibo.com': '📘', 'twitter.com': '🐦', 'x.com': '🐦',
-  'sspai.com': '📰', 'google.com': '🔍', 'taobao.com': '🛍️',
-  'zhihu.com': '💬', 'bilibili.com': '📺', 'jd.com': '🛒',
-  'v2ex.com': '💻', 'producthunt.com': '🚀',
-};
+const FEATURED = ['工作', '学习', '娱乐', '睡眠'];
 
 function todayStr(): string {
   const d = new Date();
@@ -45,217 +17,324 @@ function todayStr(): string {
 }
 
 function minutesToLabel(mins: number): string {
+  if (!mins) return '0m';
   if (mins < 60) return `${mins}m`;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
-function getSiteEmoji(domain: string): string {
-  for (const key of Object.keys(SITE_EMOJIS)) {
-    if (domain.includes(key)) return SITE_EMOJIS[key];
+// y 轴：根据最大值挑个"漂亮"的刻度上限，并返回统一的格式化器
+// 确保 5 条刻度（0/25/50/75/100%）要么全是 Xm 要么全是 Xh，不混用
+function niceYAxis(actualMax: number): { yMax: number; format: (v: number) => string } {
+  // 分钟尺度：上限 ≤ 60，统一 "Xm"
+  if (actualMax <= 60) {
+    let yMax = 60;
+    if (actualMax <= 8)        yMax = 8;
+    else if (actualMax <= 20)  yMax = 20;
+    else if (actualMax <= 40)  yMax = 40;
+    return {
+      yMax,
+      format: (v: number) => (v === 0 ? '0' : `${v}m`),
+    };
   }
-  return '🌐';
+  // 小时尺度：yMax 必须是 240 的倍数（让 4 等分后每格都是整数小时）
+  //   yMax=240 → 每格 1h → 0/1h/2h/3h/4h
+  //   yMax=480 → 每格 2h → 0/2h/4h/6h/8h
+  //   yMax=720 → 每格 3h → 0/3h/6h/9h/12h
+  // 若实际最大值介于两档之间（比如 120m），也统一用 240m=4h 作底，
+  // 省得出现 1.5h 这种碎刻度
+  let yMax = 240;
+  if (actualMax <= 240)       yMax = 240;   // 4h
+  else if (actualMax <= 480)  yMax = 480;   // 8h
+  else if (actualMax <= 720)  yMax = 720;   // 12h
+  else if (actualMax <= 960)  yMax = 960;   // 16h
+  else if (actualMax <= 1440) yMax = 1440;  // 24h
+  else                        yMax = Math.ceil(actualMax / 240) * 240;
+
+  return {
+    yMax,
+    format: (v: number) => {
+      if (v === 0) return '0';
+      return `${Math.round(v / 60)}h`;
+    },
+  };
+}
+
+function weekdayLabel(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const wd = new Date(y, m - 1, d).getDay();
+  return ['日', '一', '二', '三', '四', '五', '六'][wd];
+}
+
+function shortDate(dateStr: string): string {
+  const [, m, d] = dateStr.split('-').map(Number);
+  return `${m}/${d}`;
 }
 
 Page({
   data: {
-    selectedDate: '',
     loading: true,
-    refreshing: false,
     hasData: false,
-    searchText: '',
-    sortByTime: true,
-    totalLabel: '',
-    groups: [] as any[],
-    filteredSites: [] as any[],
-    showModal: false,
-    activeSite: {} as any,
-    _allSites: [] as any[],
+    summaries: [] as any[],
+    xLabels: [] as string[],
+    activeCat: null as string | null,
+    rangeLabel: '',
+    _raw: [] as any[],
   },
 
-  onLoad(options: any) {
-    const date = options.date || todayStr();
-    this.setData({ selectedDate: date });
-    this.fetchData(date);
+  onLoad() {
+    this.fetchData();
   },
 
   onShow() {
-    const date = this.data.selectedDate || todayStr();
-    if (!this.data.selectedDate) {
-      this.setData({ selectedDate: date });
-    }
-    this.fetchData(date);
-  },
-
-  onDateChange(e: any) {
-    const date = e.detail.date;
-    this.setData({ selectedDate: date, loading: true, hasData: false, searchText: '' });
-    this.fetchData(date);
+    this.fetchData();
   },
 
   onPullDownRefresh() {
-    this.fetchData(this.data.selectedDate);
+    this.fetchData();
   },
 
-  onSearch(e: any) {
-    const text = e.detail.value as string;
-    this.setData({ searchText: text });
-    this._filterSites(text);
-  },
-
-  clearSearch() {
-    this.setData({ searchText: '' });
-    this._filterSites('');
-  },
-
-  toggleSort() {
-    this.setData({ sortByTime: !this.data.sortByTime });
-    this._buildAll(this.data._allSites);
-  },
-
-  onSiteTap(e: any) {
-    const site = e.currentTarget.dataset.site;
-    const hourly = site.hourly || [];
-    const maxH = hourly.length ? Math.max(...hourly.map((h: any) => h.minutes), 1) : 1;
-    const hourlyFormatted = hourly.map((h: any) => ({
-      hour: String(h.hour).padStart(2, '0'),
-      pct: Math.round(h.minutes / maxH * 100),
-    }));
-
-    const avgLabel = site.visits > 0
-      ? minutesToLabel(Math.round((site.minutes || 0) / site.visits))
-      : '—';
-
-    this.setData({
-      showModal: true,
-      activeSite: { ...site, hourly: hourlyFormatted, avgLabel },
-    });
-  },
-
-  closeModal() {
-    this.setData({ showModal: false });
-  },
-
-  fetchData(date: string) {
+  fetchData() {
     const app = getApp<IAppOption>();
     const openId = app.globalData.openId || wx.getStorageSync('openId');
-    if (!openId) return;
-
-    getTimeSites(openId, date).then((data: any) => {
-      if (!data || !data.sites || !data.sites.length) {
-        this.setData({ loading: false, refreshing: false, hasData: false });
-        return;
-      }
-
-      const total = data.totalMinutes || 0;
-      this.setData({
-        hasData: true,
-        loading: false,
-        refreshing: false,
-        totalLabel: minutesToLabel(total),
-        _allSites: data.sites,
-      });
-      this._buildAll(data.sites);
-      wx.stopPullDownRefresh();
-    }).catch(err => {
-      console.error('[timeSites] fetch error', err);
-      this.setData({ loading: false, refreshing: false, hasData: false });
-      wx.stopPullDownRefresh();
-    });
-  },
-
-  _buildAll(rawSites: any[]) {
-    const { sortByTime } = this.data;
-
-    // Sort globally
-    const sorted = [...rawSites].sort((a, b) =>
-      sortByTime ? b.minutes - a.minutes : b.visits - a.visits
-    );
-    const maxMins = sorted.length ? sorted[0].minutes : 1;
-
-    // Enrich each site
-    const enriched = sorted.map((s, idx) => {
-      const cfg = CAT_CONFIG[s.category] || CAT_CONFIG['其他'];
-      return {
-        ...s,
-        rank: idx + 1,
-        emoji: getSiteEmoji(s.domain),
-        catColor: cfg.color,
-        catBgLight: cfg.bgLight,
-        catIcon: cfg.icon,
-        durationLabel: minutesToLabel(s.minutes),
-        barWidth: Math.round(s.minutes / maxMins * 100),
-      };
-    });
-
-    // Group by category —— 根据真实数据动态建组，避免漏掉后端新分类
-    const groupMap: Record<string, any[]> = {};
-    enriched.forEach(s => {
-      const cat = s.category || '其他';
-      if (!groupMap[cat]) groupMap[cat] = [];
-      groupMap[cat].push(s);
-    });
-
-    // 按 CAT_PRIORITY 排序，未在列表的分类按总时长降序追加到末尾
-    const presentCats = Object.keys(groupMap);
-    const ranked = presentCats
-      .map(c => {
-        const idx = CAT_PRIORITY.indexOf(c);
-        const totalMins = groupMap[c].reduce((acc: number, s: any) => acc + (s.minutes || 0), 0);
-        return { cat: c, idx: idx === -1 ? 9999 : idx, totalMins };
-      })
-      .sort((a, b) => {
-        if (a.idx !== b.idx) return a.idx - b.idx;
-        return b.totalMins - a.totalMins;
-      });
-
-    const groups = ranked.map(({ cat, totalMins }) => {
-      const cfg = CAT_CONFIG[cat] || CAT_CONFIG['其他'];
-      return {
-        category: cat,
-        color: cfg.color,
-        bgLight: cfg.bgLight,
-        icon: cfg.icon,
-        totalLabel: minutesToLabel(totalMins),
-        sites: groupMap[cat],
-      };
-    });
-
-    this.setData({ groups, filteredSites: enriched });
-  },
-
-  _filterSites(text: string) {
-    const lower = text.toLowerCase();
-    const all = this.data._allSites as any[];
-    if (!text) {
-      this._buildAll(all);
+    if (!openId) {
+      this.setData({ loading: false, hasData: false });
       return;
     }
 
-    const { sortByTime } = this.data;
-    const filtered = all
-      .filter(s =>
-        s.name.toLowerCase().includes(lower) ||
-        s.domain.toLowerCase().includes(lower)
-      )
-      .sort((a, b) => sortByTime ? b.minutes - a.minutes : b.visits - a.visits);
+    this.setData({ loading: true });
+    getTimeWeekTrend(openId, todayStr()).then((data: any[]) => {
+      if (!data || !data.length) {
+        this.setData({ loading: false, hasData: false });
+        wx.stopPullDownRefresh();
+        return;
+      }
 
-    const maxMins = filtered.length ? filtered[0].minutes : 1;
-    const enriched = filtered.map((s, idx) => {
-      const cfg = CAT_CONFIG[s.category] || CAT_CONFIG['其他'];
-      return {
-        ...s,
-        rank: idx + 1,
-        emoji: getSiteEmoji(s.domain),
-        catColor: cfg.color,
-        catBgLight: cfg.bgLight,
-        catIcon: cfg.icon,
-        durationLabel: minutesToLabel(s.minutes),
-        barWidth: Math.round(s.minutes / maxMins * 100),
-      };
+      const totalAll = data.reduce((sum, d) => sum + (d.totalMinutes || 0), 0);
+      if (!totalAll) {
+        this.setData({ loading: false, hasData: false, _raw: data });
+        wx.stopPullDownRefresh();
+        return;
+      }
+
+      const xLabels = data.map(d => weekdayLabel(d.date));
+      const rangeLabel = `${shortDate(data[0].date)} – ${shortDate(data[data.length - 1].date)}`;
+
+      const summaries = FEATURED.map(cat => {
+        const series = data.map(d => Math.round((d.categories || {})[cat] || 0));
+        const total  = series.reduce((a, b) => a + b, 0);
+        const avg    = Math.round(total / 7);
+        const max    = Math.max(...series);
+        const last   = series[series.length - 1];
+        const prev   = series[series.length - 2];
+        const diff   = last - prev;
+        const trend  = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
+        const cfg    = CAT_CONFIG[cat];
+        return {
+          key:        cat,
+          color:      cfg.color,
+          bgLight:    cfg.bgLight,
+          icon:       cfg.icon,
+          emoji:      cfg.emoji,
+          totalLabel: minutesToLabel(total),
+          avgLabel:   minutesToLabel(avg),
+          maxLabel:   minutesToLabel(max),
+          last,
+          lastLabel:  minutesToLabel(last),
+          diff,
+          diffAbs:    minutesToLabel(Math.abs(diff)),
+          trend,
+          series,
+        };
+      });
+
+      this.setData({
+        loading: false,
+        hasData: true,
+        summaries,
+        xLabels,
+        rangeLabel,
+        _raw: data,
+      });
+
+      setTimeout(() => this._drawChart(), 50);
+      wx.stopPullDownRefresh();
+    }).catch(err => {
+      console.error('[timeTrend] fetch error', err);
+      this.setData({ loading: false, hasData: false });
+      wx.stopPullDownRefresh();
+    });
+  },
+
+  onLegendTap(e: any) {
+    const key = e.currentTarget.dataset.key as string;
+    const next = this.data.activeCat === key ? null : key;
+    this.setData({ activeCat: next });
+    this._drawChart();
+  },
+
+  _drawChart() {
+    const { summaries, activeCat } = this.data;
+    if (!summaries.length) return;
+
+    wx.createSelectorQuery()
+      .in(this as any)
+      .select('#trendCanvas')
+      .boundingClientRect((rect: any) => {
+        if (!rect || !rect.width || !rect.height) return;
+        this._renderCurves(rect.width, rect.height, summaries, activeCat);
+      })
+      .exec();
+  },
+
+  _renderCurves(w: number, h: number, summaries: any[], activeCat: string | null) {
+    const ctx = wx.createCanvasContext('trendCanvas', this);
+    ctx.clearRect(0, 0, w, h);
+
+    const padL = 56, padR = 16, padT = 24, padB = 28;
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+
+    const visible = activeCat ? summaries.filter(s => s.key === activeCat) : summaries;
+    let actualMax = 0;
+    visible.forEach(s => {
+      s.series.forEach((v: number) => { if (v > actualMax) actualMax = v; });
+    });
+    const { yMax, format: fmtTick } = niceYAxis(actualMax || 60);
+
+    // y 轴网格线 + 刻度
+    ctx.setFontSize(20);
+    ctx.setFillStyle('#bbb');
+    ctx.setTextAlign('right');
+    ctx.setTextBaseline('middle');
+    const yTicks = 4;
+    for (let i = 0; i <= yTicks; i++) {
+      const ratio = i / yTicks;
+      const val   = Math.round(yMax * (1 - ratio));
+      const y     = padT + plotH * ratio;
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(padL + plotW, y);
+      ctx.setStrokeStyle(i === yTicks ? '#e5e7eb' : '#f1f3f7');
+      ctx.setLineWidth(1);
+      ctx.stroke();
+      ctx.fillText(fmtTick(val), padL - 8, y);
+    }
+
+    // x 轴标签
+    const n = 7;
+    const stepX = plotW / (n - 1);
+    ctx.setTextAlign('center');
+    ctx.setTextBaseline('top');
+    const xLabels = this.data.xLabels;
+    for (let i = 0; i < n; i++) {
+      const x = padL + stepX * i;
+      ctx.setFillStyle('#9ca3af');
+      ctx.fillText(xLabels[i] || '', x, padT + plotH + 8);
+    }
+
+    // 画曲线（Fritsch-Carlson 单调三次插值，避免在谷/峰附近越界）
+    visible.forEach((s: any) => {
+      const pts: Array<[number, number]> = s.series.map((v: number, i: number) => {
+        const x = padL + stepX * i;
+        const y = padT + plotH * (1 - (v / yMax));
+        return [x, y];
+      });
+      const n = pts.length;
+
+      // 1) 相邻段斜率
+      const dxs: number[] = [];
+      const dys: number[] = [];
+      const ms:  number[] = [];
+      for (let i = 0; i < n - 1; i++) {
+        const dx = pts[i + 1][0] - pts[i][0];
+        const dy = pts[i + 1][1] - pts[i][1];
+        dxs.push(dx);
+        dys.push(dy);
+        ms.push(dy / dx);
+      }
+
+      // 2) 各节点切线（相邻斜率异号时置 0，保证单调性）
+      const ts: number[] = new Array(n);
+      ts[0] = ms[0];
+      ts[n - 1] = ms[n - 2];
+      for (let i = 1; i < n - 1; i++) {
+        ts[i] = (ms[i - 1] * ms[i] <= 0) ? 0 : (ms[i - 1] + ms[i]) / 2;
+      }
+
+      // 3) Fritsch-Carlson 修正，防止斜率超限造成的过冲
+      for (let i = 0; i < n - 1; i++) {
+        if (ms[i] === 0) {
+          ts[i] = 0;
+          ts[i + 1] = 0;
+        } else {
+          const a = ts[i] / ms[i];
+          const b = ts[i + 1] / ms[i];
+          const r2 = a * a + b * b;
+          if (r2 > 9) {
+            const tau = 3 / Math.sqrt(r2);
+            ts[i]     = tau * a * ms[i];
+            ts[i + 1] = tau * b * ms[i];
+          }
+        }
+      }
+
+      // 4) Hermite → Bezier
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 0; i < n - 1; i++) {
+        const dx = dxs[i];
+        const cp1x = pts[i][0] + dx / 3;
+        const cp1y = pts[i][1] + ts[i] * dx / 3;
+        const cp2x = pts[i + 1][0] - dx / 3;
+        const cp2y = pts[i + 1][1] - ts[i + 1] * dx / 3;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pts[i + 1][0], pts[i + 1][1]);
+      }
+      ctx.setStrokeStyle(s.color);
+      ctx.setLineWidth(3);
+      ctx.setLineCap('round');
+      ctx.setLineJoin('round');
+      ctx.stroke();
+
+      // 单一分类时显示填充
+      if (activeCat) {
+        ctx.lineTo(pts[pts.length - 1][0], padT + plotH);
+        ctx.lineTo(pts[0][0], padT + plotH);
+        ctx.closePath();
+        ctx.setGlobalAlpha(0.15);
+        ctx.setFillStyle(s.color);
+        ctx.fill();
+        ctx.setGlobalAlpha(1);
+      }
+
+      // 端点圆点
+      pts.forEach(([x, y]) => {
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.setFillStyle('#fff');
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.setStrokeStyle(s.color);
+        ctx.setLineWidth(2);
+        ctx.stroke();
+      });
     });
 
-    this.setData({ filteredSites: enriched });
+    ctx.draw();
+  },
+
+  onShareAppMessage() {
+    return makeShareToFriend({
+      title: '近 7 天的时间趋势 · 一日虚度',
+      path:  '/pages/timeSites/index',
+    });
+  },
+
+  onShareTimeline() {
+    return makeShareToTimeline({
+      title: '一日虚度 · 7 天时间趋势',
+    });
   },
 });

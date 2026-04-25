@@ -1,0 +1,2 @@
+<!--pages/users/blog/blog.wxml-->
+<web-view wx:if="{{ url }}" src="{{ url }}" bindload="onWebLoad" binderror="onWebError"/>

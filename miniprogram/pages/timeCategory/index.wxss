@@ -132,7 +132,11 @@
   background: #f5f5f5;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
+/* 品牌站点图标：让整个方块都是品牌色，图标占满 */
+.site-favicon.site-favicon--brand { padding: 0; }
+.site-favicon.site-favicon--brand .site-icon-img { width: 68rpx; height: 68rpx; border-radius: 16rpx; }
 .site-emoji { font-size: 36rpx; }
 .site-icon-img { width: 44rpx; height: 44rpx; }
 .site-info { flex: 1; min-width: 0; }
@@ -145,6 +149,13 @@
   flex-shrink: 0;
 }
 .site-domain { font-size: 22rpx; color: #bbb; margin-bottom: 10rpx; }
+.site-time-range {
+  font-size: 22rpx;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+  margin-top: -4rpx;
+  margin-bottom: 10rpx;
+}
 .site-bar-bg { height: 6rpx; background: #f0f0f0; border-radius: 3rpx; overflow: hidden; }
 .site-bar-fill { height: 100%; border-radius: 3rpx; }
 .site-right { text-align: right; flex-shrink: 0; min-width: 80rpx; }

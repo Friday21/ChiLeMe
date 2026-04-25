@@ -61,7 +61,7 @@
 
     <!-- 网站列表标题 -->
     <view class="section-header">
-      <text class="section-title">{{activeTabLabel === '所有' ? '全部网站' : activeTabLabel + ' 网站'}}</text>
+      <text class="section-title">{{activeTabLabel === '所有' ? '全部网站' : activeTabLabel}}</text>
       <view class="sort-btn" bindtap="toggleSort">
         <text class="sort-label">{{sortByTime ? '按时长' : '按次数'}}</text>
         <text class="sort-icon">⇅</text>
@@ -71,8 +71,9 @@
     <!-- 网站列表 -->
     <view class="site-list">
       <view class="site-card" wx:for="{{sites}}" wx:key="domain" bindtap="goSiteDetail" data-domain="{{item.domain}}">
-        <view class="site-favicon" style="background:{{item.catBgLight}}">
-          <image class="site-icon-img" src="{{item.catIcon}}" mode="aspectFit" wx:if="{{item.catIcon}}"></image>
+        <view class="site-favicon {{item.siteIcon ? 'site-favicon--brand' : ''}}" style="background:{{item.favBg}}">
+          <image class="site-icon-img" src="{{item.siteIcon}}" mode="aspectFit" wx:if="{{item.siteIcon}}"></image>
+          <image class="site-icon-img" src="{{item.catIcon}}" mode="aspectFit" wx:elif="{{item.catIcon}}"></image>
           <text class="site-emoji" wx:else>{{item.emoji}}</text>
         </view>
         <view class="site-info">
@@ -81,6 +82,7 @@
             <view class="site-cat-tag" style="background:{{item.catBgLight}};color:{{item.catColor}}">{{item.category}}</view>
           </view>
           <view class="site-domain">{{item.domain}}</view>
+          <view class="site-time-range" wx:if="{{item.timeRangeLabel}}" style="color:{{item.catColor}}">{{item.timeRangeLabel}}</view>
           <view class="site-bar-bg">
             <view class="site-bar-fill" style="width:{{item.barWidth}}%;background:{{item.catColor}}"></view>
           </view>

@@ -7,13 +7,20 @@ import {
 } from './mockData';
 
 /**
- * ⚠️ 本地调试开关
- * 改为 true → 所有时间追踪接口使用 Mock 数据，无需连接服务器
- * 上线前改回 false
+ * Mock 数据开关
+ * 用户可在"我的"页面切换，值持久化在本地 Storage (key: useMockData)，
+ * 不随账号同步到云端。
+ *
+ * 默认为 true —— 新用户 / 游客直接能体验到全套 UI，
+ * 关闭后才会真正去服务器拉取数据。
  */
-const MY_OPEN_ID = 'orjoY7et_lrDdpT85J0BwKufgEsk';
-// 我的账号有真实数据，使用真实接口；其他账号暂无数据，使用 mock
-const useMock = (openId: string) => openId !== MY_OPEN_ID;
+const USE_MOCK_KEY = 'useMockData';
+const useMock = (_openId: string): boolean => {
+  const pref = wx.getStorageSync(USE_MOCK_KEY);
+  // 未设置过（首次进入 / 清除过缓存）→ 默认使用 mock
+  if (pref === '' || pref === null || pref === undefined) return true;
+  return pref === true;
+};
 
 // utils/api.ts
 const callContainer = (path: string, method: "GET" | "POST" | "PUT" | "DELETE" = "GET", data: any = {}): Promise<any> => {
@@ -221,9 +228,9 @@ const getTimeOverview = (openId: string, date: string): Promise<any> => {
 };
 
 /**
- * 本周趋势
+ * 过去 7 天趋势（含 pivot 当天，往前推 6 天）
  * GET /api/time/week/<openId>/?date=YYYY-MM-DD
- * Returns: [{date, totalMinutes}] (本周一到本周日，7条)
+ * Returns: [{date, totalMinutes, categories: {catName: minutes}}] （7 条）
  */
 const getTimeWeekTrend = (openId: string, date: string): Promise<any> => {
   if (useMock(openId)) return mockGetTimeWeekTrend(openId, date);

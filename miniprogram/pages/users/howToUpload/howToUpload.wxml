@@ -1,0 +1,57 @@
+<view class="page">
+
+  <!-- 简介 -->
+  <view class="intro">
+    <view class="intro-title">自带数据，自己托管</view>
+    <view class="intro-text">
+      小程序本身不采集任何浏览记录 —— 你需要在自己的设备上收集活动数据（浏览器插件 / 脚本 / App），整理成 JSON 之后上传到下面这个接口。
+    </view>
+    <view class="intro-text">
+      服务端用 <text class="intro-mark">openId</text> 区分你的数据，上传成功即可在"时间 / 分类 / 趋势"页看到可视化结果。
+    </view>
+  </view>
+
+  <!-- 1. 我的 openId -->
+  <view class="section">
+    <view class="section-title">1. 你的 openId</view>
+    <view class="section-sub">上传时用来标识你的身份</view>
+    <view class="code-card" bindtap="copyOpenId">
+      <text class="code-text selectable" user-select="{{true}}">{{openId || '未登录'}}</text>
+      <view class="copy-btn">复制</view>
+    </view>
+  </view>
+
+  <!-- 2. 上传接口 -->
+  <view class="section">
+    <view class="section-title">2. 上传接口</view>
+    <view class="section-sub">直接 POST JSON 到这个 URL：</view>
+
+    <view class="api-card" bindtap="copyApiUrl">
+      <view class="api-method">POST</view>
+      <text class="api-url selectable" user-select="{{true}}">{{apiUrl}}</text>
+      <view class="copy-btn-abs">复制</view>
+    </view>
+  </view>
+
+  <!-- 3. 参考实现 -->
+  <view class="section">
+    <view class="section-title">3. 数据采集 & 上传</view>
+    <view class="section-sub">采集逻辑、字段格式、定时上传脚本的完整实现请参考：</view>
+
+    <view class="repo-card" bindtap="openRepo">
+      <view class="repo-icon">⌥</view>
+      <view class="repo-body">
+        <view class="repo-name">Friday21 / activity-tracker</view>
+        <view class="repo-url selectable" user-select="{{true}}">{{repoUrl}}</view>
+      </view>
+      <view class="repo-action">复制</view>
+    </view>
+
+    <view class="tip">
+      <text class="tip-icon">ℹ️</text>
+      <text class="tip-text">小程序里没法直接打开外链，点上面的卡片会复制仓库地址，你到浏览器里粘贴打开即可。</text>
+    </view>
+  </view>
+
+  <view style="height:48rpx"></view>
+</view>

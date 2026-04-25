@@ -1,0 +1,3 @@
+/* pages/users/blog/blog.wxss */
+page { background: #fff; }
+web-view { width: 100%; height: 100vh; }
